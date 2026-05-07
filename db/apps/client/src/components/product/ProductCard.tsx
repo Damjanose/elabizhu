@@ -22,7 +22,7 @@ export const ProductCard = ({ product, eagerImage = false }: { product: Product;
         <motion.img
           src={thumb}
           alt=""
-          className="object-fit-cover w-100 h-100 aurelia-product-image position-absolute top-0 start-0"
+          className="object-fit-cover w-100 h-100 aurelia-product-image"
           loading={eagerImage ? "eager" : "lazy"}
           decoding="async"
           fetchPriority={eagerImage ? "high" : "auto"}

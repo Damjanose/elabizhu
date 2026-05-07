@@ -1,6 +1,7 @@
-import { Navigate } from "react-router-dom"
+import { Navigate, useSearchParams } from "react-router-dom"
 import { useAuth } from "../types/auth-context"
 import { useAuthStore } from "../stores/authStore"
+import { sanitizeRedirect } from "../utils/post-auth-redirect"
 
 export const GuestRoute = ({
   children,
@@ -11,13 +12,15 @@ export const GuestRoute = ({
 }) => {
   const { user } = useAuth()
   const sessionReady = useAuthStore((state) => state.sessionReady)
+  const [searchParams] = useSearchParams()
 
   if (!sessionReady) {
     return null
   }
 
   if (user) {
-    return <Navigate to={redirectTo} replace />
+    const next = sanitizeRedirect(searchParams.get("redirect")) ?? redirectTo
+    return <Navigate to={next} replace />
   }
 
   return <>{children}</>

@@ -2,11 +2,12 @@ import { useMemo, useRef, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import type { Product } from "@jewellery/types"
 import { AnimatePresence, motion } from "motion/react"
-import { Link, useParams } from "react-router-dom"
+import { Link, useLocation, useParams } from "react-router-dom"
 import { useCart } from "../hooks/useCart"
 import { useCategories } from "../hooks/useCatalog"
 import { fadeIn, fadeUp, listItem, listStagger, scrollRevealViewport, transition } from "../lib/motion"
 import { fetchProduct, fetchProductRecommendations } from "../services/products"
+import { loginHrefWithReturn } from "../utils/post-auth-redirect"
 import { successToast, toastFromError } from "../utils/toast"
 
 const PLACEHOLDER_IMAGE = "https://placehold.co/800x1000?text=Aurelia"
@@ -21,6 +22,8 @@ const formatPrice = (value: string | number) =>
 
 export const ProductDetailsPage = () => {
   const { productId = "" } = useParams()
+  const location = useLocation()
+  const signInHref = loginHrefWithReturn(location)
   const { addItem, isUpdating, isGuest } = useCart()
 
   const productQuery = useQuery({
@@ -68,6 +71,7 @@ export const ProductDetailsPage = () => {
       <ProductHero
         product={product}
         categoryName={categoryName}
+        signInHref={signInHref}
         canBuy={product.stockQuantity > 0}
         isUpdating={isUpdating}
         isGuest={isGuest}
@@ -96,13 +100,14 @@ export const ProductDetailsPage = () => {
 type HeroProps = {
   product: Product
   categoryName: string | null
+  signInHref: string
   canBuy: boolean
   isGuest: boolean
   isUpdating: boolean
   onAdd: (quantity: number) => void
 }
 
-const ProductHero = ({ product, categoryName, canBuy, isGuest, isUpdating, onAdd }: HeroProps) => {
+const ProductHero = ({ product, categoryName, signInHref, canBuy, isGuest, isUpdating, onAdd }: HeroProps) => {
   const images = product.images.length > 0 ? product.images : []
   const [activeIndex, setActiveIndex] = useState(0)
   const [quantity, setQuantity] = useState(1)
@@ -240,7 +245,8 @@ const ProductHero = ({ product, categoryName, canBuy, isGuest, isUpdating, onAdd
           </a>
           {isGuest && (
             <p className="aurelia-pdp-signin">
-              Shopping as a guest. <Link to="/login">Sign in</Link> to sync your selection across
+              Shopping as a guest.{" "}
+              <Link to={signInHref}>Sign in</Link> to sync your selection across
               devices and check out securely.
             </p>
           )}

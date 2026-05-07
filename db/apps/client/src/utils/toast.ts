@@ -7,7 +7,7 @@ const baseOptions: ToastOptions = {
   hideProgressBar: false,
   closeOnClick: true,
   pauseOnHover: true,
-  draggable: true,
+  draggable: false,
 }
 
 export const successToast = (message: string, options?: ToastOptions) =>

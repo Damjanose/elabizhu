@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from "react"
 import { FiLogOut, FiPackage, FiUser } from "react-icons/fi"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../../types/auth-context"
+import { loginHrefWithReturn } from "../../utils/post-auth-redirect"
 import { infoToast, toastFromError } from "../../utils/toast"
 
 export const UserMenu = () => {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+  const signInHref = loginHrefWithReturn(location)
   const [open, setOpen] = useState(false)
   const [signingOut, setSigningOut] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -33,7 +36,7 @@ export const UserMenu = () => {
 
   if (!user) {
     return (
-      <Link className="aurelia-icon-link text-decoration-none" to="/login" aria-label="Sign in">
+      <Link className="aurelia-icon-link text-decoration-none" to={signInHref} aria-label="Sign in">
         <FiUser />
       </Link>
     )

@@ -1,7 +1,7 @@
 import { motion } from "motion/react"
 import { Link, NavLink, Route, Routes } from "react-router-dom"
 import { FiSearch, FiShoppingBag } from "react-icons/fi"
-import { ToastContainer } from "react-toastify"
+import { Slide, ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { ErrorBoundary } from "./components/feedback/ErrorBoundary"
 import { GuestRoute } from "./components/GuestRoute"
@@ -198,13 +198,15 @@ export const App = () => (
       <Shell />
     </motion.div>
     <ToastContainer
+      className="aurelia-toast-container"
+      transition={Slide}
       position="top-right"
       autoClose={3500}
       newestOnTop
       pauseOnFocusLoss={false}
       closeOnClick
       pauseOnHover
-      draggable
+      draggable={false}
       theme="light"
       toastClassName="aurelia-toast"
     />
