@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Noto+Serif:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "error": "#ba1a1a",
+                  "inverse-on-surface": "#f8efe6",
+                  "on-primary-container": "#4e3700",
+                  "surface-container-highest": "#e9e1d8",
+                  "surface-dim": "#e1d9d0",
+                  "on-primary-fixed": "#261900",
+                  "secondary-container": "#d6e3d5",
+                  "on-secondary": "#ffffff",
+                  "secondary-fixed": "#d9e6d7",
+                  "surface": "#fff8f3",
+                  "primary-container": "#c5a059",
+                  "primary-fixed-dim": "#e9c176",
+                  "surface-container": "#f5ede4",
+                  "on-surface-variant": "#4e4639",
+                  "primary-fixed": "#ffdea5",
+                  "outline-variant": "#d1c5b4",
+                  "on-tertiary-fixed": "#2c1600",
+                  "on-primary-fixed-variant": "#5d4201",
+                  "surface-container-high": "#efe7de",
+                  "error-container": "#ffdad6",
+                  "on-secondary-container": "#59665a",
+                  "on-secondary-fixed": "#131e15",
+                  "tertiary-fixed": "#ffdcbd",
+                  "inverse-surface": "#34302a",
+                  "on-primary": "#ffffff",
+                  "secondary-fixed-dim": "#bdcabc",
+                  "inverse-primary": "#e9c176",
+                  "on-error": "#ffffff",
+                  "on-secondary-fixed-variant": "#3e4a3f",
+                  "surface-variant": "#e9e1d8",
+                  "on-tertiary-container": "#55340d",
+                  "tertiary-fixed-dim": "#f0bd8b",
+                  "surface-bright": "#fff8f3",
+                  "background": "#fff8f3",
+                  "secondary": "#556156",
+                  "surface-container-low": "#fbf2e9",
+                  "tertiary": "#7d562d",
+                  "on-background": "#1e1b16",
+                  "primary": "#775a19",
+                  "on-tertiary": "#ffffff",
+                  "surface-tint": "#775a19",
+                  "on-tertiary-fixed-variant": "#623f18",
+                  "tertiary-container": "#cc9c6d",
+                  "on-surface": "#1e1b16",
+                  "on-error-container": "#93000a",
+                  "surface-container-lowest": "#ffffff",
+                  "outline": "#7f7667"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.125rem",
+                  "lg": "0.25rem",
+                  "xl": "0.5rem",
+                  "full": "0.75rem"
+          },
+          "spacing": {
+                  "gutter": "32px",
+                  "margin-desktop": "80px",
+                  "section-gap": "120px",
+                  "unit": "8px",
+                  "container-max": "1440px",
+                  "margin-mobile": "24px"
+          },
+          "fontFamily": {
+                  "display-xl": ["Noto Serif"],
+                  "body-md": ["Inter"],
+                  "headline-md": ["Noto Serif"],
+                  "headline-lg": ["Noto Serif"],
+                  "body-lg": ["Inter"],
+                  "label-sm": ["Inter"]
+          },
+          "fontSize": {
+                  "display-xl": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "400"}],
+                  "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                  "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "400"}],
+                  "headline-lg": ["48px", {"lineHeight": "1.2", "fontWeight": "400"}],
+                  "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                  "label-sm": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "600"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    }
+    .custom-shadow {
+      box-shadow: 0 4px 20px -2px rgba(51, 34, 17, 0.06);
+    }
+    .active-nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background-color: currentColor;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md selection:bg-primary-fixed-dim">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-margin-desktop max-w-container-max mx-auto h-24">
+<div class="flex items-center gap-12">
+<h1 class="font-display-xl text-headline-md font-normal text-on-surface dark:text-inverse-on-surface tracking-widest">AURELIA</h1>
+<nav class="hidden md:flex gap-8">
+<a class="text-on-surface-variant dark:text-surface-variant font-body-md text-label-sm tracking-widest hover:text-primary transition-opacity duration-450 ease-in-out" href="#">COLLECTIONS</a>
+<a class="text-on-surface-variant dark:text-surface-variant font-body-md text-label-sm tracking-widest hover:text-primary transition-opacity duration-450 ease-in-out" href="#">STORY</a>
+<a class="text-on-surface-variant dark:text-surface-variant font-body-md text-label-sm tracking-widest hover:text-primary transition-opacity duration-450 ease-in-out" href="#">BESPOKE</a>
+<a class="text-on-surface-variant dark:text-surface-variant font-body-md text-label-sm tracking-widest hover:text-primary transition-opacity duration-450 ease-in-out" href="#">JOURNAL</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<button class="material-symbols-outlined text-primary dark:text-inverse-primary hover:opacity-70 transition-all duration-450 ease-out">search</button>
+<button class="material-symbols-outlined text-primary dark:text-inverse-primary hover:opacity-70 transition-all duration-450 ease-out">shopping_bag</button>
+<button class="material-symbols-outlined text-primary dark:text-inverse-primary border-b border-primary pb-1 transition-all duration-450 ease-out">person</button>
+</div>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-margin-desktop py-16">
+<!-- Hero Section / Title -->
+<section class="mb-section-gap">
+<span class="font-body-md text-label-sm tracking-widest text-primary uppercase mb-4 block">Personal Atelier</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">Welcome back, Elena</h2>
+<p class="text-on-surface-variant max-w-2xl font-body-lg">Manage your bespoke orders, profile settings, and curated preferences from your private dashboard.</p>
+</section>
+<!-- Account Overview Cards (Bento Grid) -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-section-gap">
+<!-- Profile Card -->
+<div class="md:col-span-4 bg-surface-container-low p-8 custom-shadow flex flex-col justify-between group transition-all duration-450 ease-out hover:-translate-y-1">
+<div>
+<div class="flex justify-between items-start mb-8">
+<span class="material-symbols-outlined text-primary text-4xl">account_circle</span>
+<button class="text-label-sm tracking-widest text-primary hover:underline">EDIT</button>
+</div>
+<h3 class="font-headline-md text-headline-md mb-2">Elena Rossi</h3>
+<p class="text-on-surface-variant font-body-md">elena.rossi@haute-couture.it</p>
+<p class="text-on-surface-variant font-body-md mt-1">Via della Spiga, 12, Milano</p>
+</div>
+<div class="mt-12 flex gap-4">
+<div class="bg-primary-fixed-dim/20 px-3 py-1 rounded-full text-label-sm text-on-primary-fixed-variant">PLATINUM MEMBER</div>
+</div>
+</div>
+<!-- Orders Card -->
+<div class="md:col-span-5 bg-inverse-surface p-8 custom-shadow text-inverse-on-surface flex flex-col justify-between group transition-all duration-450 ease-out hover:-translate-y-1">
+<div>
+<div class="flex justify-between items-start mb-8">
+<span class="material-symbols-outlined text-inverse-primary text-4xl">auto_stories</span>
+<span class="text-label-sm tracking-widest text-inverse-primary">ACTIVE ORDER</span>
+</div>
+<h3 class="font-headline-md text-headline-md mb-2">Order #AUR-98421</h3>
+<p class="opacity-80 font-body-md">Hand-carved Emerald Pendulum Necklace</p>
+<p class="opacity-80 font-body-md mt-4">Estimated Delivery: Oct 24, 2024</p>
+</div>
+<div class="mt-8">
+<button class="w-full border border-inverse-primary text-inverse-primary py-4 text-label-sm tracking-widest hover:bg-inverse-primary hover:text-inverse-surface transition-colors duration-450">VIEW FULL HISTORY</button>
+</div>
+</div>
+<!-- Notifications Card -->
+<div class="md:col-span-3 bg-surface-container-high p-8 custom-shadow flex flex-col justify-between group transition-all duration-450 ease-out hover:-translate-y-1">
+<div>
+<div class="flex justify-between items-start mb-8">
+<div class="relative">
+<span class="material-symbols-outlined text-primary text-4xl">notifications</span>
+<span class="absolute top-0 right-0 w-3 h-3 bg-error rounded-full border-2 border-surface-container-high"></span>
+</div>
+<span class="text-label-sm tracking-widest text-primary">2 NEW</span>
+</div>
+<div class="space-y-6">
+<div>
+<p class="text-label-sm font-bold text-on-surface mb-1">CRAFTING UPDATE</p>
+<p class="text-body-md text-on-surface-variant leading-snug">The gem setting for your bespoke piece is now complete.</p>
+</div>
+<div>
+<p class="text-label-sm font-bold text-on-surface mb-1">CARE GUIDE</p>
+<p class="text-body-md text-on-surface-variant leading-snug">Discover how to maintain your heirloom's brilliance.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Layout for Timeline and Detail -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-gutter items-start">
+<!-- Order Tracking Timeline -->
+<div class="lg:col-span-1 bg-surface-container-lowest p-10 border border-outline-variant">
+<h4 class="font-headline-md text-headline-md mb-12">Tracking Status</h4>
+<div class="relative">
+<!-- Timeline Line -->
+<div class="absolute left-[11px] top-0 bottom-0 w-[1px] bg-outline-variant"></div>
+<ul class="space-y-12 relative">
+<!-- Shipped (Active/Latest) -->
+<li class="flex gap-6 items-start">
+<div class="relative z-10 flex items-center justify-center">
+<div class="w-[23px] h-[23px] bg-primary rounded-full border-4 border-surface"></div>
+</div>
+<div>
+<p class="text-label-sm font-bold text-primary tracking-widest mb-1">SHIPPED</p>
+<p class="text-on-surface font-body-md">Package in transit via DHL Express</p>
+<p class="text-label-sm text-on-surface-variant mt-1">Oct 18, 14:30 · Milan Hub</p>
+</div>
+</li>
+<!-- Confirmed -->
+<li class="flex gap-6 items-start">
+<div class="relative z-10 flex items-center justify-center">
+<div class="w-[23px] h-[23px] bg-primary-fixed-dim rounded-full border-4 border-surface"></div>
+</div>
+<div>
+<p class="text-label-sm font-bold text-on-surface tracking-widest mb-1">CONFIRMED</p>
+<p class="text-on-surface-variant font-body-md">Final quality inspection passed</p>
+<p class="text-label-sm text-on-surface-variant mt-1">Oct 16, 09:12 · Atelier</p>
+</div>
+</li>
+<!-- In Production -->
+<li class="flex gap-6 items-start">
+<div class="relative z-10 flex items-center justify-center">
+<div class="w-[23px] h-[23px] bg-primary-fixed-dim rounded-full border-4 border-surface"></div>
+</div>
+<div>
+<p class="text-label-sm font-bold text-on-surface tracking-widest mb-1">IN PRODUCTION</p>
+<p class="text-on-surface-variant font-body-md">Hand-crafting process initiated</p>
+<p class="text-label-sm text-on-surface-variant mt-1">Oct 12, 11:00 · Valenza</p>
+</div>
+</li>
+<!-- Pending -->
+<li class="flex gap-6 items-start">
+<div class="relative z-10 flex items-center justify-center">
+<div class="w-[23px] h-[23px] bg-primary-fixed-dim rounded-full border-4 border-surface"></div>
+</div>
+<div>
+<p class="text-label-sm font-bold text-on-surface tracking-widest mb-1">PENDING</p>
+<p class="text-on-surface-variant font-body-md">Order received and verified</p>
+<p class="text-label-sm text-on-surface-variant mt-1">Oct 10, 18:45 · Digital Boutique</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<!-- Item Detail & Context -->
+<div class="lg:col-span-2 space-y-gutter">
+<div class="flex flex-col md:flex-row gap-8 bg-surface-container p-4">
+<div class="w-full md:w-64 h-80 overflow-hidden shrink-0">
+<img alt="Emerald Jewelry" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105" data-alt="A macro shot of a luxurious emerald pendant necklace resting on a neutral, textured silk fabric. The lighting is soft and cinematic, highlighting the deep green facets of the gemstone and the polished gold of the setting. The aesthetic is extremely clean and high-end, evoking a sense of calm luxury and meticulous craftsmanship typical of a premium jewelry boutique." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVzXXtMrHShe9AO1ue41aTCgGmkSHHnUTz5aKy0-rSAuqB6MEV-NfLS84-KpUk5nllJpDV4PXXbP7REMkSkizzhVOQ7VZFCGrFjCZ8UaZPwO7luqfK1JxonnGxvc3B4r6SaWyLssWyGAz0ThLu2FqAZNa2Bp9Y_sPdJzk9GBEmaaUUEU2gUqqFHODNfTkoH18uqdZyuOCbLc4k57OLps33GvfcfXtTbMi61ALyb2TbQgNN52a3xQEFarHdc0XJGt6BxET0UDHzzA"/>
+</div>
+<div class="flex flex-col justify-center">
+<span class="text-label-sm text-on-surface-variant tracking-widest mb-2">COLLECTION: THE VERDANT SEED</span>
+<h5 class="font-display-xl text-headline-md mb-4">Emerald Pendulum Necklace</h5>
+<p class="text-on-surface-variant font-body-md mb-6 leading-relaxed max-w-lg">
+              Each stone is ethically sourced and hand-selected by our master gemologists. This particular piece features a 4.2-carat Zambian emerald encased in recycled 18k yellow gold.
+            </p>
+<div class="flex items-center gap-12 border-t border-outline-variant pt-6">
+<div>
+<p class="text-label-sm text-on-surface-variant uppercase mb-1">Price</p>
+<p class="text-on-surface font-semibold text-lg">€ 14,200.00</p>
+</div>
+<div>
+<p class="text-label-sm text-on-surface-variant uppercase mb-1">Weight</p>
+<p class="text-on-surface font-semibold text-lg">12.4g Gold</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Order Assistance / Crimson Alert Area -->
+<div class="p-8 border border-error-container bg-error-container/5">
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-error mt-1">info</span>
+<div>
+<h6 class="font-bold text-on-surface mb-1">Signature Required on Delivery</h6>
+<p class="text-on-surface-variant font-body-md">Due to the high value of your purchase, an adult signature is mandatory. If you are not available, please contact DHL to schedule a secure pickup.</p>
+<button class="mt-4 text-label-sm tracking-widest text-error hover:underline font-bold">MANAGE DELIVERY PREFERENCES</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface dark:bg-surface-container-highest border-t border-outline-variant mt-section-gap">
+<div class="w-full py-section-gap px-margin-desktop max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-start md:items-center">
+<div class="mb-12 md:mb-0">
+<h2 class="font-display-xl text-headline-md text-on-surface mb-4">AURELIA</h2>
+<p class="text-on-surface-variant font-body-md max-w-xs">Elevating the essence of fine jewellery through timeless design and bespoke artistry.</p>
+</div>
+<div class="grid grid-cols-2 md:flex gap-12 mb-12 md:mb-0">
+<div class="flex flex-col gap-4">
+<span class="text-label-sm font-bold tracking-widest text-on-surface">LEGAL</span>
+<a class="text-on-surface-variant text-label-sm tracking-widest hover:text-primary transition-colors duration-300" href="#">PRIVACY</a>
+<a class="text-on-surface-variant text-label-sm tracking-widest hover:text-primary transition-colors duration-300" href="#">TERMS</a>
+</div>
+<div class="flex flex-col gap-4">
+<span class="text-label-sm font-bold tracking-widest text-on-surface">CLIENT CARE</span>
+<a class="text-on-surface-variant text-label-sm tracking-widest hover:text-primary transition-colors duration-300" href="#">SUSTAINABILITY</a>
+<a class="text-on-surface-variant text-label-sm tracking-widest hover:text-primary transition-colors duration-300" href="#">CARE GUIDE</a>
+<a class="text-on-surface-variant text-label-sm tracking-widest hover:text-primary transition-colors duration-300" href="#">SHIPPING</a>
+</div>
+</div>
+</div>
+<div class="w-full py-8 px-margin-desktop max-w-container-max mx-auto border-t border-outline-variant flex flex-col md:flex-row justify-between items-center opacity-60">
+<p class="text-label-sm tracking-widest uppercase">© 2024 AURELIA FINE JEWELLERY. HANDCRAFTED EXCELLENCE.</p>
+<div class="flex gap-6 mt-4 md:mt-0">
+<span class="material-symbols-outlined text-on-surface text-lg">public</span>
+<span class="material-symbols-outlined text-on-surface text-lg">share</span>
+</div>
+</div>
+</footer>
+<!-- BottomNavBar for Mobile -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 md:hidden bg-surface border-t border-outline-variant shadow-sm">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant scale-95 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">auto_awesome</span>
+<span class="font-body-md text-label-sm">Shop</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant scale-95 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">auto_stories</span>
+<span class="font-body-md text-label-sm">Curated</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant scale-95 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-body-md text-label-sm">Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary dark:text-inverse-primary font-bold scale-95 active:scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-body-md text-label-sm">Account</span>
+</a>
+</nav>
+</body></html>
