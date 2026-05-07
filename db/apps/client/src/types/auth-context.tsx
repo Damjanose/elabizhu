@@ -2,6 +2,26 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react"
 import type { AuthResponse, LoginInput, RegisterInput, User } from "@jewellery/types"
 import { apiClient } from "../api/client"
 import { useAuthStore } from "../stores/authStore"
+import { useGuestCartStore } from "../stores/guestCartStore"
+
+const mergeGuestCart = async (accessToken: string) => {
+  const { items, clear } = useGuestCartStore.getState()
+  if (items.length === 0) return
+  try {
+    await Promise.all(
+      items.map((item) =>
+        apiClient.post(
+          "/cart/items",
+          { productId: item.productId, quantity: item.quantity },
+          { headers: { Authorization: `Bearer ${accessToken}` } },
+        ),
+      ),
+    )
+    clear()
+  } catch (error) {
+    console.warn("[Aurelia] Could not merge guest cart into server cart", error)
+  }
+}
 
 type AuthContextValue = {
   user: User | null
@@ -65,6 +85,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       refreshToken,
       login: async (input) => {
         const { data } = await apiClient.post<AuthResponse>("/auth/login", input)
+        await mergeGuestCart(data.tokens.accessToken)
         setUser(data.user)
         setAccessToken(data.tokens.accessToken)
         setRefreshToken(data.tokens.refreshToken)
@@ -72,6 +93,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       },
       register: async (input) => {
         const { data } = await apiClient.post<AuthResponse>("/auth/register", input)
+        await mergeGuestCart(data.tokens.accessToken)
         setUser(data.user)
         setAccessToken(data.tokens.accessToken)
         setRefreshToken(data.tokens.refreshToken)

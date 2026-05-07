@@ -1,83 +1,351 @@
+import { animated, useSpring } from "@react-spring/web"
+import type { CartLine } from "@jewellery/types"
+import { motion, type Variants } from "motion/react"
 import { Link } from "react-router-dom"
+import { MotionLink } from "../components/motion/MotionLink"
 import { useCart } from "../hooks/useCart"
+import { EmptyState } from "../components/feedback/EmptyState"
+import { fadeUp, listItem, listStagger, transition } from "../lib/motion"
+import { successToast, toastFromError } from "../utils/toast"
+
+const TAX_RATE = 0.2
+
+const formatCurrency = (value: string | number) =>
+  new Intl.NumberFormat("en-GB", {
+    style: "currency",
+    currency: "GBP",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(Number(value))
+
+const STEPS = [
+  { id: "cart", label: "Cart" },
+  { id: "shipping", label: "Shipping" },
+  { id: "payment", label: "Payment" },
+] as const
+
+const TRUST_BADGES = [
+  { icon: "verified", label: "Authenticated" },
+  { icon: "lock", label: "Secure Payment" },
+  { icon: "recycling", label: "Ethical Sourcing" },
+] as const
 
 export const CartPage = () => {
-  const { data, isLoading, isError, setQty, removeLine, isUpdating } = useCart()
+  const {
+    data,
+    isLoading,
+    isError,
+    setQty,
+    removeLine,
+    isUpdating,
+    refetch,
+    isFetching,
+    isGuest,
+  } = useCart()
 
-  if (isLoading) return <div className="alert alert-info">Loading cart…</div>
-  if (isError) return <div className="alert alert-danger">Could not load cart</div>
+  if (isLoading) {
+    return (
+      <section className="aurelia-cart-shell">
+        <Stepper activeIndex={0} />
+        <EmptyState
+          variant="card"
+          icon="hourglass_empty"
+          kicker="Loading"
+          title="Retrieving your selection…"
+          copy="One moment while we gather what you’ve set aside."
+        />
+      </section>
+    )
+  }
+
+  if (isError) {
+    return (
+      <section className="aurelia-cart-shell">
+        <Stepper activeIndex={0} />
+        <EmptyState
+          variant="card"
+          tone="danger"
+          icon="error"
+          kicker="Connection Issue"
+          title="We couldn’t load your cart"
+          copy="An unexpected error interrupted our request. Please try again."
+          cta={{ label: isFetching ? "Retrying…" : "Try Again", onClick: () => void refetch() }}
+          secondaryCta={{ to: "/products", label: "Browse Collections" }}
+        />
+      </section>
+    )
+  }
 
   const items = data?.items ?? []
 
+  if (items.length === 0) {
+    return (
+      <section className="aurelia-cart-shell">
+        <Stepper activeIndex={0} />
+        <EmptyState
+          variant="card"
+          icon="shopping_bag"
+          kicker="Your Atelier"
+          title="Your cart is empty"
+          copy="When you set a piece aside, it will rest here until you’re ready to continue."
+          cta={{ to: "/products", label: "Browse Collections" }}
+          secondaryCta={{ to: "/categories", label: "Shop by Category" }}
+        />
+      </section>
+    )
+  }
+
+  const subtotalNumber = Number(data?.subtotal ?? 0)
+  const estimatedTax = subtotalNumber * TAX_RATE
+  const total = subtotalNumber + estimatedTax
+
+  const checkoutTo = isGuest ? `/login?redirect=${encodeURIComponent("/checkout")}` : "/checkout"
+  const checkoutLabel = isGuest ? "Sign in to Checkout" : "Proceed to Checkout"
+
   return (
-    <div className="card border-0 shadow-sm">
-      <div className="card-body p-4">
-        <h1 className="h3 fw-bold mb-3">Cart</h1>
-        {items.length === 0 ? (
-          <p className="text-secondary mb-0">
-            Your cart is empty. <Link to="/products">Continue shopping</Link>
-          </p>
-        ) : (
-          <>
-            <div className="table-responsive">
-              <table className="table align-middle">
-                <thead>
-                  <tr>
-                    <th>Item</th>
-                    <th className="text-end">Price</th>
-                    <th className="text-center">Qty</th>
-                    <th />
-                  </tr>
-                </thead>
-                <tbody>
-                  {items.map((line) => (
-                    <tr key={line.productId}>
-                      <td>
-                        <div className="d-flex align-items-center gap-2">
-                          {line.imageUrl && (
-                            <img src={line.imageUrl} alt="" width={48} height={48} className="rounded object-fit-cover" />
-                          )}
-                          <span className="fw-medium">{line.name}</span>
-                        </div>
-                      </td>
-                      <td className="text-end">${Number(line.price).toFixed(2)}</td>
-                      <td className="text-center" style={{ maxWidth: 120 }}>
-                        <input
-                          type="number"
-                          min={1}
-                          className="form-control form-control-sm"
-                          defaultValue={line.quantity}
-                          disabled={isUpdating}
-                          onBlur={(e) => {
-                            const q = Number(e.target.value)
-                            if (Number.isFinite(q)) void setQty({ productId: line.productId, quantity: q })
-                          }}
-                        />
-                      </td>
-                      <td className="text-end">
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-outline-danger"
-                          disabled={isUpdating}
-                          onClick={() => void removeLine(line.productId)}
-                        >
-                          Remove
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+    <motion.section className="aurelia-cart-shell" variants={fadeUp} initial="hidden" animate="visible">
+      <Stepper activeIndex={0} />
+
+      <div className="aurelia-cart-grid">
+        <div className="aurelia-cart-main">
+          <h1 className="aurelia-cart-title">Your Selection</h1>
+
+          <div className="aurelia-cart-table" role="table" aria-label="Cart items">
+            <div className="aurelia-cart-thead" role="row">
+              <span role="columnheader">Product</span>
+              <span role="columnheader" className="text-center">Quantity</span>
+              <span role="columnheader" className="text-end">Total</span>
             </div>
-            <div className="d-flex justify-content-between align-items-center mt-3">
-              <strong>Subtotal: ${Number(data?.subtotal ?? 0).toFixed(2)}</strong>
-              <Link className="btn btn-primary" to="/checkout">
-                Checkout
-              </Link>
+
+            <motion.ul className="aurelia-cart-rows" variants={listStagger} initial="hidden" animate="visible">
+              {items.map((line) => (
+                <CartRow
+                  key={line.productId}
+                  line={line}
+                  variants={listItem}
+                  isUpdating={isUpdating}
+                  onChangeQty={async (quantity) => {
+                    try {
+                      await setQty({ productId: line.productId, quantity })
+                    } catch (err) {
+                      toastFromError(err, "Could not update quantity")
+                    }
+                  }}
+                  onRemove={async () => {
+                    try {
+                      await removeLine(line.productId)
+                      successToast(`“${line.name}” removed from cart`)
+                    } catch (err) {
+                      toastFromError(err, "Could not remove item")
+                    }
+                  }}
+                />
+              ))}
+            </motion.ul>
+          </div>
+
+          <ShippingBanner />
+        </div>
+
+        <aside className="aurelia-cart-aside">
+          <div className="aurelia-cart-summary">
+            <h2 className="aurelia-cart-summary-title">Summary</h2>
+
+            <dl className="aurelia-cart-summary-rows">
+              <div>
+                <dt>Subtotal</dt>
+                <dd>{formatCurrency(subtotalNumber)}</dd>
+              </div>
+              <div>
+                <dt>Estimated Taxes</dt>
+                <dd>{formatCurrency(estimatedTax)}</dd>
+              </div>
+              <div>
+                <dt>Shipping</dt>
+                <dd className="aurelia-cart-summary-shipping">Complimentary</dd>
+              </div>
+            </dl>
+
+            <div className="aurelia-cart-summary-total">
+              <span className="aurelia-cart-summary-total-label">Total Amount</span>
+              <span className="aurelia-cart-summary-total-value">{formatCurrency(total)}</span>
             </div>
-          </>
-        )}
+
+            <div className="aurelia-cart-summary-actions">
+              <MotionLink
+                to={checkoutTo}
+                className="aurelia-cart-checkout"
+                whileHover={{ scale: 1.02, y: -1 }}
+                whileTap={{ scale: 0.97 }}
+                transition={transition.quick}
+              >
+                <span>{checkoutLabel}</span>
+                <span className="material-symbols-outlined" aria-hidden>
+                  arrow_forward
+                </span>
+              </MotionLink>
+              <p className="aurelia-cart-finance-note">
+                {isGuest
+                  ? "Your selection is saved on this device. Sign in to securely complete the order."
+                  : "Interest-free financing available via Klarna."}
+              </p>
+            </div>
+
+            <div className="aurelia-cart-trust">
+              {TRUST_BADGES.map((badge) => (
+                <div key={badge.label} className="aurelia-cart-trust-item">
+                  <span className="material-symbols-outlined" aria-hidden>
+                    {badge.icon}
+                  </span>
+                  <p>{badge.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </aside>
       </div>
-    </div>
+    </motion.section>
   )
+}
+
+const Stepper = ({ activeIndex }: { activeIndex: number }) => (
+  <nav className="aurelia-cart-stepper" aria-label="Checkout progress">
+    {STEPS.map((step, index) => {
+      const state = index < activeIndex ? "complete" : index === activeIndex ? "active" : "upcoming"
+      return (
+        <div key={step.id} className={`aurelia-cart-stepper-item is-${state}`}>
+          <div className="aurelia-cart-stepper-bullet" aria-hidden>
+            {state === "complete" ? (
+              <span className="material-symbols-outlined">check</span>
+            ) : (
+              index + 1
+            )}
+          </div>
+          <span className="aurelia-cart-stepper-label">{step.label}</span>
+          {index < STEPS.length - 1 && <span className="aurelia-cart-stepper-line" aria-hidden />}
+        </div>
+      )
+    })}
+  </nav>
+)
+
+const CartRow = ({
+  line,
+  variants,
+  isUpdating,
+  onChangeQty,
+  onRemove,
+}: {
+  line: CartLine
+  variants: Variants
+  isUpdating: boolean
+  onChangeQty: (quantity: number) => void
+  onRemove: () => void
+}) => {
+  const meta = describeLine(line)
+  const qtySpring = useSpring({
+    from: { transform: "scale(0.92)" },
+    to: { transform: "scale(1)" },
+    reset: true,
+    config: { tension: 250, friction: 14 },
+    pause: line.quantity <= 0,
+  })
+
+  return (
+    <motion.li role="row" className="aurelia-cart-row" variants={variants}>
+      <div className="aurelia-cart-cell aurelia-cart-cell--product" role="cell">
+        <Link
+          to={`/products/${line.productId}`}
+          className="aurelia-cart-row-image overflow-hidden"
+          aria-label={`View ${line.name}`}
+        >
+          {line.imageUrl ? (
+            <motion.img
+              src={line.imageUrl}
+              alt={line.name}
+              loading="lazy"
+              whileHover={{ scale: 1.05 }}
+              transition={transition.quick}
+            />
+          ) : (
+            <div className="aurelia-cart-row-image-fallback" aria-hidden />
+          )}
+        </Link>
+        <div className="aurelia-cart-row-meta">
+          <Link to={`/products/${line.productId}`} className="aurelia-cart-row-name">
+            {line.name}
+          </Link>
+          {meta && <p className="aurelia-cart-row-sub">{meta}</p>}
+          <motion.button
+            type="button"
+            className="aurelia-cart-row-remove"
+            onClick={onRemove}
+            disabled={isUpdating}
+            whileTap={isUpdating ? undefined : { scale: 0.97 }}
+            transition={transition.quick}
+          >
+            Remove
+          </motion.button>
+        </div>
+      </div>
+
+      <div className="aurelia-cart-cell aurelia-cart-cell--qty" role="cell">
+        <span className="aurelia-cart-cell-label">Qty</span>
+        <div className="aurelia-cart-qty" role="group" aria-label={`Quantity for ${line.name}`}>
+          <motion.button
+            type="button"
+            aria-label="Decrease quantity"
+            disabled={isUpdating || line.quantity <= 1}
+            onClick={() => onChangeQty(Math.max(1, line.quantity - 1))}
+            whileTap={isUpdating || line.quantity <= 1 ? undefined : { scale: 0.9 }}
+            transition={transition.quick}
+          >
+            <span className="material-symbols-outlined" aria-hidden>remove</span>
+          </motion.button>
+          <animated.span className="aurelia-cart-qty-value" aria-live="polite" style={qtySpring}>
+            {line.quantity}
+          </animated.span>
+          <motion.button
+            type="button"
+            aria-label="Increase quantity"
+            disabled={isUpdating}
+            onClick={() => onChangeQty(line.quantity + 1)}
+            whileTap={isUpdating ? undefined : { scale: 0.9 }}
+            transition={transition.quick}
+          >
+            <span className="material-symbols-outlined" aria-hidden>add</span>
+          </motion.button>
+        </div>
+      </div>
+
+      <div className="aurelia-cart-cell aurelia-cart-cell--total" role="cell">
+        <span className="aurelia-cart-cell-label">Total</span>
+        <span className="aurelia-cart-row-total">
+          {formatCurrency(Number(line.price) * line.quantity)}
+        </span>
+      </div>
+    </motion.li>
+  )
+}
+
+const ShippingBanner = () => (
+  <aside className="aurelia-cart-banner" role="note">
+    <span className="material-symbols-outlined aurelia-cart-banner-icon" aria-hidden>
+      local_shipping
+    </span>
+    <div>
+      <p className="aurelia-cart-banner-title">Complimentary White-Glove Delivery</p>
+      <p className="aurelia-cart-banner-copy">
+        Insured worldwide shipping is included with your selection today.
+      </p>
+    </div>
+  </aside>
+)
+
+// Best-effort to derive the secondary "18K Gold / 0.5ct Diamond" style line.
+// The cart line API only exposes name/price/qty/imageUrl, so we surface unit price
+// as a refined sub-line when nothing richer is available.
+const describeLine = (line: CartLine) => {
+  const unit = formatCurrency(line.price)
+  return `${unit} each`
 }

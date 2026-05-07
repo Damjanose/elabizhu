@@ -18,6 +18,7 @@ const mapUser = async (userId: string, email: string, isActive: boolean) => {
     email,
     isActive,
     fullName: details.full_name,
+    phone: details.phone ?? null,
     permissions: permissionRows.map((row) => row.name as PermissionName),
   }
 }

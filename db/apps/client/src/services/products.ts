@@ -10,3 +10,10 @@ export const fetchProduct = async (id: string) => {
   const { data } = await apiClient.get<Product>(`/products/${id}`)
   return data
 }
+
+export const fetchProductRecommendations = async (id: string, limit?: number) => {
+  const { data } = await apiClient.get<Product[]>(`/products/${id}/recommendations`, {
+    params: limit ? { limit } : undefined,
+  })
+  return data
+}

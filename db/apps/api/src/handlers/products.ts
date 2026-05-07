@@ -53,6 +53,13 @@ export const listByCategory = async (req: Request, res: Response) => {
   return res.json(data)
 }
 
+export const recommendations = async (req: Request, res: Response) => {
+  const rawLimit = typeof req.query.limit === "string" ? Number(req.query.limit) : NaN
+  const limit = Number.isFinite(rawLimit) && rawLimit > 0 ? Math.min(Math.floor(rawLimit), 24) : 8
+  const data = await products.listRecommendations(req.params.id, limit)
+  return res.json(data)
+}
+
 export const create = async (req: Request, res: Response) => {
   try {
     const input = createSchema.parse(req.body)

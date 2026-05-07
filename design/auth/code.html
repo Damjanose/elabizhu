@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&amp;family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #fff8f3;
+            color: #1e1b16;
+            -webkit-font-smoothing: antialiased;
+        }
+        .editorial-shadow {
+            box-shadow: 0 10px 30px -15px rgba(51, 34, 17, 0.08);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#d9e6d7",
+                        "on-primary": "#ffffff",
+                        "primary-fixed-dim": "#e9c176",
+                        "on-error": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed": "#ffdea5",
+                        "inverse-surface": "#34302a",
+                        "on-tertiary-fixed-variant": "#623f18",
+                        "primary": "#775a19",
+                        "surface-container-highest": "#e9e1d8",
+                        "on-background": "#1e1b16",
+                        "on-primary-container": "#4e3700",
+                        "surface-tint": "#775a19",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#ffdcbd",
+                        "on-primary-fixed": "#261900",
+                        "primary-container": "#c5a059",
+                        "tertiary": "#7d562d",
+                        "on-secondary-fixed-variant": "#3e4a3f",
+                        "on-secondary-container": "#59665a",
+                        "tertiary-fixed-dim": "#f0bd8b",
+                        "error": "#ba1a1a",
+                        "surface-container": "#f5ede4",
+                        "on-tertiary-fixed": "#2c1600",
+                        "inverse-on-surface": "#f8efe6",
+                        "error-container": "#ffdad6",
+                        "surface-container-low": "#fbf2e9",
+                        "secondary-container": "#d6e3d5",
+                        "secondary": "#556156",
+                        "on-tertiary-container": "#55340d",
+                        "on-surface": "#1e1b16",
+                        "on-primary-fixed-variant": "#5d4201",
+                        "surface-variant": "#e9e1d8",
+                        "outline-variant": "#d1c5b4",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#cc9c6d",
+                        "surface-dim": "#e1d9d0",
+                        "on-secondary-fixed": "#131e15",
+                        "surface-container-high": "#efe7de",
+                        "outline": "#7f7667",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#fff8f3",
+                        "on-surface-variant": "#4e4639",
+                        "background": "#fff8f3",
+                        "surface": "#fff8f3",
+                        "inverse-primary": "#e9c176",
+                        "secondary-fixed-dim": "#bdcabc"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-desktop": "80px",
+                        "margin-mobile": "24px",
+                        "section-gap": "120px",
+                        "gutter": "32px",
+                        "container-max": "1440px",
+                        "unit": "8px"
+                    },
+                    "fontFamily": {
+                        "display-xl": ["Noto Serif"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg": ["Noto Serif"],
+                        "headline-md": ["Noto Serif"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display-xl": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.2", "fontWeight": "400"}],
+                        "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-x-hidden">
+<!-- TopNavBar -->
+<header class="bg-background fixed full-width top-0 z-50">
+<nav class="flex justify-between items-center w-full px-margin-desktop py-8 max-w-container-max mx-auto">
+<div class="flex gap-8 items-center">
+<a class="font-body-md text-body-md tracking-widest uppercase text-on-surface-variant opacity-80 pb-1 hover:opacity-100 transition-opacity duration-450 ease-[cubic-bezier(0.4,0,0.2,1)]" href="#">COLLECTIONS</a>
+<a class="font-body-md text-body-md tracking-widest uppercase text-on-surface-variant opacity-80 pb-1 hover:opacity-100 transition-opacity duration-450 ease-[cubic-bezier(0.4,0,0.2,1)]" href="#">STORY</a>
+</div>
+<div class="font-display-xl text-headline-md tracking-[0.2em] text-primary uppercase">
+                AURELIA
+            </div>
+<div class="flex gap-6 items-center">
+<span class="material-symbols-outlined text-primary cursor-pointer">shopping_bag</span>
+<span class="material-symbols-outlined text-primary cursor-pointer">person</span>
+</div>
+</nav>
+</header>
+<main class="min-h-screen flex items-center justify-center pt-32 pb-section-gap px-margin-mobile md:px-0">
+<div class="max-w-[1200px] w-full grid grid-cols-1 md:grid-cols-2 gap-gutter items-center">
+<!-- Visual Anchor Section -->
+<div class="hidden md:block h-[700px] relative overflow-hidden group">
+<img alt="Aurelia Craftsmanship" class="w-full h-full object-cover transition-transform duration-[2000ms] ease-out group-hover:scale-105" data-alt="A high-end, editorial close-up shot of a master jeweller's hands meticulously working on a gold band in a sun-drenched, minimalist studio. The lighting is soft and natural, emphasizing the warm stone tones and the delicate texture of the gold. The composition is clean and centered, reflecting a quiet luxury aesthetic with deep shadows and bright highlights. The overall mood is serene, professional, and aspirational." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVxPoCEE5J42x1Zv5072i31eniqvZryuBBJOQ1nVskQ3c3ZMgM5A-PCle6LHHBF4qRs6_jgXLpUrsYDmVZxrmMg9Z9z9LbEXWh6kLMH7r4-0ahNoRBf1tIcggR4Ef1NBGno1faZ4fjo2cQcrIVrNiZQXBvzE0QTSZnwjjBwvAR77kSSOTiG9__DHm188FxyAyCTR2izKQ8bZwnbOIyMQd4J2PRQP9ubR9a4i9zW0_Ebku6iLZo-QfSgN6f3zW64hZH8lSI6STejA"/>
+<div class="absolute inset-0 bg-primary/5 mix-blend-multiply"></div>
+<div class="absolute bottom-12 left-12 right-12">
+<h2 class="font-headline-lg text-headline-lg text-white mb-4">Timeless Elegance.</h2>
+<p class="font-body-lg text-body-lg text-white/90 max-w-md">Become part of an exclusive circle where fine craftsmanship meets soulful storytelling.</p>
+</div>
+</div>
+<!-- Registration Form Section -->
+<div class="px-4 md:px-16 flex flex-col justify-center">
+<div class="mb-12">
+<h1 class="font-headline-lg text-headline-lg text-primary mb-2">Create Account</h1>
+<p class="font-body-md text-on-surface-variant opacity-70">Experience the art of fine jewellery through a personalized lens.</p>
+</div>
+<form class="space-y-8">
+<div class="grid grid-cols-2 gap-gutter">
+<div class="relative">
+<label class="block font-label-sm text-label-sm text-outline mb-2 uppercase tracking-widest" for="first_name">First Name</label>
+<input class="w-full bg-transparent border-t-0 border-x-0 border-b border-outline-variant focus:ring-0 focus:border-primary transition-colors py-2 px-0 text-on-surface" id="first_name" placeholder="Evelyn" type="text"/>
+</div>
+<div class="relative">
+<label class="block font-label-sm text-label-sm text-outline mb-2 uppercase tracking-widest" for="last_name">Last Name</label>
+<input class="w-full bg-transparent border-t-0 border-x-0 border-b border-outline-variant focus:ring-0 focus:border-primary transition-colors py-2 px-0 text-on-surface" id="last_name" placeholder="Aurelius" type="text"/>
+</div>
+</div>
+<div class="relative">
+<label class="block font-label-sm text-label-sm text-outline mb-2 uppercase tracking-widest" for="email">Email Address</label>
+<input class="w-full bg-transparent border-t-0 border-x-0 border-b border-outline-variant focus:ring-0 focus:border-primary transition-colors py-2 px-0 text-on-surface" id="email" placeholder="evelyn@aurelia.com" type="email"/>
+</div>
+<div class="relative">
+<label class="block font-label-sm text-label-sm text-outline mb-2 uppercase tracking-widest" for="password">Password</label>
+<input class="w-full bg-transparent border-t-0 border-x-0 border-b border-outline-variant focus:ring-0 focus:border-primary transition-colors py-2 px-0 text-on-surface" id="password" placeholder="••••••••" type="password"/>
+</div>
+<div class="flex items-start space-x-3 group cursor-pointer">
+<div class="flex items-center h-5">
+<input class="h-4 w-4 rounded-none border-outline-variant text-primary focus:ring-0 cursor-pointer" id="newsletter" type="checkbox"/>
+</div>
+<div class="text-label-sm">
+<label class="font-body-md text-on-surface-variant cursor-pointer select-none" for="newsletter">Join the Aurelia Circle for exclusive collections and journal entries.</label>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary py-5 font-label-sm tracking-[0.2em] uppercase editorial-shadow hover:bg-primary-container transition-all duration-450 ease-[cubic-bezier(0.4,0,0.2,1)] active:translate-y-[2px]" type="submit">
+                        CREATE ACCOUNT
+                    </button>
+</form>
+<div class="mt-12 text-center">
+<p class="font-body-md text-on-surface-variant">
+                        Already have an account? 
+                        <a class="text-primary font-semibold border-b border-primary/30 hover:border-primary transition-colors ml-1" href="#">Sign In</a>
+</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low border-t border-outline-variant">
+<div class="w-full px-margin-desktop py-section-gap flex flex-col md:flex-row justify-between items-center max-w-container-max mx-auto">
+<div class="font-display-xl text-headline-sm tracking-[0.1em] text-primary mb-8 md:mb-0">
+                AURELIA
+            </div>
+<div class="flex flex-wrap justify-center gap-8 mb-8 md:mb-0">
+<a class="font-label-sm text-label-sm tracking-widest uppercase text-on-surface-variant hover:text-primary transition-colors duration-450" href="#">CLIENT CARE</a>
+<a class="font-label-sm text-label-sm tracking-widest uppercase text-on-surface-variant hover:text-primary transition-colors duration-450" href="#">SHIPPING &amp; RETURNS</a>
+<a class="font-label-sm text-label-sm tracking-widest uppercase text-on-surface-variant hover:text-primary transition-colors duration-450" href="#">PRIVACY POLICY</a>
+<a class="font-label-sm text-label-sm tracking-widest uppercase text-on-surface-variant hover:text-primary transition-colors duration-450" href="#">CONTACT</a>
+</div>
+<div class="font-label-sm text-label-sm tracking-widest uppercase text-secondary">
+                © 2024 AURELIA FINE JEWELLERY
+            </div>
+</div>
+</footer>
+</body></html>

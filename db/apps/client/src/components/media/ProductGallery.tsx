@@ -8,7 +8,7 @@ export const ProductGallery = ({ images, alt }: { images: ProductImage[]; alt: s
     <div className="row g-3">
       <div className="col-12">
         <div className="ratio ratio-1x1 bg-body-secondary rounded-3 overflow-hidden shadow-sm">
-          <img src={main} alt={alt} className="object-fit-cover w-100 h-100" />
+          <img src={main} alt={alt} className="object-fit-cover w-100 h-100" loading="lazy" decoding="async" />
         </div>
       </div>
       {images.length > 1 && (
@@ -20,7 +20,14 @@ export const ProductGallery = ({ images, alt }: { images: ProductImage[]; alt: s
               className={`btn p-0 border-0 bg-transparent rounded-2 ${i === idx ? "border border-2 border-primary" : ""}`}
               onClick={() => setIdx(i)}
             >
-              <img src={im.url} alt="" className="rounded-2" style={{ width: 72, height: 72, objectFit: "cover" }} />
+              <img
+                src={im.url}
+                alt=""
+                className="rounded-2"
+                style={{ width: 72, height: 72, objectFit: "cover" }}
+                loading="lazy"
+                decoding="async"
+              />
             </button>
           ))}
         </div>

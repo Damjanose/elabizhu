@@ -1,47 +1,62 @@
-import { Link, Navigate, Route, Routes } from "react-router-dom"
-import { FiSearch, FiShoppingBag, FiUser } from "react-icons/fi"
+import { motion } from "motion/react"
+import { Link, NavLink, Route, Routes } from "react-router-dom"
+import { FiSearch, FiShoppingBag } from "react-icons/fi"
+import { Slide, ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
+import { ErrorBoundary } from "./components/feedback/ErrorBoundary"
+import { GuestRoute } from "./components/GuestRoute"
 import { ProtectedRoute } from "./components/ProtectedRoute"
 import { StaffRoute } from "./components/StaffRoute"
+import { UserMenu } from "./components/auth/UserMenu"
+import { useCart } from "./hooks/useCart"
 import { useSocketLifecycle } from "./hooks/useSocketLifecycle"
 import { AccountPage } from "./pages/AccountPage"
 import { AdminDashboardPage } from "./pages/admin/AdminDashboardPage"
 import { AdminOrdersPage } from "./pages/admin/AdminOrdersPage"
 import { AdminProductsPage } from "./pages/admin/AdminProductsPage"
 import { CartPage } from "./pages/CartPage"
+import { CheckoutPage } from "./pages/CheckoutPage"
 import { CategoriesPage } from "./pages/CategoriesPage"
 import { CategoryProductsPage } from "./pages/CategoryProductsPage"
-import { CheckoutPage } from "./pages/CheckoutPage"
+import { CollectionsPage } from "./pages/CollectionsPage"
+import { JournalPage } from "./pages/JournalPage"
+import { JournalPostPage } from "./pages/JournalPostPage"
 import { HomePage } from "./pages/HomePage"
 import { LoginPage } from "./pages/LoginPage"
+import { NotFoundPage } from "./pages/NotFoundPage"
 import { NotificationsPage } from "./pages/NotificationsPage"
 import { OrderDetailPage } from "./pages/OrderDetailPage"
 import { OrdersPage } from "./pages/OrdersPage"
 import { ProductDetailsPage } from "./pages/ProductDetailsPage"
 import { ProductsPage } from "./pages/ProductsPage"
+import { ProfilePage } from "./pages/ProfilePage"
 import { RegisterPage } from "./pages/RegisterPage"
-import { useAuth } from "./types/auth-context"
+import { fadeUp } from "./lib/motion"
+
+const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+  `aurelia-nav-link${isActive ? " aurelia-nav-link-active" : ""}`
 
 const Shell = () => {
   useSocketLifecycle()
-  const { user } = useAuth()
+  const { itemCount } = useCart()
 
   return (
     <div className="aurelia-app-shell min-vh-100">
       <nav className="aurelia-topbar sticky-top">
         <div className="aurelia-container aurelia-nav-grid">
           <div className="aurelia-nav-left">
-            <Link className="aurelia-nav-link" to="/products">
+            <NavLink className={navLinkClass} to="/collections">
               Collections
-            </Link>
-            <Link className="aurelia-nav-link" to="/categories">
+            </NavLink>
+            <NavLink className={navLinkClass} to="/categories">
               Story
-            </Link>
-            <Link className="aurelia-nav-link" to="/account">
+            </NavLink>
+            <NavLink className={navLinkClass} to="/account">
               Bespoke
-            </Link>
-            <Link className="aurelia-nav-link" to="/products">
+            </NavLink>
+            <NavLink className={navLinkClass} to="/journal">
               Journal
-            </Link>
+            </NavLink>
           </div>
 
           <Link className="aurelia-brand text-decoration-none text-center" to="/">
@@ -49,41 +64,52 @@ const Shell = () => {
           </Link>
 
           <div className="aurelia-nav-right">
-            <Link className="aurelia-icon-link text-decoration-none" to="/products" aria-label="Search">
+            <Link className="aurelia-icon-link text-decoration-none" to="/collections" aria-label="Search">
               <FiSearch />
             </Link>
+            <UserMenu />
             <Link
-              className="aurelia-icon-link text-decoration-none"
-              to={user ? "/account" : "/login"}
-              aria-label="Account"
+              className="aurelia-cart-icon text-decoration-none"
+              to="/cart"
+              aria-label={itemCount > 0 ? `Cart, ${itemCount} item${itemCount === 1 ? "" : "s"}` : "Cart"}
             >
-              <FiUser />
-            </Link>
-            <Link className="aurelia-cart-icon text-decoration-none" to={user ? "/cart" : "/login"} aria-label="Cart">
               <FiShoppingBag />
-              <span className="aurelia-cart-badge">{user ? "1" : "0"}</span>
+              {itemCount > 0 && (
+                <span className="aurelia-cart-badge">{itemCount > 99 ? "99+" : itemCount}</span>
+              )}
             </Link>
           </div>
         </div>
       </nav>
       <main className="aurelia-container py-4 py-md-5">
+        <ErrorBoundary>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+          <Route
+            path="/login"
+            element={
+              <GuestRoute>
+                <LoginPage />
+              </GuestRoute>
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <GuestRoute>
+                <RegisterPage />
+              </GuestRoute>
+            }
+          />
+          <Route path="/collections" element={<CollectionsPage />} />
+          <Route path="/journal" element={<JournalPage />} />
+          <Route path="/journal/:slug" element={<JournalPostPage />} />
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/categories/:categoryId/products" element={<CategoryProductsPage />} />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/products/:productId" element={<ProductDetailsPage />} />
 
-          <Route
-            path="/cart"
-            element={
-              <ProtectedRoute>
-                <CartPage />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/cart" element={<CartPage />} />
           <Route
             path="/checkout"
             element={
@@ -97,6 +123,14 @@ const Shell = () => {
             element={
               <ProtectedRoute>
                 <AccountPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/account/edit"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
               </ProtectedRoute>
             }
           />
@@ -150,11 +184,31 @@ const Shell = () => {
             }
           />
 
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
+        </ErrorBoundary>
       </main>
     </div>
   )
 }
 
-export const App = () => <Shell />
+export const App = () => (
+  <>
+    <motion.div variants={fadeUp} initial="hidden" animate="visible">
+      <Shell />
+    </motion.div>
+    <ToastContainer
+      className="aurelia-toast-container"
+      transition={Slide}
+      position="top-right"
+      autoClose={3500}
+      newestOnTop
+      pauseOnFocusLoss={false}
+      closeOnClick
+      pauseOnHover
+      draggable={false}
+      theme="light"
+      toastClassName="aurelia-toast"
+    />
+  </>
+)

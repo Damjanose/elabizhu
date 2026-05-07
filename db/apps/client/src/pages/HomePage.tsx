@@ -1,5 +1,10 @@
 import { useQuery } from "@tanstack/react-query"
-import { Link } from "react-router-dom"
+import gsap from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { motion } from "motion/react"
+import { useEffect, useRef } from "react"
+import { MotionLink, linkPressProps } from "../components/motion/MotionLink"
+import { fadeUp, listItem, listStagger, scrollRevealViewport, shouldReduceMotion, transition } from "../lib/motion"
 import { ProductCard } from "../components/product/ProductCard"
 import { fetchProducts } from "../services/products"
 
@@ -25,18 +30,52 @@ const CATEGORY_TILES = [
 ] as const
 
 export const HomePage = () => {
+  const heroRef = useRef<HTMLElement | null>(null)
   const { data: featured, isLoading: fLoad } = useQuery({
     queryKey: ["products", "featured"],
     queryFn: () => fetchProducts({ featured: true }),
   })
 
+  useEffect(() => {
+    if (!heroRef.current || shouldReduceMotion()) return
+    gsap.registerPlugin(ScrollTrigger)
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        ".aurelia-hero-overlay",
+        { yPercent: 18, autoAlpha: 0 },
+        { yPercent: 0, autoAlpha: 1, duration: 0.9, ease: "power3.out" },
+      )
+
+      gsap.fromTo(
+        ".aurelia-hero-image",
+        { scale: 1.08, yPercent: -4 },
+        {
+          scale: 1,
+          yPercent: 6,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".aurelia-hero",
+            scrub: true,
+            start: "top top",
+            end: "bottom top",
+          },
+        },
+      )
+    }, heroRef)
+
+    return () => ctx.revert()
+  }, [])
+
   return (
-    <div className="aurelia-home">
-      <section className="aurelia-hero mb-5">
+    <motion.div className="aurelia-home" variants={fadeUp} initial="hidden" animate="visible">
+      <section className="aurelia-hero mb-5" ref={heroRef}>
         <img
           src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfrdXXDMvv_4i_QFR-cJQr4iUBQSgbhCXdTXoK6o6vnj5UenpWxIpHkaQsZ9XDXFy79XlmYCed9Tg-MDbQ5z4bw3OJHUd9z43VFF2qnAHg78HSf8OqAJs3PfFkAsuZBE8vqOsqP45J6NSvkjbSYGAHWLZw2mL1pwZI4IY_e6ttpbMG0153ZE4UC-w8PbSU97SwCKMnwbFmnr4bD4srvGTX4BYxqqM4vLnhyBIl9a8ppoXeS6g-WeYPDac1pcJhAFffPKEjfIGJDw"
           alt=""
           className="aurelia-hero-image"
+          decoding="async"
+          fetchPriority="high"
         />
         <div className="aurelia-hero-overlay">
           <span className="aurelia-admin-kicker mb-3">Est. 1924</span>
@@ -45,46 +84,87 @@ export const HomePage = () => {
             Discover a collection of handcrafted pieces that celebrate the art of fine jewellery.
           </p>
           <div className="d-flex gap-2 justify-content-center mt-3">
-            <Link className="aurelia-btn aurelia-btn-primary text-decoration-none" to="/products">
+            <MotionLink
+              className="aurelia-btn aurelia-btn-primary text-decoration-none"
+              to="/products"
+              {...linkPressProps}
+            >
               Shop Collection
-            </Link>
-            <Link className="aurelia-btn text-decoration-none" to="/products?featured=1">
+            </MotionLink>
+            <MotionLink
+              className="aurelia-btn text-decoration-none"
+              to="/products?featured=1"
+              {...linkPressProps}
+            >
               View New Arrivals
-            </Link>
+            </MotionLink>
           </div>
         </div>
       </section>
 
       <section className="mb-5">
-        <div className="d-flex justify-content-between align-items-end mb-4">
+        <motion.div
+          className="d-flex justify-content-between align-items-end mb-4"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={scrollRevealViewport}
+        >
           <div>
             <h2 className="aurelia-admin-title mb-2">The Signature Series</h2>
             <p className="aurelia-muted mb-0 small">Refined essentials for the modern connoisseur.</p>
           </div>
-          <Link to="/products?featured=1" className="aurelia-nav-link">
+          <MotionLink to="/products?featured=1" className="aurelia-nav-link" {...linkPressProps}>
             View all
-          </Link>
-        </div>
+          </MotionLink>
+        </motion.div>
         {fLoad && <div className="alert alert-info py-2">Loading featured…</div>}
-        <div className="row g-4">
-          {featured?.slice(0, 4).map((p) => (
-            <div key={p.id} className="col-6 col-lg-3">
-              <ProductCard product={p} />
-            </div>
-          ))}
-        </div>
+        {!fLoad && featured && featured.length > 0 && (
+          <motion.div
+            key={featured
+              .slice(0, 4)
+              .map((p) => p.id)
+              .join("-")}
+            className="row g-4"
+            variants={listStagger}
+            initial="hidden"
+            animate="visible"
+          >
+            {featured.slice(0, 4).map((p) => (
+              <motion.div key={p.id} className="col-6 col-lg-3" variants={listItem}>
+                <ProductCard product={p} eagerImage />
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
       </section>
 
       <section className="aurelia-feature-block mb-5">
         <div className="row g-4 align-items-center">
-          <div className="col-md-5">
-            <img
+          <motion.div
+            className="col-md-5 overflow-hidden"
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={scrollRevealViewport}
+          >
+            <motion.img
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuANIPK2sA_DRxWB_X0cI9oci-WSe6NXAJqBeV5uM-oNM7loqG2k7g7pBlapLwp_wZ0OGa0R5npIpEr_XD2x6SU_bAp-g1C4KGl3UWFPuM8rO2rSEXdTBlWO_NA8AIjlf12oCTHnMehix8fRwglYRDYfBVhKfagn1YN0QkTILB3_eqtipyes0e1P19vkR6oMivth7PNQftjceEEOaZOXTFns8iInHoDjkLH2_WFlWb1Z8DfLkCbBl_DV6jrISOgov80h7lOFKCn4Gw"
               alt=""
               className="w-100 aurelia-feature-image"
+              loading="lazy"
+              decoding="async"
+              whileHover={{ scale: 1.04 }}
+              transition={transition.slow}
             />
-          </div>
-          <div className="col-md-7">
+          </motion.div>
+          <motion.div
+            className="col-md-7"
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={scrollRevealViewport}
+          >
             <h2 className="aurelia-admin-title mb-3">Celestial Craftsmanship</h2>
             <p className="aurelia-muted mb-4">
               Our newest arrivals bridge traditional techniques and contemporary design. Every piece
@@ -100,55 +180,119 @@ export const HomePage = () => {
                 <p className="aurelia-muted small mb-0">Individually polished for a mirror-like shine.</p>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       <section className="py-16 md:py-24">
-        <h2 className="font-display-xl text-headline-lg text-center mb-16 font-normal">
+        <motion.h2
+          className="font-display-xl text-headline-lg text-center mb-16 font-normal"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={scrollRevealViewport}
+        >
           Shop by Category
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter">
-          {CATEGORY_TILES.map((tile) => (
-            <Link
+        </motion.h2>
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-3 gap-gutter"
+          variants={listStagger}
+          initial="hidden"
+          whileInView="visible"
+          viewport={scrollRevealViewport}
+        >
+          {CATEGORY_TILES.map((tile, index) => (
+            <motion.div key={tile.label} variants={listItem}>
+            <MotionLink
               key={tile.label}
               to={tile.to}
               className="relative group block aspect-square overflow-hidden bg-surface-dim"
               style={{ color: "#fff8f3", textDecoration: "none" }}
+              whileHover={{ scale: 1.015, y: -4 }}
+              whileTap={{ scale: 0.98 }}
+              transition={transition.base}
             >
-              <img
+              <motion.img
                 src={tile.image}
                 alt={tile.label}
-                className="w-full h-full object-cover transition-transform duration-[1000ms] group-hover:scale-110"
+                className="absolute inset-0 w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
+                whileHover={{ scale: 1.08 }}
+                transition={transition.slow}
               />
+
               <div
                 aria-hidden
-                className="absolute inset-0 bg-on-background/10 group-hover:bg-on-background/20 transition-colors"
+                className="absolute inset-0 transition-opacity duration-500 group-hover:opacity-95"
+                style={{
+                  background:
+                    "linear-gradient(180deg, rgba(20,16,10,0.20) 0%, rgba(20,16,10,0) 32%, rgba(20,16,10,0) 50%, rgba(20,16,10,0.88) 100%)",
+                }}
               />
-              <div className="absolute inset-0 flex items-center justify-center px-6">
-                <h3
-                  className="font-display-xl text-headline-md tracking-widest uppercase font-normal text-center"
-                  style={{ color: "#fff8f3" }}
+
+              <div className="absolute inset-x-0 bottom-0 px-6 pb-6 md:px-8 md:pb-8">
+                <span
+                  className="block text-[11px] uppercase tracking-[0.32em] mb-3"
+                  style={{ color: "rgba(255,248,243,0.72)", fontFamily: "Inter, sans-serif" }}
                 >
-                  {tile.label}
-                </h3>
+                  {String(index + 1).padStart(2, "0")} &nbsp;·&nbsp; Collection
+                </span>
+
+                <div className="flex items-end justify-between gap-4">
+                  <h3
+                    className="m-0 font-normal leading-none text-[28px] md:text-[36px] lg:text-[40px] tracking-wide"
+                    style={{ color: "#fff8f3", fontFamily: '"Noto Serif", serif' }}
+                  >
+                    {tile.label}
+                  </h3>
+                  <span
+                    aria-hidden
+                    className="text-2xl leading-none transition-transform duration-500 ease-out group-hover:translate-x-1.5"
+                    style={{ color: "#fff8f3", fontWeight: 200 }}
+                  >
+                    →
+                  </span>
+                </div>
+
+                <span
+                  aria-hidden
+                  className="mt-5 block h-px w-8 group-hover:w-full transition-all duration-700 ease-out"
+                  style={{ background: "rgba(255,248,243,0.6)" }}
+                />
               </div>
-            </Link>
+            </MotionLink>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
       <section className="aurelia-newsletter text-center">
-        <h2 className="aurelia-admin-title mb-2">Join the Aurelia Circle</h2>
-        <p className="aurelia-muted mb-3">
-          Be the first to explore our weekly curations, exclusive bespoke opportunities and private events.
-        </p>
-        <div className="d-flex justify-content-center gap-2 flex-wrap">
-          <input type="email" className="aurelia-newsletter-input" placeholder="Your Email Address" />
-          <button className="aurelia-btn aurelia-btn-primary">Subscribe</button>
-        </div>
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={scrollRevealViewport}
+        >
+          <h2 className="aurelia-admin-title mb-2">Join the Aurelia Circle</h2>
+          <p className="aurelia-muted mb-3">
+            Be the first to explore our weekly curations, exclusive bespoke opportunities and private events.
+          </p>
+          <div className="d-flex justify-content-center gap-2 flex-wrap">
+            <input type="email" className="aurelia-newsletter-input" placeholder="Your Email Address" />
+            <motion.button
+              type="button"
+              className="aurelia-btn aurelia-btn-primary"
+              whileHover={{ scale: 1.03, y: -1 }}
+              whileTap={{ scale: 0.97 }}
+              transition={transition.quick}
+            >
+              Subscribe
+            </motion.button>
+          </div>
+        </motion.div>
       </section>
 
-    </div>
+    </motion.div>
   )
 }

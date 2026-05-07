@@ -8,6 +8,7 @@ import * as categoryHandlers from "./handlers/categories.js"
 import * as notificationHandlers from "./handlers/notifications.js"
 import * as orderHandlers from "./handlers/orders.js"
 import * as productHandlers from "./handlers/products.js"
+import * as profileHandlers from "./handlers/profile.js"
 import { requireAuth, requirePermission } from "./middleware/auth.js"
 import { attachSocket } from "./socketServer.js"
 
@@ -25,6 +26,13 @@ app.post("/auth/refresh", authHandlers.refresh)
 app.post("/auth/logout", requireAuth, authHandlers.logout)
 app.get("/auth/me", requireAuth, authHandlers.me)
 
+app.patch("/me/profile", requireAuth, profileHandlers.updateProfile)
+app.get("/me/addresses", requireAuth, profileHandlers.listAddresses)
+app.post("/me/addresses", requireAuth, profileHandlers.createAddress)
+app.patch("/me/addresses/:id", requireAuth, profileHandlers.updateAddress)
+app.delete("/me/addresses/:id", requireAuth, profileHandlers.deleteAddress)
+app.post("/me/addresses/:id/default", requireAuth, profileHandlers.setDefaultAddress)
+
 app.get("/categories", categoryHandlers.list)
 app.get("/categories/:id", categoryHandlers.getById)
 app.get("/categories/:id/products", productHandlers.listByCategory)
@@ -34,6 +42,7 @@ app.delete("/categories/:id", requireAuth, requirePermission("category.write"), 
 
 app.get("/products", productHandlers.list)
 app.get("/products/:id", productHandlers.getById)
+app.get("/products/:id/recommendations", productHandlers.recommendations)
 app.post("/products", requireAuth, requirePermission("product.write"), productHandlers.create)
 app.patch("/products/:id", requireAuth, requirePermission("product.write"), productHandlers.update)
 app.delete("/products/:id", requireAuth, requirePermission("product.write"), productHandlers.remove)

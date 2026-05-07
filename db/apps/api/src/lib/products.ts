@@ -38,6 +38,44 @@ export const getProduct = async (id: string) => {
 
 export const listProductsByCategory = async (categoryId: string) => listProducts({ categoryId })
 
+export const listRecommendations = async (productId: string, limit = 8) => {
+  const source = await db
+    .selectFrom("products")
+    .select(["id", "category_id"])
+    .where("id", "=", productId)
+    .executeTakeFirst()
+  if (!source) return []
+
+  const sameCategory = await db
+    .selectFrom("products")
+    .selectAll()
+    .where("is_active", "=", true)
+    .where("id", "!=", productId)
+    .where("category_id", "=", source.category_id)
+    .orderBy("featured", "desc")
+    .orderBy("name", "asc")
+    .limit(limit)
+    .execute()
+
+  let rows = sameCategory
+  if (rows.length < limit) {
+    const excludeIds = [productId, ...rows.map((r) => r.id)]
+    const fillers = await db
+      .selectFrom("products")
+      .selectAll()
+      .where("is_active", "=", true)
+      .where("id", "not in", excludeIds)
+      .orderBy("featured", "desc")
+      .orderBy("name", "asc")
+      .limit(limit - rows.length)
+      .execute()
+    rows = [...rows, ...fillers]
+  }
+
+  const imgMap = await loadImagesForProducts(rows.map((r) => r.id))
+  return rows.map((row) => toProduct(row, imgMap.get(row.id) ?? []))
+}
+
 export const createProduct = async (input: {
   categoryId: string
   name: string
