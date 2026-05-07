@@ -1,5 +1,7 @@
 import { Link, Route, Routes } from "react-router-dom"
 import { FiSearch, FiShoppingBag } from "react-icons/fi"
+import { ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 import { ErrorBoundary } from "./components/feedback/ErrorBoundary"
 import { GuestRoute } from "./components/GuestRoute"
 import { ProtectedRoute } from "./components/ProtectedRoute"
@@ -23,6 +25,7 @@ import { OrderDetailPage } from "./pages/OrderDetailPage"
 import { OrdersPage } from "./pages/OrdersPage"
 import { ProductDetailsPage } from "./pages/ProductDetailsPage"
 import { ProductsPage } from "./pages/ProductsPage"
+import { ProfilePage } from "./pages/ProfilePage"
 import { RegisterPage } from "./pages/RegisterPage"
 
 const Shell = () => {
@@ -113,6 +116,14 @@ const Shell = () => {
             }
           />
           <Route
+            path="/account/edit"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/orders"
             element={
               <ProtectedRoute>
@@ -170,4 +181,19 @@ const Shell = () => {
   )
 }
 
-export const App = () => <Shell />
+export const App = () => (
+  <>
+    <Shell />
+    <ToastContainer
+      position="top-right"
+      autoClose={3500}
+      newestOnTop
+      pauseOnFocusLoss={false}
+      closeOnClick
+      pauseOnHover
+      draggable
+      theme="light"
+      toastClassName="aurelia-toast"
+    />
+  </>
+)

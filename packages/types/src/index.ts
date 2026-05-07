@@ -12,7 +12,40 @@ export type User = {
   email: string
   isActive: boolean
   fullName: string
+  phone: string | null
   permissions: PermissionName[]
+}
+
+export type Address = {
+  id: string
+  label: string
+  recipientName: string
+  line1: string
+  line2: string | null
+  city: string
+  postalCode: string
+  country: string
+  phone: string | null
+  isDefault: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export type UpdateProfileInput = {
+  fullName: string
+  phone?: string | null
+}
+
+export type AddressInput = {
+  label: string
+  recipientName: string
+  line1: string
+  line2?: string | null
+  city: string
+  postalCode: string
+  country: string
+  phone?: string | null
+  isDefault?: boolean
 }
 
 export type Category = {

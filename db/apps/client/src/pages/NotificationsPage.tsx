@@ -7,6 +7,7 @@ import {
   markAllNotificationsRead,
   markNotificationRead,
 } from "../services/notifications"
+import { successToast, toastFromError } from "../utils/toast"
 
 const formatRelative = (iso: string) => {
   const date = new Date(iso)
@@ -32,11 +33,16 @@ export const NotificationsPage = () => {
   const markOne = useMutation({
     mutationFn: markNotificationRead,
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: ["notifications"] }),
+    onError: (err) => toastFromError(err, "Could not mark notification as read"),
   })
 
   const markAll = useMutation({
     mutationFn: markAllNotificationsRead,
-    onSuccess: () => void queryClient.invalidateQueries({ queryKey: ["notifications"] }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["notifications"] })
+      successToast("All notifications marked as read")
+    },
+    onError: (err) => toastFromError(err, "Could not mark all as read"),
   })
 
   const sorted = useMemo(

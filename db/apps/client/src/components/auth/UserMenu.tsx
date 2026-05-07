@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import { FiLogOut, FiPackage, FiUser } from "react-icons/fi"
 import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "../../types/auth-context"
+import { infoToast, toastFromError } from "../../utils/toast"
 
 export const UserMenu = () => {
   const { user, logout } = useAuth()
@@ -43,7 +44,10 @@ export const UserMenu = () => {
     try {
       await logout()
       setOpen(false)
+      infoToast("You have been signed out")
       navigate("/")
+    } catch (err) {
+      toastFromError(err, "Could not sign you out")
     } finally {
       setSigningOut(false)
     }

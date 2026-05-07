@@ -3854,6 +3854,36 @@ h4,
   box-shadow: none;
 }
 
+.aurelia-checkout-field.is-error {
+  border-bottom-color: #ba1a1a;
+}
+
+.aurelia-checkout-field.is-error:focus-within {
+  border-bottom-color: #ba1a1a;
+}
+
+.aurelia-checkout-field.is-error .aurelia-checkout-label {
+  color: #ba1a1a;
+}
+
+.aurelia-form-field-error {
+  margin: 6px 0 0;
+  font-family: Inter, sans-serif;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: #ba1a1a;
+  letter-spacing: 0.02em;
+}
+
+.aurelia-form-field-help {
+  margin: 6px 0 0;
+  font-family: Inter, sans-serif;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--aurelia-text-muted);
+  opacity: 0.8;
+}
+
 /* Payment method */
 .aurelia-checkout-payment {
   border: 0;
@@ -4718,4 +4748,666 @@ h4,
   .aurelia-order-detail-card-header {
     flex-wrap: wrap;
   }
+}
+
+/* ---------- Profile / Addresses (editorial) ---------- */
+.aurelia-profile-shell {
+  padding: 1rem 0 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 3vw, 2rem);
+}
+
+@media (min-width: 768px) {
+  .aurelia-profile-shell {
+    padding: 1.5rem 0 6rem;
+  }
+}
+
+.aurelia-profile-back {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--aurelia-text-muted);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.aurelia-profile-back:hover,
+.aurelia-profile-back:focus-visible {
+  color: var(--aurelia-primary);
+  text-decoration: none;
+}
+
+.aurelia-profile-back .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.aurelia-profile-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: clamp(20px, 4vw, 32px);
+  border-bottom: 1px solid var(--aurelia-surface-border);
+}
+
+.aurelia-profile-kicker {
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--aurelia-primary);
+}
+
+.aurelia-profile-title {
+  font-family: "Noto Serif", serif;
+  font-weight: 400;
+  font-size: clamp(1.8rem, 4vw, 2.75rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: var(--aurelia-text);
+}
+
+.aurelia-profile-sub {
+  font-family: Inter, sans-serif;
+  font-size: 0.95rem;
+  color: var(--aurelia-text-muted);
+  margin: 0;
+  max-width: 640px;
+  line-height: 1.6;
+}
+
+/* Two-column grid */
+.aurelia-profile-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.25rem, 3vw, 1.75rem);
+  align-items: flex-start;
+}
+
+@media (min-width: 992px) {
+  .aurelia-profile-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: 32px;
+  }
+}
+
+/* Card */
+.aurelia-profile-card {
+  background: #ffffff;
+  border: 1px solid var(--aurelia-surface-border);
+  padding: clamp(20px, 3vw, 32px);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.aurelia-profile-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--aurelia-surface-border);
+}
+
+.aurelia-profile-card-title {
+  font-family: "Noto Serif", serif;
+  font-weight: 400;
+  font-size: clamp(1.15rem, 1.6vw + 0.4rem, 1.4rem);
+  margin: 0;
+  color: var(--aurelia-text);
+}
+
+.aurelia-profile-card-icon {
+  font-size: 22px;
+  color: var(--aurelia-text-muted);
+  opacity: 0.6;
+}
+
+.aurelia-profile-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid var(--aurelia-surface-border);
+  padding: 10px 16px;
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--aurelia-text);
+  cursor: pointer;
+  transition: border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
+}
+
+.aurelia-profile-add:hover,
+.aurelia-profile-add:focus-visible {
+  border-color: var(--aurelia-primary);
+  color: var(--aurelia-primary);
+}
+
+.aurelia-profile-add .material-symbols-outlined {
+  font-size: 18px;
+}
+
+/* Form */
+.aurelia-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.aurelia-profile-fields {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(20px, 3vw, 28px) clamp(20px, 3vw, 32px);
+}
+
+@media (min-width: 640px) {
+  .aurelia-profile-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Disabled field treatment */
+.aurelia-checkout-field.is-disabled {
+  border-bottom-color: var(--aurelia-surface-border);
+  opacity: 0.7;
+}
+
+.aurelia-checkout-field.is-disabled .aurelia-checkout-input {
+  cursor: not-allowed;
+}
+
+.aurelia-profile-form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  padding-top: 8px;
+}
+
+.aurelia-profile-success {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #3e6b4b;
+}
+
+.aurelia-profile-success .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.aurelia-profile-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--aurelia-primary);
+  color: #fff8f3;
+  border: 0;
+  padding: 14px 28px;
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  cursor: pointer;
+  min-height: 48px;
+  transition: opacity 0.3s ease, transform 0.2s ease, background 0.3s ease;
+}
+
+.aurelia-profile-submit:hover:not(:disabled),
+.aurelia-profile-submit:focus-visible:not(:disabled) {
+  opacity: 0.92;
+}
+
+.aurelia-profile-submit:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.aurelia-profile-submit:disabled {
+  background: #b6a888;
+  cursor: not-allowed;
+}
+
+.aurelia-profile-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 18px;
+  background: #fff4f4;
+  border: 1px solid #f1c4c4;
+  color: #93000a;
+  font-family: Inter, sans-serif;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.aurelia-profile-error .material-symbols-outlined {
+  font-size: 22px;
+  flex: 0 0 auto;
+  margin-top: -1px;
+}
+
+/* Address book list */
+.aurelia-address-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+@media (min-width: 640px) {
+  .aurelia-address-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.aurelia-address-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid var(--aurelia-surface-border);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.aurelia-address-card.is-default {
+  border-color: var(--aurelia-primary);
+  box-shadow: inset 0 0 0 1px var(--aurelia-primary);
+  background: var(--aurelia-surface-soft);
+}
+
+.aurelia-address-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.aurelia-address-card-label-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.aurelia-address-card-label {
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--aurelia-text);
+}
+
+.aurelia-address-card-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  background: var(--aurelia-primary);
+  color: #fff8f3;
+  font-family: Inter, sans-serif;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border-radius: 999px;
+}
+
+.aurelia-address-card-icon {
+  font-size: 20px;
+  color: var(--aurelia-text-muted);
+  opacity: 0.5;
+}
+
+.aurelia-address-card.is-default .aurelia-address-card-icon {
+  color: var(--aurelia-primary);
+  opacity: 0.8;
+}
+
+.aurelia-address-card-body {
+  font-family: Inter, sans-serif;
+  font-style: normal;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--aurelia-text);
+  margin: 0;
+}
+
+.aurelia-address-card-body p {
+  margin: 0;
+}
+
+.aurelia-address-card-recipient {
+  font-family: "Noto Serif", serif;
+  font-size: 1rem;
+  margin: 0 0 4px !important;
+  color: var(--aurelia-text);
+}
+
+.aurelia-address-card-phone {
+  margin-top: 6px !important;
+  color: var(--aurelia-text-muted);
+  font-size: 0.85rem;
+}
+
+.aurelia-address-card-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--aurelia-surface-border);
+}
+
+.aurelia-address-card.is-default .aurelia-address-card-actions {
+  border-top-color: rgba(119, 90, 25, 0.25);
+}
+
+.aurelia-address-card-link {
+  background: transparent;
+  border: 0;
+  padding: 4px 0;
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--aurelia-text);
+  cursor: pointer;
+  transition: color 0.3s ease, opacity 0.3s ease;
+}
+
+.aurelia-address-card-link:hover:not(:disabled),
+.aurelia-address-card-link:focus-visible:not(:disabled) {
+  color: var(--aurelia-primary);
+}
+
+.aurelia-address-card-link--danger {
+  color: #ba1a1a;
+}
+
+.aurelia-address-card-link--danger:hover:not(:disabled) {
+  color: #93000a;
+}
+
+.aurelia-address-card-link:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Dialog */
+.aurelia-address-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(30, 27, 22, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: aurelia-fade-in 240ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes aurelia-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.aurelia-address-dialog {
+  width: 100%;
+  max-width: 720px;
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid var(--aurelia-surface-border);
+  padding: clamp(20px, 4vw, 36px);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-shadow: 0 30px 80px -20px rgba(51, 34, 17, 0.35);
+  animation: aurelia-dialog-rise 320ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes aurelia-dialog-rise {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.aurelia-address-dialog-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--aurelia-surface-border);
+}
+
+.aurelia-address-dialog-title {
+  font-family: "Noto Serif", serif;
+  font-weight: 400;
+  font-size: clamp(1.4rem, 2.4vw, 1.8rem);
+  margin: 8px 0 0;
+  color: var(--aurelia-text);
+}
+
+.aurelia-address-dialog-close {
+  background: transparent;
+  border: 0;
+  padding: 6px;
+  cursor: pointer;
+  color: var(--aurelia-text-muted);
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.aurelia-address-dialog-close:hover,
+.aurelia-address-dialog-close:focus-visible {
+  color: var(--aurelia-primary);
+}
+
+.aurelia-address-dialog-close .material-symbols-outlined {
+  font-size: 22px;
+}
+
+.aurelia-address-dialog-default {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: Inter, sans-serif;
+  font-size: 0.92rem;
+  color: var(--aurelia-text);
+  cursor: pointer;
+  user-select: none;
+}
+
+.aurelia-address-dialog-default input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--aurelia-primary);
+  cursor: pointer;
+}
+
+.aurelia-address-dialog-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 18px;
+  border-top: 1px solid var(--aurelia-surface-border);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 540px) {
+  .aurelia-profile-form-actions {
+    justify-content: stretch;
+    flex-wrap: wrap;
+  }
+
+  .aurelia-profile-submit {
+    width: 100%;
+  }
+
+  .aurelia-address-dialog-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .aurelia-address-dialog-actions .aurelia-profile-submit {
+    width: 100%;
+  }
+
+  .aurelia-address-dialog-actions .aurelia-checkout-back {
+    align-self: flex-start;
+  }
+}
+
+/* ---------- Toast notifications (Aurelia editorial) ---------- */
+.Toastify__toast-container {
+  --toastify-toast-width: 380px;
+  padding: 16px;
+  z-index: 9999;
+}
+
+@media (max-width: 540px) {
+  .Toastify__toast-container {
+    padding: 12px;
+    width: calc(100vw - 24px);
+    left: 12px;
+    right: 12px;
+    top: 12px;
+  }
+}
+
+.aurelia-toast {
+  font-family: Inter, sans-serif !important;
+  background: #ffffff !important;
+  color: var(--aurelia-text) !important;
+  border: 1px solid var(--aurelia-surface-border) !important;
+  border-left-width: 3px !important;
+  border-radius: 0 !important;
+  box-shadow: 0 12px 40px -16px rgba(51, 34, 17, 0.25) !important;
+  padding: 14px 16px !important;
+  min-height: 0 !important;
+}
+
+.aurelia-toast .Toastify__toast-body {
+  padding: 0 !important;
+  margin: 0 !important;
+  align-items: center !important;
+  gap: 12px !important;
+  font-family: Inter, sans-serif !important;
+  font-size: 0.92rem !important;
+  line-height: 1.5 !important;
+  letter-spacing: 0.01em !important;
+}
+
+.aurelia-toast .Toastify__toast-icon {
+  margin-inline-end: 0 !important;
+  width: 20px !important;
+  height: 20px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 20px !important;
+}
+
+.aurelia-toast .Toastify__close-button {
+  color: var(--aurelia-text-muted) !important;
+  opacity: 0.5 !important;
+  align-self: center !important;
+  padding: 4px !important;
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.aurelia-toast .Toastify__close-button:hover {
+  opacity: 1 !important;
+  color: var(--aurelia-text) !important;
+}
+
+.aurelia-toast .Toastify__progress-bar {
+  height: 2px !important;
+  border-radius: 0 !important;
+  opacity: 0.85 !important;
+}
+
+/* Variant accents (left rail + progress bar + icon) */
+.aurelia-toast.Toastify__toast--success {
+  border-left-color: #3e6b4b !important;
+}
+
+.aurelia-toast.Toastify__toast--success .Toastify__progress-bar {
+  background: #3e6b4b !important;
+}
+
+.aurelia-toast.Toastify__toast--success .Toastify__toast-icon svg {
+  fill: #3e6b4b !important;
+}
+
+.aurelia-toast.Toastify__toast--error {
+  border-left-color: #ba1a1a !important;
+}
+
+.aurelia-toast.Toastify__toast--error .Toastify__progress-bar {
+  background: #ba1a1a !important;
+}
+
+.aurelia-toast.Toastify__toast--error .Toastify__toast-icon svg {
+  fill: #ba1a1a !important;
+}
+
+.aurelia-toast.Toastify__toast--info {
+  border-left-color: var(--aurelia-primary) !important;
+}
+
+.aurelia-toast.Toastify__toast--info .Toastify__progress-bar {
+  background: var(--aurelia-primary) !important;
+}
+
+.aurelia-toast.Toastify__toast--info .Toastify__toast-icon svg {
+  fill: var(--aurelia-primary) !important;
+}
+
+.aurelia-toast.Toastify__toast--warning {
+  border-left-color: #b07b22 !important;
+}
+
+.aurelia-toast.Toastify__toast--warning .Toastify__progress-bar {
+  background: #b07b22 !important;
+}
+
+.aurelia-toast.Toastify__toast--warning .Toastify__toast-icon svg {
+  fill: #b07b22 !important;
 }

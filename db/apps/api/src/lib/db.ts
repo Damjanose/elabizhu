@@ -14,6 +14,23 @@ export interface UsersTable {
 export interface UserDetailsTable {
   user_id: string
   full_name: string
+  phone: string | null
+  created_at: Generated<Date>
+  updated_at: Generated<Date>
+}
+
+export interface UserAddressesTable {
+  id: Generated<string>
+  user_id: string
+  label: string
+  recipient_name: string
+  line1: string
+  line2: string | null
+  city: string
+  postal_code: string
+  country: string
+  phone: string | null
+  is_default: Generated<boolean>
   created_at: Generated<Date>
   updated_at: Generated<Date>
 }
@@ -124,6 +141,7 @@ export interface NotificationsTable {
 export interface Database {
   users: UsersTable
   user_details: UserDetailsTable
+  user_addresses: UserAddressesTable
   permissions: PermissionsTable
   user_permissions: UserPermissionsTable
   auth_sessions: AuthSessionsTable

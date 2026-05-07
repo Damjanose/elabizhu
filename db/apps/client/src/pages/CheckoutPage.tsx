@@ -1,12 +1,16 @@
+import { useMemo, useState } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import axios from "axios"
-import { useEffect, useMemo, useState } from "react"
+import { Formik, Form, useFormikContext, type FormikHelpers } from "formik"
+import * as Yup from "yup"
 import { Link, useNavigate } from "react-router-dom"
 import { checkout } from "../services/orders"
 import { useOrderStore } from "../stores/orderStore"
 import { useCart } from "../hooks/useCart"
 import { useAuth } from "../types/auth-context"
 import { EmptyState } from "../components/feedback/EmptyState"
+import { EditorialFormField } from "../components/forms/FormFields"
+import { errorToast, successToast } from "../utils/toast"
 
 const TAX_RATE = 0.2
 
@@ -30,7 +34,7 @@ const PAYMENT_OPTIONS = [
   { id: "bank", label: "Bank transfer", helper: "Receive instructions by email" },
 ] as const
 
-type FormState = {
+type CheckoutValues = {
   firstName: string
   lastName: string
   address: string
@@ -39,6 +43,28 @@ type FormState = {
   phone: string
   paymentMethod: string
 }
+
+const initialValues: CheckoutValues = {
+  firstName: "",
+  lastName: "",
+  address: "",
+  city: "",
+  postalCode: "",
+  phone: "",
+  paymentMethod: "card",
+}
+
+const checkoutSchema = Yup.object({
+  firstName: Yup.string().trim().required("First name is required"),
+  lastName: Yup.string().trim().required("Last name is required"),
+  address: Yup.string().trim().required("Shipping address is required"),
+  city: Yup.string().trim().required("City is required"),
+  postalCode: Yup.string().trim().required("Postal code is required"),
+  phone: Yup.string().trim(),
+  paymentMethod: Yup.string()
+    .oneOf(PAYMENT_OPTIONS.map((o) => o.id), "Please select a payment method")
+    .required("Please select a payment method"),
+})
 
 const splitName = (fullName?: string | null) => {
   if (!fullName) return { firstName: "", lastName: "" }
@@ -54,54 +80,22 @@ export const CheckoutPage = () => {
   const setLast = useOrderStore((s) => s.setLastCheckoutId)
   const { user } = useAuth()
   const { data: cart, isLoading: cartLoading, isFetching: cartFetching } = useCart()
-
-  const [form, setForm] = useState<FormState>({
-    firstName: "",
-    lastName: "",
-    address: "",
-    city: "",
-    postalCode: "",
-    phone: "",
-    paymentMethod: "card",
-  })
-
-  // Pre-fill name from authenticated user once available.
-  useEffect(() => {
-    if (!user) return
-    const { firstName, lastName } = splitName(user.fullName)
-    setForm((current) => ({
-      firstName: current.firstName || firstName,
-      lastName: current.lastName || lastName,
-      address: current.address,
-      city: current.city,
-      postalCode: current.postalCode,
-      phone: current.phone,
-      paymentMethod: current.paymentMethod,
-    }))
-  }, [user])
-
-  const update = <K extends keyof FormState>(key: K, value: FormState[K]) =>
-    setForm((current) => ({ ...current, [key]: value }))
+  const [formError, setFormError] = useState<string | null>(null)
 
   const items = cart?.items ?? []
   const subtotalNumber = Number(cart?.subtotal ?? 0)
   const estimatedTax = subtotalNumber * TAX_RATE
   const total = subtotalNumber + estimatedTax
 
-  const requiredFilled =
-    form.firstName.trim().length > 0 &&
-    form.lastName.trim().length > 0 &&
-    form.address.trim().length > 0 &&
-    form.city.trim().length > 0 &&
-    form.postalCode.trim().length > 0
-
-  const composedShippingAddress = useMemo(() => {
-    const recipient = `${form.firstName.trim()} ${form.lastName.trim()}`.trim()
-    const cityLine = [form.city.trim(), form.postalCode.trim()].filter(Boolean).join(", ")
-    return [recipient, form.address.trim(), cityLine, form.phone.trim()]
-      .filter(Boolean)
-      .join("\n")
-  }, [form])
+  const initial = useMemo<CheckoutValues>(() => {
+    const { firstName, lastName } = splitName(user?.fullName)
+    return {
+      ...initialValues,
+      firstName,
+      lastName,
+      phone: user?.phone ?? "",
+    }
+  }, [user])
 
   const m = useMutation({
     mutationFn: checkout,
@@ -109,26 +103,36 @@ export const CheckoutPage = () => {
       setLast(order.id)
       void queryClient.invalidateQueries({ queryKey: ["cart"] })
       void queryClient.invalidateQueries({ queryKey: ["orders"] })
+      successToast(`Order placed · #AUR-${order.id.slice(0, 6).toUpperCase()}`)
       navigate(`/orders/${order.id}`)
     },
   })
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    if (!requiredFilled || m.isPending) return
-    void m.mutateAsync({
-      shippingAddress: composedShippingAddress,
-      paymentMethod: form.paymentMethod,
-    })
-  }
+  const handleSubmit = async (values: CheckoutValues, helpers: FormikHelpers<CheckoutValues>) => {
+    setFormError(null)
+    const recipient = `${values.firstName.trim()} ${values.lastName.trim()}`.trim()
+    const cityLine = [values.city.trim(), values.postalCode.trim()].filter(Boolean).join(", ")
+    const shippingAddress = [recipient, values.address.trim(), cityLine, values.phone.trim()]
+      .filter(Boolean)
+      .join("\n")
 
-  const errorMessage = m.isError
-    ? axios.isAxiosError(m.error)
-      ? String((m.error.response?.data as { message?: string })?.message ?? m.error.message)
-      : m.error instanceof Error
-        ? m.error.message
-        : "Checkout failed"
-    : null
+    try {
+      await m.mutateAsync({
+        shippingAddress,
+        paymentMethod: values.paymentMethod,
+      })
+    } catch (err) {
+      const message = axios.isAxiosError(err)
+        ? String((err.response?.data as { message?: string })?.message ?? err.message)
+        : err instanceof Error
+          ? err.message
+          : "Checkout failed"
+      setFormError(message)
+      errorToast(message)
+    } finally {
+      helpers.setSubmitting(false)
+    }
+  }
 
   // Empty cart guard
   if (!cartLoading && items.length === 0) {
@@ -153,125 +157,123 @@ export const CheckoutPage = () => {
       <Stepper activeIndex={1} />
 
       <div className="aurelia-checkout-grid">
-        <form className="aurelia-checkout-form" onSubmit={handleSubmit} noValidate>
-          <header className="aurelia-checkout-header">
-            <p className="aurelia-checkout-kicker">Step 2 · Shipping & Payment</p>
-            <h1 className="aurelia-checkout-title">Shipping Details</h1>
-            <p className="aurelia-checkout-sub">
-              Tell us where your piece should arrive. We will only contact you about this order.
-            </p>
-          </header>
+        <Formik
+          initialValues={initial}
+          enableReinitialize
+          validationSchema={checkoutSchema}
+          onSubmit={handleSubmit}
+          validateOnBlur
+          validateOnChange
+        >
+          {({ isSubmitting, submitCount, isValid, values, setFieldValue, setFieldTouched }) => {
+            const showInvalidBanner = !formError && submitCount > 0 && !isValid
 
-          <div className="aurelia-checkout-fields">
-            <Field
-              label="First Name"
-              colSpan={1}
-              value={form.firstName}
-              onChange={(value) => update("firstName", value)}
-              placeholder="John"
-              autoComplete="given-name"
-              required
-            />
-            <Field
-              label="Last Name"
-              colSpan={1}
-              value={form.lastName}
-              onChange={(value) => update("lastName", value)}
-              placeholder="Doe"
-              autoComplete="family-name"
-              required
-            />
-            <Field
-              label="Shipping Address"
-              colSpan={2}
-              value={form.address}
-              onChange={(value) => update("address", value)}
-              placeholder="123 Mayfair Terrace"
-              autoComplete="street-address"
-              required
-            />
-            <Field
-              label="City"
-              colSpan={1}
-              value={form.city}
-              onChange={(value) => update("city", value)}
-              placeholder="London"
-              autoComplete="address-level2"
-              required
-            />
-            <Field
-              label="Postal Code"
-              colSpan={1}
-              value={form.postalCode}
-              onChange={(value) => update("postalCode", value)}
-              placeholder="W1K 7AA"
-              autoComplete="postal-code"
-              required
-            />
-            <Field
-              label="Phone Number"
-              colSpan={2}
-              type="tel"
-              value={form.phone}
-              onChange={(value) => update("phone", value)}
-              placeholder="+44 20 1234 5678"
-              autoComplete="tel"
-            />
-          </div>
+            return (
+              <Form className="aurelia-checkout-form" noValidate>
+                <header className="aurelia-checkout-header">
+                  <p className="aurelia-checkout-kicker">Step 2 · Shipping & Payment</p>
+                  <h1 className="aurelia-checkout-title">Shipping Details</h1>
+                  <p className="aurelia-checkout-sub">
+                    Tell us where your piece should arrive. We will only contact you about this order.
+                  </p>
+                </header>
 
-          <fieldset className="aurelia-checkout-payment">
-            <legend className="aurelia-checkout-payment-legend">Payment Method</legend>
-            <p className="aurelia-checkout-payment-note">
-              MVP checkout captures a payment label only — no card processor is charged.
-            </p>
-            <div className="aurelia-checkout-payment-options">
-              {PAYMENT_OPTIONS.map((option) => {
-                const checked = form.paymentMethod === option.id
-                return (
-                  <label
-                    key={option.id}
-                    className={`aurelia-checkout-payment-option${checked ? " is-selected" : ""}`}
-                  >
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value={option.id}
-                      checked={checked}
-                      onChange={() => update("paymentMethod", option.id)}
-                    />
-                    <span className="aurelia-checkout-payment-bullet" aria-hidden />
-                    <span className="aurelia-checkout-payment-text">
-                      <span className="aurelia-checkout-payment-label">{option.label}</span>
-                      <span className="aurelia-checkout-payment-helper">{option.helper}</span>
+                <div className="aurelia-checkout-fields">
+                  <EditorialFormField
+                    name="firstName"
+                    label="First Name"
+                    placeholder="John"
+                    autoComplete="given-name"
+                    required
+                  />
+                  <EditorialFormField
+                    name="lastName"
+                    label="Last Name"
+                    placeholder="Doe"
+                    autoComplete="family-name"
+                    required
+                  />
+                  <EditorialFormField
+                    name="address"
+                    label="Shipping Address"
+                    colSpan={2}
+                    placeholder="123 Mayfair Terrace"
+                    autoComplete="street-address"
+                    required
+                  />
+                  <EditorialFormField
+                    name="city"
+                    label="City"
+                    placeholder="London"
+                    autoComplete="address-level2"
+                    required
+                  />
+                  <EditorialFormField
+                    name="postalCode"
+                    label="Postal Code"
+                    placeholder="W1K 7AA"
+                    autoComplete="postal-code"
+                    required
+                  />
+                  <EditorialFormField
+                    name="phone"
+                    label="Phone Number"
+                    colSpan={2}
+                    type="tel"
+                    placeholder="+44 20 1234 5678"
+                    autoComplete="tel"
+                  />
+                </div>
+
+                <fieldset className="aurelia-checkout-payment">
+                  <legend className="aurelia-checkout-payment-legend">Payment Method</legend>
+                  <p className="aurelia-checkout-payment-note">
+                    MVP checkout captures a payment label only — no card processor is charged.
+                  </p>
+                  <div className="aurelia-checkout-payment-options">
+                    {PAYMENT_OPTIONS.map((option) => {
+                      const checked = values.paymentMethod === option.id
+                      return (
+                        <label
+                          key={option.id}
+                          className={`aurelia-checkout-payment-option${checked ? " is-selected" : ""}`}
+                        >
+                          <input
+                            type="radio"
+                            name="paymentMethod"
+                            value={option.id}
+                            checked={checked}
+                            onChange={() => {
+                              void setFieldValue("paymentMethod", option.id)
+                              void setFieldTouched("paymentMethod", true, false)
+                            }}
+                          />
+                          <span className="aurelia-checkout-payment-bullet" aria-hidden />
+                          <span className="aurelia-checkout-payment-text">
+                            <span className="aurelia-checkout-payment-label">{option.label}</span>
+                            <span className="aurelia-checkout-payment-helper">{option.helper}</span>
+                          </span>
+                        </label>
+                      )
+                    })}
+                  </div>
+                </fieldset>
+
+                {(formError || showInvalidBanner) && (
+                  <div className="aurelia-checkout-error" role="alert">
+                    <span className="material-symbols-outlined" aria-hidden>error</span>
+                    <span>
+                      {formError ??
+                        "Please fix the highlighted fields and try again."}
                     </span>
-                  </label>
-                )
-              })}
-            </div>
-          </fieldset>
+                  </div>
+                )}
 
-          {errorMessage && (
-            <div className="aurelia-checkout-error" role="alert">
-              <span className="material-symbols-outlined" aria-hidden>error</span>
-              <span>{errorMessage}</span>
-            </div>
-          )}
-
-          <div className="aurelia-checkout-actions">
-            <Link to="/cart" className="aurelia-checkout-back">
-              <span className="material-symbols-outlined" aria-hidden>chevron_left</span>
-              <span>Return to Cart</span>
-            </Link>
-            <button
-              type="submit"
-              className="aurelia-checkout-submit"
-              disabled={m.isPending || !requiredFilled}
-            >
-              <span>{m.isPending ? "Placing Order…" : "Place Order"}</span>
-              <span className="material-symbols-outlined" aria-hidden>arrow_forward</span>
-            </button>
-          </div>
-        </form>
+                <CheckoutActions isSubmitting={isSubmitting} />
+              </Form>
+            )
+          }}
+        </Formik>
 
         <aside className="aurelia-checkout-aside">
           <div className="aurelia-checkout-summary">
@@ -334,6 +336,37 @@ export const CheckoutPage = () => {
   )
 }
 
+const CheckoutActions = ({ isSubmitting }: { isSubmitting: boolean }) => {
+  // Marks every field as touched so all validation messages surface on the first submit.
+  const { validateForm, setTouched, values } = useFormikContext<CheckoutValues>()
+
+  return (
+    <div className="aurelia-checkout-actions">
+      <Link to="/cart" className="aurelia-checkout-back">
+        <span className="material-symbols-outlined" aria-hidden>chevron_left</span>
+        <span>Return to Cart</span>
+      </Link>
+      <button
+        type="submit"
+        className="aurelia-checkout-submit"
+        disabled={isSubmitting}
+        onClick={() => {
+          // Pre-emptively touch every field so messages show even if the user never blurred them.
+          const touched = Object.keys(values).reduce<Record<string, boolean>>((acc, key) => {
+            acc[key] = true
+            return acc
+          }, {})
+          void setTouched(touched, true)
+          void validateForm()
+        }}
+      >
+        <span>{isSubmitting ? "Placing Order…" : "Place Order"}</span>
+        <span className="material-symbols-outlined" aria-hidden>arrow_forward</span>
+      </button>
+    </div>
+  )
+}
+
 const Stepper = ({ activeIndex }: { activeIndex: number }) => (
   <nav className="aurelia-cart-stepper" aria-label="Checkout progress">
     {STEPS.map((step, index) => {
@@ -354,46 +387,4 @@ const Stepper = ({ activeIndex }: { activeIndex: number }) => (
       )
     })}
   </nav>
-)
-
-type FieldProps = {
-  label: string
-  value: string
-  onChange: (value: string) => void
-  placeholder?: string
-  autoComplete?: string
-  type?: string
-  required?: boolean
-  colSpan: 1 | 2
-}
-
-const Field = ({
-  label,
-  value,
-  onChange,
-  placeholder,
-  autoComplete,
-  type = "text",
-  required,
-  colSpan,
-}: FieldProps) => (
-  <div
-    className={`aurelia-checkout-field aurelia-checkout-field--span-${colSpan}${
-      value ? " is-filled" : ""
-    }`}
-  >
-    <label className="aurelia-checkout-label">
-      {label}
-      {required && <span aria-hidden> *</span>}
-    </label>
-    <input
-      className="aurelia-checkout-input"
-      type={type}
-      value={value}
-      onChange={(event) => onChange(event.target.value)}
-      placeholder={placeholder}
-      autoComplete={autoComplete}
-      required={required}
-    />
-  </div>
 )

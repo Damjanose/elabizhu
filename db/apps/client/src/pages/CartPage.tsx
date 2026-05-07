@@ -2,6 +2,7 @@ import type { CartLine } from "@jewellery/types"
 import { Link } from "react-router-dom"
 import { useCart } from "../hooks/useCart"
 import { EmptyState } from "../components/feedback/EmptyState"
+import { successToast, toastFromError } from "../utils/toast"
 
 const TAX_RATE = 0.2
 
@@ -118,10 +119,21 @@ export const CartPage = () => {
                   key={line.productId}
                   line={line}
                   isUpdating={isUpdating}
-                  onChangeQty={(quantity) =>
-                    void setQty({ productId: line.productId, quantity })
-                  }
-                  onRemove={() => void removeLine(line.productId)}
+                  onChangeQty={async (quantity) => {
+                    try {
+                      await setQty({ productId: line.productId, quantity })
+                    } catch (err) {
+                      toastFromError(err, "Could not update quantity")
+                    }
+                  }}
+                  onRemove={async () => {
+                    try {
+                      await removeLine(line.productId)
+                      successToast(`“${line.name}” removed from cart`)
+                    } catch (err) {
+                      toastFromError(err, "Could not remove item")
+                    }
+                  }}
                 />
               ))}
             </ul>

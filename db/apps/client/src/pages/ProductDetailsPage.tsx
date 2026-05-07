@@ -5,6 +5,7 @@ import { Link, useParams } from "react-router-dom"
 import { useCart } from "../hooks/useCart"
 import { useCategories } from "../hooks/useCatalog"
 import { fetchProduct, fetchProductRecommendations } from "../services/products"
+import { successToast, toastFromError } from "../utils/toast"
 
 const PLACEHOLDER_IMAGE = "https://placehold.co/800x1000?text=Aurelia"
 
@@ -68,7 +69,18 @@ export const ProductDetailsPage = () => {
         canBuy={product.stockQuantity > 0}
         isUpdating={isUpdating}
         isGuest={isGuest}
-        onAdd={(quantity) => void addItem({ product, quantity })}
+        onAdd={async (quantity) => {
+          try {
+            await addItem({ product, quantity })
+            successToast(
+              quantity > 1
+                ? `${quantity} × “${product.name}” added to cart`
+                : `“${product.name}” added to cart`,
+            )
+          } catch (err) {
+            toastFromError(err, "Could not add to cart")
+          }
+        }}
       />
       <RecommendationsRail
         title="Recommended for You"

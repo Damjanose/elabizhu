@@ -144,7 +144,7 @@ const ProfileCard = ({
   <article className="aurelia-bento-card aurelia-bento-card--profile">
     <div className="aurelia-bento-card-head">
       <span className="material-symbols-outlined aurelia-bento-icon">account_circle</span>
-      <Link to="/account" className="aurelia-bento-action">EDIT</Link>
+      <Link to="/account/edit" className="aurelia-bento-action">EDIT</Link>
     </div>
     <div className="aurelia-bento-card-body">
       <h3 className="aurelia-bento-headline">{name}</h3>
