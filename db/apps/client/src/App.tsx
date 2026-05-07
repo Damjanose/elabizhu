@@ -1,5 +1,6 @@
 import { Link, Navigate, Route, Routes } from "react-router-dom"
 import { FiSearch, FiShoppingBag } from "react-icons/fi"
+import { GuestRoute } from "./components/GuestRoute"
 import { ProtectedRoute } from "./components/ProtectedRoute"
 import { StaffRoute } from "./components/StaffRoute"
 import { UserMenu } from "./components/auth/UserMenu"
@@ -64,8 +65,22 @@ const Shell = () => {
       <main className="aurelia-container py-4 py-md-5">
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+          <Route
+            path="/login"
+            element={
+              <GuestRoute>
+                <LoginPage />
+              </GuestRoute>
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <GuestRoute>
+                <RegisterPage />
+              </GuestRoute>
+            }
+          />
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/categories/:categoryId/products" element={<CategoryProductsPage />} />
           <Route path="/products" element={<ProductsPage />} />

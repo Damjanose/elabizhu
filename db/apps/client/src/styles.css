@@ -1512,3 +1512,540 @@ h4,
 .aurelia-account-alert-link:hover {
   text-decoration: underline;
 }
+
+/* ---------- Product Detail (editorial) ---------- */
+.aurelia-pdp-shell {
+  padding: 1.5rem 0 clamp(72px, 12vw, 120px);
+}
+
+.aurelia-pdp-state {
+  text-align: center;
+  padding: 4rem 0;
+  font-family: Inter, sans-serif;
+  font-size: 0.95rem;
+  color: var(--aurelia-text-muted);
+}
+
+.aurelia-pdp-state-error a {
+  color: var(--aurelia-primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.aurelia-pdp-state-error a:hover {
+  text-decoration: underline;
+}
+
+.aurelia-pdp-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+@media (min-width: 768px) {
+  .aurelia-pdp-grid {
+    flex-direction: row;
+    gap: 56px;
+    align-items: flex-start;
+  }
+  .aurelia-pdp-gallery-col {
+    width: 60%;
+  }
+  .aurelia-pdp-info-col {
+    width: 40%;
+    position: sticky;
+    top: 96px;
+  }
+}
+
+.aurelia-pdp-gallery {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .aurelia-pdp-gallery {
+    flex-direction: row;
+  }
+}
+
+.aurelia-pdp-thumbs {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 4px;
+}
+.aurelia-pdp-thumbs::-webkit-scrollbar {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .aurelia-pdp-thumbs {
+    flex-direction: column;
+    width: 84px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 600px;
+    padding-bottom: 0;
+  }
+}
+
+.aurelia-pdp-thumb {
+  flex: 0 0 auto;
+  width: 80px;
+  height: 96px;
+  background: var(--aurelia-surface-soft);
+  border: 1px solid transparent;
+  cursor: pointer;
+  padding: 0;
+  overflow: hidden;
+  transition: border-color 0.3s ease;
+}
+
+.aurelia-pdp-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.aurelia-pdp-thumb:hover img,
+.aurelia-pdp-thumb.is-active img {
+  opacity: 1;
+}
+
+.aurelia-pdp-thumb.is-active {
+  border-color: var(--aurelia-primary);
+}
+
+.aurelia-pdp-main-image {
+  flex: 1;
+  aspect-ratio: 4 / 5;
+  background: var(--aurelia-surface-soft);
+  overflow: hidden;
+}
+
+.aurelia-pdp-main-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 700ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.aurelia-pdp-main-image:hover img {
+  transform: scale(1.03);
+}
+
+.aurelia-pdp-collection {
+  display: inline-block;
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--aurelia-text-muted);
+  margin-bottom: 12px;
+}
+
+.aurelia-pdp-title {
+  font-family: "Noto Serif", serif;
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  line-height: 1.15;
+  font-weight: 400;
+  margin: 0 0 24px;
+  color: var(--aurelia-text);
+}
+
+.aurelia-pdp-price {
+  font-family: "Noto Serif", serif;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  color: var(--aurelia-primary);
+  margin: 0 0 32px;
+}
+
+.aurelia-pdp-description {
+  font-family: Inter, sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--aurelia-text-muted);
+  margin: 0 0 20px;
+}
+
+.aurelia-pdp-stock {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+
+.aurelia-pdp-stock-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.aurelia-pdp-stock.in-stock {
+  color: #556156;
+}
+.aurelia-pdp-stock.in-stock .aurelia-pdp-stock-dot {
+  background: #556156;
+}
+
+.aurelia-pdp-stock.low-stock {
+  color: #b8731e;
+}
+.aurelia-pdp-stock.low-stock .aurelia-pdp-stock-dot {
+  background: #b8731e;
+}
+
+.aurelia-pdp-stock.out-of-stock {
+  color: #ba1a1a;
+}
+.aurelia-pdp-stock.out-of-stock .aurelia-pdp-stock-dot {
+  background: #ba1a1a;
+}
+
+.aurelia-pdp-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.aurelia-pdp-action-row {
+  display: flex;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.aurelia-pdp-qty {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--aurelia-surface-border);
+  height: 56px;
+  padding: 0 8px;
+  background: #fff;
+}
+
+.aurelia-pdp-qty button {
+  background: transparent;
+  border: 0;
+  padding: 0 12px;
+  height: 100%;
+  color: var(--aurelia-text-muted);
+  cursor: pointer;
+  transition: color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aurelia-pdp-qty button:hover:not(:disabled) {
+  color: var(--aurelia-primary);
+}
+
+.aurelia-pdp-qty button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.aurelia-pdp-qty .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.aurelia-pdp-qty-value {
+  width: 40px;
+  text-align: center;
+  font-family: Inter, sans-serif;
+  font-size: 1rem;
+  color: var(--aurelia-text);
+}
+
+.aurelia-pdp-add {
+  flex: 1;
+  background: #34302a;
+  color: #fff8f3;
+  border: 0;
+  padding: 0 32px;
+  height: 56px;
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.3s ease, transform 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aurelia-pdp-add:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.aurelia-pdp-add:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.aurelia-pdp-add:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.aurelia-pdp-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background: transparent;
+  color: #34302a;
+  border: 1px solid #34302a;
+  padding: 0 32px;
+  height: 56px;
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.aurelia-pdp-secondary:hover {
+  background: var(--aurelia-surface-soft);
+  color: #34302a;
+  text-decoration: none;
+}
+
+.aurelia-pdp-signin {
+  font-family: Inter, sans-serif;
+  font-size: 0.85rem;
+  color: var(--aurelia-text-muted);
+  margin: 0;
+}
+
+.aurelia-pdp-signin a {
+  color: var(--aurelia-primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.aurelia-pdp-signin a:hover {
+  text-decoration: underline;
+}
+
+.aurelia-pdp-accordion {
+  margin-top: 48px;
+  border-top: 1px solid var(--aurelia-surface-border);
+}
+
+.aurelia-pdp-acc-item {
+  border-bottom: 1px solid var(--aurelia-surface-border);
+}
+
+.aurelia-pdp-acc-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 0;
+  background: transparent;
+  border: 0;
+  color: var(--aurelia-text);
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.aurelia-pdp-acc-icon {
+  font-size: 20px;
+  transition: transform 0.3s ease;
+}
+
+.aurelia-pdp-acc-item.is-open .aurelia-pdp-acc-icon {
+  transform: rotate(180deg);
+}
+
+.aurelia-pdp-acc-body {
+  padding-bottom: 24px;
+  font-family: Inter, sans-serif;
+  font-size: 0.95rem;
+  color: var(--aurelia-text-muted);
+}
+
+.aurelia-pdp-acc-rows {
+  margin: 0;
+}
+
+.aurelia-pdp-acc-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--aurelia-surface-soft);
+  font-size: 0.95rem;
+}
+
+.aurelia-pdp-acc-row span:first-child {
+  opacity: 0.6;
+}
+
+.aurelia-pdp-acc-row:last-child {
+  border-bottom: 0;
+}
+
+.aurelia-pdp-acc-copy {
+  margin: 0;
+  line-height: 1.65;
+}
+
+/* ---------- Recommendations carousel ---------- */
+.aurelia-rec-section {
+  padding-top: clamp(60px, 10vw, 120px);
+}
+
+.aurelia-rec-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 48px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.aurelia-rec-title {
+  font-family: "Noto Serif", serif;
+  font-size: clamp(1.6rem, 3vw, 2rem);
+  font-weight: 400;
+  margin: 0;
+  color: var(--aurelia-text);
+}
+
+.aurelia-rec-controls {
+  display: flex;
+  gap: 12px;
+}
+
+.aurelia-rec-arrow {
+  width: 48px;
+  height: 48px;
+  background: transparent;
+  border: 1px solid var(--aurelia-surface-border);
+  color: var(--aurelia-text);
+  cursor: pointer;
+  transition: border-color 0.3s ease, color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aurelia-rec-arrow:hover:not(:disabled) {
+  border-color: var(--aurelia-primary);
+  color: var(--aurelia-primary);
+}
+
+.aurelia-rec-arrow:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.aurelia-rec-track {
+  display: flex;
+  gap: 32px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding-bottom: 8px;
+  scrollbar-width: none;
+}
+
+.aurelia-rec-track::-webkit-scrollbar {
+  display: none;
+}
+
+.aurelia-rec-item {
+  flex: 0 0 78%;
+  scroll-snap-align: start;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--aurelia-text);
+  display: flex;
+  flex-direction: column;
+}
+
+.aurelia-rec-item:hover {
+  text-decoration: none;
+  color: var(--aurelia-text);
+}
+
+@media (min-width: 640px) {
+  .aurelia-rec-item {
+    flex: 0 0 calc((100% - 32px) / 2);
+  }
+}
+
+@media (min-width: 1024px) {
+  .aurelia-rec-item {
+    flex: 0 0 calc((100% - 96px) / 4);
+  }
+}
+
+.aurelia-rec-image {
+  aspect-ratio: 4 / 5;
+  width: 100%;
+  background: var(--aurelia-surface-soft);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.aurelia-rec-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 450ms ease-out;
+}
+
+.aurelia-rec-item:hover .aurelia-rec-image img {
+  transform: scale(1.03);
+}
+
+.aurelia-rec-name {
+  font-family: "Noto Serif", serif;
+  font-size: 1.05rem;
+  font-weight: 400;
+  text-align: center;
+  margin: 0 0 6px;
+  color: var(--aurelia-text);
+}
+
+.aurelia-rec-price {
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--aurelia-text-muted);
+  text-align: center;
+  margin: 0;
+}
+
+.aurelia-rec-empty {
+  text-align: center;
+  padding: 40px 0;
+  font-family: Inter, sans-serif;
+  font-size: 0.95rem;
+  color: var(--aurelia-text-muted);
+}

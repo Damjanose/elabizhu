@@ -34,6 +34,7 @@ app.delete("/categories/:id", requireAuth, requirePermission("category.write"), 
 
 app.get("/products", productHandlers.list)
 app.get("/products/:id", productHandlers.getById)
+app.get("/products/:id/recommendations", productHandlers.recommendations)
 app.post("/products", requireAuth, requirePermission("product.write"), productHandlers.create)
 app.patch("/products/:id", requireAuth, requirePermission("product.write"), productHandlers.update)
 app.delete("/products/:id", requireAuth, requirePermission("product.write"), productHandlers.remove)
