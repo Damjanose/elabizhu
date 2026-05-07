@@ -3,6 +3,27 @@ import { Link } from "react-router-dom"
 import { ProductCard } from "../components/product/ProductCard"
 import { fetchProducts } from "../services/products"
 
+const CATEGORY_TILES = [
+  {
+    label: "Rings",
+    to: "/categories",
+    image:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuCUCHmTYIJOJ5wHsDpcxGrnB8IoZYhdRfeeEOL6loLp9RhZ-X75eABlbfi1VokYKsf0pPjpN6U5KDla5h4Tuv953JkrshABTw1QXla7fw1g08a762tuX0dmXjcQN8uUHRWoknYYm6n_UlXV-o1ZPZICFGzKPAzBBwf234FUqxli3IzAkMN-YddIlcPGd6uC3NVVmE10s76I_B28_vqguclGYE9UZcQQpdrFLWT2DzBvDQjV7UsFQAijDqK2YtGjcofRXHK482Jf1Q",
+  },
+  {
+    label: "Necklaces",
+    to: "/categories",
+    image:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuDls09bXH9zpm_nvTZOOAJ0vui7QX-RrLm7V3zsv0cypbxpoP-mpePXuvn-4iRAqglr9MgQh9-UFYy_lHu4DORu1a-B0SWCOuKtePiA-3KnySf8WlvR5Dn4jK0xK0MefnMvXtaPhDSMFTIsZpOjWUwA7c1f9nzwkqQ4yyGzg13QcHr5UJdjZg3Zh9TnbDJ87v0Qa_ndGzHIvjIA-XqVLtvo1F6PUkXfPQxPEq3LZ2gK6EarnB_g9CXet91YiRy8Z-fpQ7ROordXoQ",
+  },
+  {
+    label: "Bespoke",
+    to: "/categories",
+    image:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuC2a5NvgT3nw6nbJt-1nTW555XAN_2nqzoDEJlxE1Buz1a9wIlJwjMBKBPE3SYoVCgjcmMk73lmQxuFIPqwNxY3OO9d7cXTWP24To_WNRtfKhh2Mzw2pXUzPEJFOlK86EIc9epl5o5RrjnxrczcCgdgUkr3E9iqmuy4I98xXxl_tM6vVN7fY3_Af7o-WArja1GKsU4YSxs18tr7BxcMR-mgBaKTCTHd3zN6l2rK9Ar3eqFZLpezmxsR0dKM6YYD3ELNN6tanVCUPw",
+  },
+] as const
+
 export const HomePage = () => {
   const { data: featured, isLoading: fLoad } = useQuery({
     queryKey: ["products", "featured"],
@@ -83,36 +104,33 @@ export const HomePage = () => {
         </div>
       </section>
 
-      <section className="mb-5">
-        <h2 className="aurelia-admin-title text-center mb-4">Shop by Category</h2>
-        <div className="row g-3">
-          <div className="col-md-4">
-            <Link className="aurelia-category-tile text-decoration-none" to="/categories">
+      <section className="py-16 md:py-24">
+        <h2 className="font-display-xl text-headline-lg text-center mb-16 font-normal">
+          Shop by Category
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+          {CATEGORY_TILES.map((tile) => (
+            <Link
+              key={tile.label}
+              to={tile.to}
+              className="relative group block aspect-square overflow-hidden bg-surface-dim no-underline"
+            >
               <img
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUCHmTYIJOJ5wHsDpcxGrnB8IoZYhdRfeeEOL6loLp9RhZ-X75eABlbfi1VokYKsf0pPjpN6U5KDla5h4Tuv953JkrshABTw1QXla7fw1g08a762tuX0dmXjcQN8uUHRWoknYYm6n_UlXV-o1ZPZICFGzKPAzBBwf234FUqxli3IzAkMN-YddIlcPGd6uC3NVVmE10s76I_B28_vqguclGYE9UZcQQpdrFLWT2DzBvDQjV7UsFQAijDqK2YtGjcofRXHK482Jf1Q"
-                alt=""
+                src={tile.image}
+                alt={tile.label}
+                className="w-full h-full object-cover transition-transform duration-[1000ms] group-hover:scale-110"
               />
-              <span>Rings</span>
-            </Link>
-          </div>
-          <div className="col-md-4">
-            <Link className="aurelia-category-tile text-decoration-none" to="/categories">
-              <img
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDls09bXH9zpm_nvTZOOAJ0vui7QX-RrLm7V3zsv0cypbxpoP-mpePXuvn-4iRAqglr9MgQh9-UFYy_lHu4DORu1a-B0SWCOuKtePiA-3KnySf8WlvR5Dn4jK0xK0MefnMvXtaPhDSMFTIsZpOjWUwA7c1f9nzwkqQ4yyGzg13QcHr5UJdjZg3Zh9TnbDJ87v0Qa_ndGzHIvjIA-XqVLtvo1F6PUkXfPQxPEq3LZ2gK6EarnB_g9CXet91YiRy8Z-fpQ7ROordXoQ"
-                alt=""
+              <div
+                aria-hidden
+                className="absolute inset-0 bg-on-background/10 group-hover:bg-on-background/20 transition-colors"
               />
-              <span>Necklaces</span>
+              <div className="absolute inset-0 flex items-center justify-center px-6">
+                <h3 className="text-surface font-display-xl text-headline-md tracking-widest uppercase font-normal text-center">
+                  {tile.label}
+                </h3>
+              </div>
             </Link>
-          </div>
-          <div className="col-md-4">
-            <Link className="aurelia-category-tile text-decoration-none" to="/account">
-              <img
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2a5NvgT3nw6nbJt-1nTW555XAN_2nqzoDEJlxE1Buz1a9wIlJwjMBKBPE3SYoVCgjcmMk73lmQxuFIPqwNxY3OO9d7cXTWP24To_WNRtfKhh2Mzw2pXUzPEJFOlK86EIc9epl5o5RrjnxrczcCgdgUkr3E9iqmuy4I98xXxl_tM6vVN7fY3_Af7o-WArja1GKsU4YSxs18tr7BxcMR-mgBaKTCTHd3zN6l2rK9Ar3eqFZLpezmxsR0dKM6YYD3ELNN6tanVCUPw"
-                alt=""
-              />
-              <span>Bespoke</span>
-            </Link>
-          </div>
+          ))}
         </div>
       </section>
 
