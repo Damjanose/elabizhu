@@ -551,3 +551,606 @@ h4,
   color: #6b7280;
   box-shadow: none;
 }
+
+/* ---------- Auth (Login / Register) ---------- */
+
+.aurelia-auth-page {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  align-items: stretch;
+  padding: 0.5rem 0 2rem;
+}
+
+@media (min-width: 992px) {
+  .aurelia-auth-page {
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    padding: 1.5rem 0 3rem;
+  }
+}
+
+.aurelia-auth-visual {
+  position: relative;
+  overflow: hidden;
+  background: var(--aurelia-surface-soft);
+  min-height: 460px;
+}
+
+@media (min-width: 992px) {
+  .aurelia-auth-visual {
+    min-height: 640px;
+  }
+}
+
+.aurelia-auth-visual img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.aurelia-auth-visual-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(20, 16, 10, 0) 35%,
+    rgba(20, 16, 10, 0.85) 100%
+  );
+  pointer-events: none;
+}
+
+.aurelia-auth-visual-content {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 2rem 2rem 2.25rem;
+  color: #fff8f3;
+}
+
+@media (min-width: 768px) {
+  .aurelia-auth-visual-content {
+    padding: 2.5rem 2.75rem 3rem;
+  }
+}
+
+.aurelia-auth-visual-title {
+  font-family: "Noto Serif", serif;
+  font-weight: 400;
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  line-height: 1.1;
+  margin: 0 0 0.75rem;
+  letter-spacing: 0.005em;
+}
+
+.aurelia-auth-visual-copy {
+  margin: 0;
+  max-width: 28rem;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: rgba(255, 248, 243, 0.85);
+}
+
+.aurelia-auth-pane {
+  display: flex;
+  align-items: center;
+}
+
+.aurelia-auth-form {
+  width: 100%;
+  max-width: 460px;
+}
+
+.aurelia-auth-title {
+  font-family: "Noto Serif", serif;
+  font-weight: 400;
+  font-size: clamp(2rem, 3.6vw, 2.75rem);
+  line-height: 1.15;
+  letter-spacing: -0.005em;
+  margin: 0 0 0.6rem;
+  color: var(--aurelia-text);
+}
+
+.aurelia-auth-subtitle {
+  margin: 0 0 2.25rem;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--aurelia-text-muted);
+  max-width: 32rem;
+}
+
+.aurelia-auth-fields {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.aurelia-auth-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .aurelia-auth-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.aurelia-auth-field {
+  position: relative;
+}
+
+.aurelia-auth-label {
+  display: block;
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--aurelia-text-muted);
+  margin-bottom: 0.6rem;
+}
+
+.aurelia-auth-input {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--aurelia-surface-border);
+  border-radius: 0;
+  padding: 0.55rem 0;
+  font-family: Inter, sans-serif;
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--aurelia-text);
+  transition: border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.aurelia-auth-input::placeholder {
+  color: rgba(78, 70, 57, 0.45);
+}
+
+.aurelia-auth-input:focus {
+  outline: none;
+  border-bottom-color: #775a19;
+}
+
+.aurelia-auth-input.is-error {
+  border-bottom-color: #ba1a1a;
+}
+
+.aurelia-auth-input.has-toggle {
+  padding-right: 2.5rem;
+}
+
+.aurelia-auth-toggle {
+  position: absolute;
+  right: 0;
+  bottom: 0.5rem;
+  background: transparent;
+  border: 0;
+  color: var(--aurelia-text-muted);
+  cursor: pointer;
+  padding: 0.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.aurelia-auth-toggle:hover {
+  color: var(--aurelia-text);
+}
+
+.aurelia-auth-error {
+  margin: 0.45rem 0 0;
+  font-size: 12px;
+  letter-spacing: 0.01em;
+  color: #ba1a1a;
+}
+
+.aurelia-auth-banner {
+  margin-top: 1.5rem;
+  padding: 0.85rem 1rem;
+  background: rgba(186, 26, 26, 0.08);
+  border-left: 2px solid #ba1a1a;
+  color: #93000a;
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.aurelia-auth-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--aurelia-text-muted);
+  cursor: pointer;
+}
+
+.aurelia-auth-checkbox input {
+  margin-top: 0.18rem;
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  accent-color: #775a19;
+  cursor: pointer;
+}
+
+.aurelia-auth-submit {
+  width: 100%;
+  background: #775a19;
+  color: #ffffff;
+  padding: 1.05rem 1.5rem;
+  border: 0;
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.aurelia-auth-submit:hover {
+  background: #5d4201;
+}
+
+.aurelia-auth-submit:focus-visible {
+  outline: 2px solid #775a19;
+  outline-offset: 3px;
+}
+
+.aurelia-auth-submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.aurelia-auth-footnote {
+  margin: 1.75rem 0 0;
+  font-size: 0.875rem;
+  color: var(--aurelia-text-muted);
+  text-align: center;
+}
+
+.aurelia-auth-footnote a {
+  color: var(--aurelia-text);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+  margin-left: 0.35rem;
+}
+
+.aurelia-auth-footnote a:hover {
+  color: #775a19;
+}
+
+/* ---------- User Menu (topbar dropdown) ---------- */
+
+.aurelia-user-menu {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.aurelia-user-menu-trigger {
+  background: transparent;
+  border: 0;
+  padding: 0.25rem;
+  cursor: pointer;
+}
+
+.aurelia-user-menu-trigger:focus-visible {
+  outline: 2px solid #775a19;
+  outline-offset: 3px;
+}
+
+.aurelia-user-menu-popover {
+  position: absolute;
+  top: calc(100% + 0.65rem);
+  right: 0;
+  min-width: 240px;
+  background: var(--aurelia-surface);
+  border: 1px solid var(--aurelia-surface-border);
+  box-shadow: 0 16px 32px -22px rgba(51, 34, 17, 0.22);
+  padding: 0.5rem;
+  z-index: 200;
+  display: grid;
+  gap: 0.15rem;
+  animation: aurelia-menu-in 220ms cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: top right;
+}
+
+@keyframes aurelia-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.aurelia-user-menu-header {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.85rem 0.85rem 0.65rem;
+}
+
+.aurelia-user-menu-kicker {
+  font-family: Inter, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #775a19;
+}
+
+.aurelia-user-menu-name {
+  font-family: "Noto Serif", serif;
+  font-size: 1rem;
+  color: var(--aurelia-text);
+  line-height: 1.2;
+}
+
+.aurelia-user-menu-email {
+  font-size: 0.78rem;
+  color: var(--aurelia-text-muted);
+  word-break: break-all;
+}
+
+.aurelia-user-menu-divider {
+  height: 1px;
+  background: var(--aurelia-surface-border);
+  margin: 0.35rem 0.5rem;
+}
+
+.aurelia-user-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.65rem 0.85rem;
+  font-family: Inter, sans-serif;
+  font-size: 0.85rem;
+  color: var(--aurelia-text);
+  background: transparent;
+  border: 0;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.18s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.aurelia-user-menu-item:hover {
+  background: var(--aurelia-surface-soft);
+  color: #775a19;
+}
+
+.aurelia-user-menu-item svg {
+  width: 1rem;
+  height: 1rem;
+  color: var(--aurelia-text-muted);
+}
+
+.aurelia-user-menu-item:hover svg {
+  color: #775a19;
+}
+
+.aurelia-user-menu-signout {
+  width: 100%;
+  color: var(--aurelia-text);
+}
+
+.aurelia-user-menu-signout:hover {
+  color: #ba1a1a;
+}
+
+.aurelia-user-menu-signout:hover svg {
+  color: #ba1a1a;
+}
+
+.aurelia-user-menu-signout:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---------- Account page (editorial salon) ---------- */
+
+.aurelia-account {
+  display: grid;
+  gap: 4rem;
+  padding: 1rem 0 3rem;
+}
+
+@media (min-width: 768px) {
+  .aurelia-account {
+    gap: 5.5rem;
+    padding: 2.5rem 0 5rem;
+  }
+}
+
+.aurelia-account-hero {
+  text-align: center;
+  max-width: 38rem;
+  margin: 0 auto;
+}
+
+.aurelia-account-hero-title {
+  font-family: "Noto Serif", serif;
+  font-weight: 400;
+  font-size: clamp(2.25rem, 4vw, 3.25rem);
+  line-height: 1.1;
+  letter-spacing: -0.005em;
+  margin: 1.25rem 0 1.25rem;
+  color: var(--aurelia-text);
+}
+
+.aurelia-account-hero-copy {
+  font-family: Inter, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--aurelia-text-muted);
+  max-width: 32rem;
+  margin: 0 auto;
+}
+
+.aurelia-account-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+@media (min-width: 992px) {
+  .aurelia-account-grid {
+    grid-template-columns: minmax(260px, 1fr) minmax(0, 2fr);
+    gap: 5rem;
+  }
+}
+
+.aurelia-account-section-label {
+  display: block;
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--aurelia-text-muted);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--aurelia-surface-border);
+}
+
+.aurelia-account-identity-list {
+  display: grid;
+  gap: 1.4rem;
+  margin: 0;
+}
+
+.aurelia-account-identity-list > div {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.aurelia-account-identity-list dt {
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--aurelia-text-muted);
+}
+
+.aurelia-account-identity-list dd {
+  font-family: "Noto Serif", serif;
+  font-size: 1.05rem;
+  margin: 0;
+  color: var(--aurelia-text);
+  word-break: break-word;
+  line-height: 1.4;
+}
+
+.aurelia-account-links nav {
+  display: grid;
+  gap: 0;
+}
+
+.aurelia-account-link-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.4rem 0.5rem;
+  text-decoration: none;
+  color: var(--aurelia-text);
+  border-bottom: 1px solid var(--aurelia-surface-border);
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    padding 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.aurelia-account-link-row:first-child {
+  border-top: 1px solid var(--aurelia-surface-border);
+}
+
+.aurelia-account-link-row:hover {
+  background: var(--aurelia-surface-soft);
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  color: #775a19;
+}
+
+.aurelia-account-link-num {
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: #775a19;
+}
+
+.aurelia-account-link-meta {
+  display: grid;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.aurelia-account-link-title {
+  font-family: "Noto Serif", serif;
+  font-size: 1.15rem;
+  line-height: 1.2;
+}
+
+.aurelia-account-link-subtitle {
+  font-family: Inter, sans-serif;
+  font-size: 0.82rem;
+  color: var(--aurelia-text-muted);
+  line-height: 1.5;
+}
+
+.aurelia-account-link-arrow {
+  font-size: 1.4rem;
+  font-weight: 200;
+  line-height: 1;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.aurelia-account-link-row:hover .aurelia-account-link-arrow {
+  transform: translateX(6px);
+}
+
+.aurelia-account-signout-block {
+  border-top: 1px solid var(--aurelia-surface-border);
+  padding-top: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .aurelia-account-signout-block {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3rem;
+  }
+}
+
+.aurelia-account-signout-title {
+  font-family: "Noto Serif", serif;
+  font-weight: 400;
+  font-size: 1.5rem;
+  margin: 0 0 0.4rem;
+  color: var(--aurelia-text);
+}
+
+.aurelia-account-signout-copy {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--aurelia-text-muted);
+  max-width: 38ch;
+}

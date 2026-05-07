@@ -109,7 +109,7 @@ export const HomePage = () => {
           Shop by Category
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter">
-          {CATEGORY_TILES.map((tile) => (
+          {CATEGORY_TILES.map((tile, index) => (
             <Link
               key={tile.label}
               to={tile.to}
@@ -119,19 +119,47 @@ export const HomePage = () => {
               <img
                 src={tile.image}
                 alt={tile.label}
-                className="w-full h-full object-cover transition-transform duration-[1000ms] group-hover:scale-110"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-110"
               />
+
               <div
                 aria-hidden
-                className="absolute inset-0 bg-on-background/10 group-hover:bg-on-background/20 transition-colors"
+                className="absolute inset-0 transition-opacity duration-500 group-hover:opacity-95"
+                style={{
+                  background:
+                    "linear-gradient(180deg, rgba(20,16,10,0.20) 0%, rgba(20,16,10,0) 32%, rgba(20,16,10,0) 50%, rgba(20,16,10,0.88) 100%)",
+                }}
               />
-              <div className="absolute inset-0 flex items-center justify-center px-6">
-                <h3
-                  className="font-display-xl text-headline-md tracking-widest uppercase font-normal text-center"
-                  style={{ color: "#fff8f3" }}
+
+              <div className="absolute inset-x-0 bottom-0 px-6 pb-6 md:px-8 md:pb-8">
+                <span
+                  className="block text-[11px] uppercase tracking-[0.32em] mb-3"
+                  style={{ color: "rgba(255,248,243,0.72)", fontFamily: "Inter, sans-serif" }}
                 >
-                  {tile.label}
-                </h3>
+                  {String(index + 1).padStart(2, "0")} &nbsp;·&nbsp; Collection
+                </span>
+
+                <div className="flex items-end justify-between gap-4">
+                  <h3
+                    className="m-0 font-normal leading-none text-[28px] md:text-[36px] lg:text-[40px] tracking-wide"
+                    style={{ color: "#fff8f3", fontFamily: '"Noto Serif", serif' }}
+                  >
+                    {tile.label}
+                  </h3>
+                  <span
+                    aria-hidden
+                    className="text-2xl leading-none transition-transform duration-500 ease-out group-hover:translate-x-1.5"
+                    style={{ color: "#fff8f3", fontWeight: 200 }}
+                  >
+                    →
+                  </span>
+                </div>
+
+                <span
+                  aria-hidden
+                  className="mt-5 block h-px w-8 group-hover:w-full transition-all duration-700 ease-out"
+                  style={{ background: "rgba(255,248,243,0.6)" }}
+                />
               </div>
             </Link>
           ))}

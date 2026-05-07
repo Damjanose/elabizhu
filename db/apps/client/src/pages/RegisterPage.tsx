@@ -1,18 +1,26 @@
 import { useState } from "react"
 import { FiEye, FiEyeOff } from "react-icons/fi"
 import { Link, useNavigate } from "react-router-dom"
+import { AuthShell } from "../components/auth/AuthShell"
 import { useAuth } from "../types/auth-context"
 import { extractFieldErrors } from "../utils/form-errors"
+
+const REGISTER_VISUAL =
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuC2a5NvgT3nw6nbJt-1nTW555XAN_2nqzoDEJlxE1Buz1a9wIlJwjMBKBPE3SYoVCgjcmMk73lmQxuFIPqwNxY3OO9d7cXTWP24To_WNRtfKhh2Mzw2pXUzPEJFOlK86EIc9epl5o5RrjnxrczcCgdgUkr3E9iqmuy4I98xXxl_tM6vVN7fY3_Af7o-WArja1GKsU4YSxs18tr7BxcMR-mgBaKTCTHd3zN6l2rK9Ar3eqFZLpezmxsR0dKM6YYD3ELNN6tanVCUPw"
 
 export const RegisterPage = () => {
   const { register } = useAuth()
   const navigate = useNavigate()
-  const [fullName, setFullName] = useState("")
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
+  const [joinCircle, setJoinCircle] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
+
   const clearFieldError = (field: string) => {
     setError(null)
     setFieldErrors((prev) => {
@@ -27,79 +35,161 @@ export const RegisterPage = () => {
     event.preventDefault()
     setError(null)
     setFieldErrors({})
+    setSubmitting(true)
     try {
+      const fullName = `${firstName.trim()} ${lastName.trim()}`.trim()
       await register({ fullName, email, password })
       navigate("/categories")
     } catch (err) {
-      const { fieldErrors: nextFieldErrors, formError } = extractFieldErrors(err)
-      setFieldErrors(nextFieldErrors)
-      setError(formError ?? "Could not register user")
+      const { fieldErrors: rawErrors, formError } = extractFieldErrors(err)
+      const next: Record<string, string> = { ...rawErrors }
+      if (rawErrors.fullName) {
+        next.firstName = next.firstName ?? rawErrors.fullName
+        delete next.fullName
+      }
+      setFieldErrors(next)
+      setError(formError ?? "Could not create account")
+    } finally {
+      setSubmitting(false)
     }
   }
 
   return (
-    <div className="row justify-content-center">
-      <div className="col-12 col-md-8 col-lg-5">
-        <div className="card border-0 shadow-sm">
-          <div className="card-body p-4 p-md-5">
-            <h1 className="h2 fw-bold mb-2">Create account</h1>
-            <p className="text-secondary mb-4">Get started with your catalog dashboard.</p>
-            <form onSubmit={onSubmit} className="d-grid gap-3">
+    <AuthShell
+      imageUrl={REGISTER_VISUAL}
+      imageAlt="A jeweller's hands setting a stone, sunlit close-up of craftsmanship"
+      overlayHeadline="Timeless Elegance."
+      overlaySubcopy="Become part of an exclusive circle where fine craftsmanship meets soulful storytelling."
+    >
+      <h1 className="aurelia-auth-title">Create Account</h1>
+      <p className="aurelia-auth-subtitle">
+        Experience the art of fine jewellery through a personalized lens.
+      </p>
+
+      <form onSubmit={onSubmit} noValidate>
+        <div className="aurelia-auth-fields">
+          <div className="aurelia-auth-row">
+            <div className="aurelia-auth-field">
+              <label htmlFor="reg-first" className="aurelia-auth-label">
+                First Name
+              </label>
               <input
-                className={`form-control form-control-lg ${fieldErrors.fullName ? "is-invalid" : ""}`}
-                placeholder="Full Name"
-                value={fullName}
+                id="reg-first"
+                type="text"
+                autoComplete="given-name"
+                className={`aurelia-auth-input ${fieldErrors.firstName ? "is-error" : ""}`}
+                placeholder="Evelyn"
+                value={firstName}
                 onChange={(e) => {
-                  setFullName(e.target.value)
-                  clearFieldError("fullName")
+                  setFirstName(e.target.value)
+                  clearFieldError("firstName")
                 }}
               />
-              {fieldErrors.fullName && <div className="invalid-feedback d-block">{fieldErrors.fullName}</div>}
+              {fieldErrors.firstName && (
+                <p className="aurelia-auth-error">{fieldErrors.firstName}</p>
+              )}
+            </div>
+
+            <div className="aurelia-auth-field">
+              <label htmlFor="reg-last" className="aurelia-auth-label">
+                Last Name
+              </label>
               <input
-                className={`form-control form-control-lg ${fieldErrors.email ? "is-invalid" : ""}`}
-                placeholder="Email"
-                value={email}
+                id="reg-last"
+                type="text"
+                autoComplete="family-name"
+                className={`aurelia-auth-input ${fieldErrors.lastName ? "is-error" : ""}`}
+                placeholder="Aurelius"
+                value={lastName}
                 onChange={(e) => {
-                  setEmail(e.target.value)
-                  clearFieldError("email")
+                  setLastName(e.target.value)
+                  clearFieldError("lastName")
                 }}
               />
-              {fieldErrors.email && <div className="invalid-feedback d-block">{fieldErrors.email}</div>}
-              <div className="password-field-wrap">
-                <input
-                  className={`form-control form-control-lg password-input ${fieldErrors.password ? "is-invalid" : ""}`}
-                  placeholder="Password"
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value)
-                    clearFieldError("password")
-                  }}
-                />
-                <button
-                  className="password-toggle-btn"
-                  type="button"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                >
-                  {showPassword ? <FiEyeOff aria-hidden="true" /> : <FiEye aria-hidden="true" />}
-                </button>
-              </div>
-              {fieldErrors.password && <div className="invalid-feedback d-block">{fieldErrors.password}</div>}
-              <button className="btn btn-primary btn-lg" type="submit">
-                Register
-              </button>
-            </form>
-            {error && <div className="alert alert-danger mt-3 mb-0">{error}</div>}
-            <p className="mb-0 mt-4 text-secondary">
-              Already have an account?{" "}
-              <Link className="fw-semibold" to="/login">
-                Login
-              </Link>
-            </p>
+              {fieldErrors.lastName && (
+                <p className="aurelia-auth-error">{fieldErrors.lastName}</p>
+              )}
+            </div>
           </div>
+
+          <div className="aurelia-auth-field">
+            <label htmlFor="reg-email" className="aurelia-auth-label">
+              Email Address
+            </label>
+            <input
+              id="reg-email"
+              type="email"
+              autoComplete="email"
+              className={`aurelia-auth-input ${fieldErrors.email ? "is-error" : ""}`}
+              placeholder="evelyn@aurelia.com"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value)
+                clearFieldError("email")
+              }}
+            />
+            {fieldErrors.email && <p className="aurelia-auth-error">{fieldErrors.email}</p>}
+          </div>
+
+          <div className="aurelia-auth-field">
+            <label htmlFor="reg-password" className="aurelia-auth-label">
+              Password
+            </label>
+            <input
+              id="reg-password"
+              type={showPassword ? "text" : "password"}
+              autoComplete="new-password"
+              className={`aurelia-auth-input has-toggle ${fieldErrors.password ? "is-error" : ""}`}
+              placeholder="At least 8 characters"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value)
+                clearFieldError("password")
+              }}
+            />
+            <button
+              type="button"
+              className="aurelia-auth-toggle"
+              onClick={() => setShowPassword((p) => !p)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              aria-pressed={showPassword}
+            >
+              {showPassword ? <FiEyeOff aria-hidden="true" /> : <FiEye aria-hidden="true" />}
+            </button>
+            {fieldErrors.password && <p className="aurelia-auth-error">{fieldErrors.password}</p>}
+          </div>
+
+          <label className="aurelia-auth-checkbox" htmlFor="reg-newsletter">
+            <input
+              id="reg-newsletter"
+              type="checkbox"
+              checked={joinCircle}
+              onChange={(e) => setJoinCircle(e.target.checked)}
+            />
+            <span>Join the Aurelia Circle for exclusive collections and journal entries.</span>
+          </label>
         </div>
-      </div>
-    </div>
+
+        {error && (
+          <div role="alert" className="aurelia-auth-banner">
+            {error}
+          </div>
+        )}
+
+        <button
+          type="submit"
+          className="aurelia-auth-submit"
+          disabled={submitting}
+          style={{ marginTop: "2rem" }}
+        >
+          {submitting ? "Creating Account…" : "Create Account"}
+        </button>
+
+        <p className="aurelia-auth-footnote">
+          Already have an account?
+          <Link to="/login">Sign In</Link>
+        </p>
+      </form>
+    </AuthShell>
   )
 }

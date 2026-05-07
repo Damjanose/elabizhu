@@ -1,7 +1,8 @@
 import { Link, Navigate, Route, Routes } from "react-router-dom"
-import { FiSearch, FiShoppingBag, FiUser } from "react-icons/fi"
+import { FiSearch, FiShoppingBag } from "react-icons/fi"
 import { ProtectedRoute } from "./components/ProtectedRoute"
 import { StaffRoute } from "./components/StaffRoute"
+import { UserMenu } from "./components/auth/UserMenu"
 import { useSocketLifecycle } from "./hooks/useSocketLifecycle"
 import { AccountPage } from "./pages/AccountPage"
 import { AdminDashboardPage } from "./pages/admin/AdminDashboardPage"
@@ -52,13 +53,7 @@ const Shell = () => {
             <Link className="aurelia-icon-link text-decoration-none" to="/products" aria-label="Search">
               <FiSearch />
             </Link>
-            <Link
-              className="aurelia-icon-link text-decoration-none"
-              to={user ? "/account" : "/login"}
-              aria-label="Account"
-            >
-              <FiUser />
-            </Link>
+            <UserMenu />
             <Link className="aurelia-cart-icon text-decoration-none" to={user ? "/cart" : "/login"} aria-label="Cart">
               <FiShoppingBag />
               <span className="aurelia-cart-badge">{user ? "1" : "0"}</span>

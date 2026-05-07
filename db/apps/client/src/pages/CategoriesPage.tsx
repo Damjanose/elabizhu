@@ -58,7 +58,7 @@ export const CategoriesPage = () => {
 
       {!isLoading && !isError && data && data.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
-          {data.map((category) => (
+          {data.map((category, index) => (
             <Link
               key={category.id}
               to={`/categories/${category.id}/products`}
@@ -70,25 +70,47 @@ export const CategoriesPage = () => {
                 src={imageFor(category.name)}
                 alt={category.name}
                 loading="lazy"
-                className="w-full h-full object-cover transition-transform duration-[1000ms] group-hover:scale-110"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-110"
               />
+
               <div
                 aria-hidden
-                className="absolute inset-0 bg-on-background/15 group-hover:bg-on-background/30 transition-colors"
+                className="absolute inset-0 transition-opacity duration-500 group-hover:opacity-95"
+                style={{
+                  background:
+                    "linear-gradient(180deg, rgba(20,16,10,0.20) 0%, rgba(20,16,10,0) 32%, rgba(20,16,10,0) 50%, rgba(20,16,10,0.88) 100%)",
+                }}
               />
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center">
-                <h2
-                  className="font-display-xl text-headline-md tracking-widest uppercase font-normal m-0"
-                  style={{ color: "#fff8f3" }}
-                >
-                  {category.name}
-                </h2>
+
+              <div className="absolute inset-x-0 bottom-0 px-6 pb-6 md:px-8 md:pb-8">
                 <span
-                  className="font-body-md text-label-sm uppercase tracking-widest border-b pb-1 opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500"
-                  style={{ color: "rgba(255,248,243,0.8)", borderColor: "rgba(255,248,243,0.6)" }}
+                  className="block text-[11px] uppercase tracking-[0.32em] mb-3 transition-transform duration-500"
+                  style={{ color: "rgba(255,248,243,0.72)", fontFamily: "Inter, sans-serif" }}
                 >
-                  Explore Collection
+                  {String(index + 1).padStart(2, "0")} &nbsp;·&nbsp; Collection
                 </span>
+
+                <div className="flex items-end justify-between gap-4">
+                  <h2
+                    className="m-0 font-normal leading-none text-[28px] md:text-[36px] lg:text-[40px] tracking-wide"
+                    style={{ color: "#fff8f3", fontFamily: '"Noto Serif", serif' }}
+                  >
+                    {category.name}
+                  </h2>
+                  <span
+                    aria-hidden
+                    className="text-2xl leading-none translate-x-0 transition-transform duration-500 ease-out group-hover:translate-x-1.5"
+                    style={{ color: "#fff8f3", fontWeight: 200 }}
+                  >
+                    →
+                  </span>
+                </div>
+
+                <span
+                  aria-hidden
+                  className="mt-5 block h-px w-8 group-hover:w-full transition-all duration-700 ease-out"
+                  style={{ background: "rgba(255,248,243,0.6)" }}
+                />
               </div>
             </Link>
           ))}
