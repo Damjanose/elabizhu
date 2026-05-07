@@ -9,8 +9,8 @@
     "start": "node dist/index.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "echo 'No lint configured'",
-    "db:migrate": "tsx ../../db/migrations/run.ts",
-    "db:seed": "tsx ../../db/migrations/seed.ts"
+    "db:migrate": "tsx ../../migrations/run.ts",
+    "db:seed": "tsx ../../migrations/seed.ts"
   },
   "dependencies": {
     "@jewellery/types": "workspace:*",
