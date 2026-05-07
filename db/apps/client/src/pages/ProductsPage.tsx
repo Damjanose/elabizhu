@@ -1,7 +1,9 @@
 import { useQuery } from "@tanstack/react-query"
+import { motion } from "motion/react"
 import { useSearchParams } from "react-router-dom"
 import { ProductCard } from "../components/product/ProductCard"
 import { EmptyState } from "../components/feedback/EmptyState"
+import { fadeUp, listItem, listStagger, scrollRevealViewport } from "../lib/motion"
 import { fetchProducts } from "../services/products"
 
 export const ProductsPage = () => {
@@ -14,8 +16,16 @@ export const ProductsPage = () => {
   })
 
   return (
-    <div>
-      <h1 className="h3 fw-bold mb-3">{featuredOnly ? "Featured products" : "All products"}</h1>
+    <motion.div variants={fadeUp} initial="hidden" animate="visible">
+      <motion.h1
+        className="h3 fw-bold mb-3"
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={scrollRevealViewport}
+      >
+        {featuredOnly ? "Featured products" : "All products"}
+      </motion.h1>
 
       {isLoading ? (
         <ProductsSkeleton />
@@ -45,15 +55,15 @@ export const ProductsPage = () => {
           secondaryCta={{ to: "/categories", label: "Shop by Category" }}
         />
       ) : (
-        <div className="row g-3">
+        <motion.div className="row g-3" variants={listStagger} initial="hidden" animate="visible">
           {data.map((product) => (
-            <div key={product.id} className="col-6 col-lg-4 col-xl-3">
+            <motion.div key={product.id} className="col-6 col-lg-4 col-xl-3" variants={listItem}>
               <ProductCard product={product} />
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   )
 }
 

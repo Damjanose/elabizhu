@@ -2,8 +2,10 @@ import { useState } from "react"
 import { Formik, Form, type FormikHelpers } from "formik"
 import * as Yup from "yup"
 import { FiEye, FiEyeOff } from "react-icons/fi"
+import { motion } from "motion/react"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import { AuthShell } from "../components/auth/AuthShell"
+import { transition } from "../lib/motion"
 import { AuthFormField } from "../components/forms/FormFields"
 import { useAuth } from "../types/auth-context"
 import { extractFieldErrors } from "../utils/form-errors"
@@ -170,14 +172,17 @@ export const RegisterPage = () => {
                 </div>
               )}
 
-              <button
+              <motion.button
                 type="submit"
                 className="aurelia-auth-submit"
                 disabled={isSubmitting}
                 style={{ marginTop: "2rem" }}
+                whileHover={isSubmitting ? undefined : { scale: 1.02, y: -1 }}
+                whileTap={isSubmitting ? undefined : { scale: 0.97 }}
+                transition={transition.quick}
               >
                 {isSubmitting ? "Creating Account…" : "Create Account"}
-              </button>
+              </motion.button>
 
               <p className="aurelia-auth-footnote">
                 Already have an account?

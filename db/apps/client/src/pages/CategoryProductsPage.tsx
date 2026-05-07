@@ -1,9 +1,11 @@
 import { useQuery } from "@tanstack/react-query"
 import type { Category, Product } from "@jewellery/types"
+import { motion } from "motion/react"
 import { useParams } from "react-router-dom"
 import { ProductCard } from "../components/product/ProductCard"
 import { EmptyState } from "../components/feedback/EmptyState"
 import { apiClient } from "../api/client"
+import { fadeUp, listItem, listStagger, scrollRevealViewport } from "../lib/motion"
 
 export const CategoryProductsPage = () => {
   const { categoryId = "" } = useParams()
@@ -29,8 +31,16 @@ export const CategoryProductsPage = () => {
   const heading = categoryQuery.data?.name ?? "Category products"
 
   return (
-    <div>
-      <h1 className="h3 fw-bold mb-3">{heading}</h1>
+    <motion.div variants={fadeUp} initial="hidden" animate="visible">
+      <motion.h1
+        className="h3 fw-bold mb-3"
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={scrollRevealViewport}
+      >
+        {heading}
+      </motion.h1>
 
       {productsQuery.isLoading ? (
         <CategoryProductsSkeleton />
@@ -59,15 +69,15 @@ export const CategoryProductsPage = () => {
           secondaryCta={{ to: "/products", label: "View All Products" }}
         />
       ) : (
-        <div className="row g-3">
+        <motion.div className="row g-3" variants={listStagger} initial="hidden" animate="visible">
           {productsQuery.data.map((product) => (
-            <div key={product.id} className="col-6 col-lg-4 col-xl-3">
+            <motion.div key={product.id} className="col-6 col-lg-4 col-xl-3" variants={listItem}>
               <ProductCard product={product} />
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   )
 }
 

@@ -2,8 +2,11 @@ import { useMemo, useState } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import axios from "axios"
 import { Formik, Form, useFormikContext, type FormikHelpers } from "formik"
+import { motion } from "motion/react"
+import { MotionLink } from "../components/motion/MotionLink"
 import * as Yup from "yup"
-import { Link, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
+import { fadeUp, listItem, listStagger, scrollRevealViewport, transition } from "../lib/motion"
 import { checkout } from "../services/orders"
 import { useOrderStore } from "../stores/orderStore"
 import { useCart } from "../hooks/useCart"
@@ -137,7 +140,7 @@ export const CheckoutPage = () => {
   // Empty cart guard
   if (!cartLoading && items.length === 0) {
     return (
-      <section className="aurelia-checkout-shell">
+      <motion.section className="aurelia-checkout-shell" variants={fadeUp} initial="hidden" animate="visible">
         <Stepper activeIndex={1} />
         <EmptyState
           variant="card"
@@ -148,12 +151,12 @@ export const CheckoutPage = () => {
           cta={{ to: "/products", label: "Browse Collections" }}
           secondaryCta={{ to: "/cart", label: "Return to Cart" }}
         />
-      </section>
+      </motion.section>
     )
   }
 
   return (
-    <section className="aurelia-checkout-shell">
+    <motion.section className="aurelia-checkout-shell" variants={fadeUp} initial="hidden" animate="visible">
       <Stepper activeIndex={1} />
 
       <div className="aurelia-checkout-grid">
@@ -170,13 +173,19 @@ export const CheckoutPage = () => {
 
             return (
               <Form className="aurelia-checkout-form" noValidate>
-                <header className="aurelia-checkout-header">
+                <motion.header
+                  className="aurelia-checkout-header"
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={scrollRevealViewport}
+                >
                   <p className="aurelia-checkout-kicker">Step 2 · Shipping & Payment</p>
                   <h1 className="aurelia-checkout-title">Shipping Details</h1>
                   <p className="aurelia-checkout-sub">
                     Tell us where your piece should arrive. We will only contact you about this order.
                   </p>
-                </header>
+                </motion.header>
 
                 <div className="aurelia-checkout-fields">
                   <EditorialFormField
@@ -275,13 +284,13 @@ export const CheckoutPage = () => {
           }}
         </Formik>
 
-        <aside className="aurelia-checkout-aside">
+        <motion.aside className="aurelia-checkout-aside" variants={fadeUp} initial="hidden" animate="visible">
           <div className="aurelia-checkout-summary">
             <h2 className="aurelia-checkout-summary-title">Order Summary</h2>
 
-            <ul className="aurelia-checkout-summary-items">
+            <motion.ul className="aurelia-checkout-summary-items" variants={listStagger} initial="hidden" animate="visible">
               {items.map((line) => (
-                <li key={line.productId} className="aurelia-checkout-summary-item">
+                <motion.li key={line.productId} className="aurelia-checkout-summary-item" variants={listItem}>
                   <div className="aurelia-checkout-summary-thumb">
                     {line.imageUrl ? (
                       <img src={line.imageUrl} alt={line.name} loading="lazy" />
@@ -299,12 +308,12 @@ export const CheckoutPage = () => {
                   <span className="aurelia-checkout-summary-line-total">
                     {formatCurrency(Number(line.price) * line.quantity)}
                   </span>
-                </li>
+                </motion.li>
               ))}
               {cartLoading && items.length === 0 && (
                 <li className="aurelia-checkout-summary-loading">Loading items…</li>
               )}
-            </ul>
+            </motion.ul>
 
             <dl className="aurelia-checkout-summary-rows">
               <div>
@@ -330,9 +339,9 @@ export const CheckoutPage = () => {
               <p className="aurelia-checkout-summary-syncing">Syncing latest pricing…</p>
             )}
           </div>
-        </aside>
+        </motion.aside>
       </div>
-    </section>
+    </motion.section>
   )
 }
 
@@ -342,14 +351,23 @@ const CheckoutActions = ({ isSubmitting }: { isSubmitting: boolean }) => {
 
   return (
     <div className="aurelia-checkout-actions">
-      <Link to="/cart" className="aurelia-checkout-back">
+      <MotionLink
+        to="/cart"
+        className="aurelia-checkout-back"
+        whileHover={{ x: -3 }}
+        whileTap={{ scale: 0.98 }}
+        transition={transition.quick}
+      >
         <span className="material-symbols-outlined" aria-hidden>chevron_left</span>
         <span>Return to Cart</span>
-      </Link>
-      <button
+      </MotionLink>
+      <motion.button
         type="submit"
         className="aurelia-checkout-submit"
         disabled={isSubmitting}
+        whileHover={isSubmitting ? undefined : { scale: 1.02, y: -1 }}
+        whileTap={isSubmitting ? undefined : { scale: 0.97 }}
+        transition={transition.quick}
         onClick={() => {
           // Pre-emptively touch every field so messages show even if the user never blurred them.
           const touched = Object.keys(values).reduce<Record<string, boolean>>((acc, key) => {
@@ -362,7 +380,7 @@ const CheckoutActions = ({ isSubmitting }: { isSubmitting: boolean }) => {
       >
         <span>{isSubmitting ? "Placing Order…" : "Place Order"}</span>
         <span className="material-symbols-outlined" aria-hidden>arrow_forward</span>
-      </button>
+      </motion.button>
     </div>
   )
 }

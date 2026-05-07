@@ -1,9 +1,11 @@
 import { useMemo, useRef, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import type { Product } from "@jewellery/types"
+import { AnimatePresence, motion } from "motion/react"
 import { Link, useParams } from "react-router-dom"
 import { useCart } from "../hooks/useCart"
 import { useCategories } from "../hooks/useCatalog"
+import { fadeIn, fadeUp, listItem, listStagger, scrollRevealViewport, transition } from "../lib/motion"
 import { fetchProduct, fetchProductRecommendations } from "../services/products"
 import { successToast, toastFromError } from "../utils/toast"
 
@@ -62,7 +64,7 @@ export const ProductDetailsPage = () => {
   }
 
   return (
-    <section className="aurelia-pdp-shell">
+    <motion.section className="aurelia-pdp-shell" variants={fadeUp} initial="hidden" animate="visible">
       <ProductHero
         product={product}
         categoryName={categoryName}
@@ -87,7 +89,7 @@ export const ProductDetailsPage = () => {
         items={recommendationsQuery.data ?? []}
         isLoading={recommendationsQuery.isLoading}
       />
-    </section>
+    </motion.section>
   )
 }
 
@@ -136,21 +138,43 @@ const ProductHero = ({ product, categoryName, canBuy, isGuest, isUpdating, onAdd
         <div className="aurelia-pdp-gallery">
           <div className="aurelia-pdp-thumbs" role="tablist" aria-label="Product images">
             {(images.length > 0 ? images : [{ id: "placeholder", url: PLACEHOLDER_IMAGE, sortOrder: 0 }]).map((img, i) => (
-              <button
+              <motion.button
                 key={img.id}
                 type="button"
                 role="tab"
                 aria-selected={i === activeIndex}
                 className={`aurelia-pdp-thumb ${i === activeIndex ? "is-active" : ""}`}
                 onClick={() => setActiveIndex(i)}
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.94 }}
+                transition={transition.quick}
               >
-                <img src={img.url} alt="" loading="lazy" />
-              </button>
+                <motion.img
+                  src={img.url}
+                  alt=""
+                  loading="lazy"
+                  whileHover={{ scale: 1.05 }}
+                  transition={transition.quick}
+                />
+              </motion.button>
             ))}
           </div>
-          <div className="aurelia-pdp-main-image">
-            <img src={activeImage} alt={product.name} />
-          </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeImage}
+              className="aurelia-pdp-main-image"
+              initial={{ opacity: 0.2, scale: 0.985 }}
+              animate={{ opacity: 1, scale: 1, transition: transition.base }}
+              exit={{ opacity: 0, scale: 1.015, transition: transition.quick }}
+            >
+              <motion.img
+                src={activeImage}
+                alt={product.name}
+                whileHover={{ scale: 1.02 }}
+                transition={transition.slow}
+              />
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
 
@@ -171,29 +195,36 @@ const ProductHero = ({ product, categoryName, canBuy, isGuest, isUpdating, onAdd
         <div className="aurelia-pdp-actions">
           <div className="aurelia-pdp-action-row">
             <div className="aurelia-pdp-qty" role="group" aria-label="Quantity">
-              <button
+              <motion.button
                 type="button"
                 aria-label="Decrease quantity"
                 disabled={quantity <= 1}
                 onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                whileTap={quantity <= 1 ? undefined : { scale: 0.9 }}
+                transition={transition.quick}
               >
                 <span className="material-symbols-outlined" aria-hidden>remove</span>
-              </button>
+              </motion.button>
               <span className="aurelia-pdp-qty-value" aria-live="polite">{quantity}</span>
-              <button
+              <motion.button
                 type="button"
                 aria-label="Increase quantity"
                 disabled={quantity >= maxQty}
                 onClick={() => setQuantity((q) => Math.min(maxQty, q + 1))}
+                whileTap={quantity >= maxQty ? undefined : { scale: 0.9 }}
+                transition={transition.quick}
               >
                 <span className="material-symbols-outlined" aria-hidden>add</span>
-              </button>
+              </motion.button>
             </div>
-            <button
+            <motion.button
               type="button"
               className="aurelia-pdp-add"
               disabled={!canBuy || isUpdating}
               onClick={handleAdd}
+              whileHover={!canBuy || isUpdating ? undefined : { scale: 1.02, y: -1 }}
+              whileTap={!canBuy || isUpdating ? undefined : { scale: 0.97 }}
+              transition={transition.quick}
             >
               {!canBuy
                 ? "Sold Out"
@@ -202,7 +233,7 @@ const ProductHero = ({ product, categoryName, canBuy, isGuest, isUpdating, onAdd
                   : justAdded
                     ? "Added to Cart ✓"
                     : "Add to Cart"}
-            </button>
+            </motion.button>
           </div>
           <a className="aurelia-pdp-secondary" href={viewingMailto}>
             Book a Private Viewing
@@ -265,20 +296,40 @@ type AccordionProps = {
 const Accordion = ({ title, defaultOpen = false, children }: AccordionProps) => {
   const [open, setOpen] = useState(defaultOpen)
   return (
-    <div className={`aurelia-pdp-acc-item ${open ? "is-open" : ""}`}>
-      <button
+    <motion.div
+      className={`aurelia-pdp-acc-item ${open ? "is-open" : ""}`}
+      variants={fadeUp}
+      initial="hidden"
+      whileInView="visible"
+      viewport={scrollRevealViewport}
+    >
+      <motion.button
         type="button"
         className="aurelia-pdp-acc-trigger"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
+        whileTap={{ scale: 0.99 }}
+        transition={transition.quick}
       >
         <span>{title}</span>
         <span className="material-symbols-outlined aurelia-pdp-acc-icon" aria-hidden>
           expand_more
         </span>
-      </button>
-      {open && <div className="aurelia-pdp-acc-body">{children}</div>}
-    </div>
+      </motion.button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            className="aurelia-pdp-acc-body"
+            variants={fadeIn}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+          >
+            {children}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   )
 }
 
@@ -302,28 +353,39 @@ const RecommendationsRail = ({
   }
 
   return (
-    <section className="aurelia-rec-section" aria-label={title}>
+    <motion.section
+      className="aurelia-rec-section"
+      aria-label={title}
+      variants={fadeUp}
+      initial="hidden"
+      whileInView="visible"
+      viewport={scrollRevealViewport}
+    >
       <header className="aurelia-rec-header">
         <h2 className="aurelia-rec-title">{title}</h2>
         <div className="aurelia-rec-controls">
-          <button
+          <motion.button
             type="button"
             className="aurelia-rec-arrow"
             aria-label="Scroll recommendations left"
             onClick={() => scrollBy(-1)}
             disabled={items.length === 0}
+            whileTap={items.length === 0 ? undefined : { scale: 0.92 }}
+            transition={transition.quick}
           >
             <span className="material-symbols-outlined" aria-hidden>west</span>
-          </button>
-          <button
+          </motion.button>
+          <motion.button
             type="button"
             className="aurelia-rec-arrow"
             aria-label="Scroll recommendations right"
             onClick={() => scrollBy(1)}
             disabled={items.length === 0}
+            whileTap={items.length === 0 ? undefined : { scale: 0.92 }}
+            transition={transition.quick}
           >
             <span className="material-symbols-outlined" aria-hidden>east</span>
-          </button>
+          </motion.button>
         </div>
       </header>
 
@@ -334,25 +396,40 @@ const RecommendationsRail = ({
           We’ll surface companion pieces here once more of the collection is in stock.
         </div>
       ) : (
-        <div className="aurelia-rec-track" ref={trackRef}>
+        <motion.div
+          className="aurelia-rec-track"
+          ref={trackRef}
+          variants={listStagger}
+          initial="hidden"
+          whileInView="visible"
+          viewport={scrollRevealViewport}
+        >
           {items.map((item) => {
             const thumb = item.images[0]?.url ?? PLACEHOLDER_IMAGE
             return (
+              <motion.div key={item.id} variants={listItem}>
               <Link
                 key={item.id}
                 to={`/products/${item.id}`}
                 className="aurelia-rec-item"
               >
-                <div className="aurelia-rec-image">
-                  <img src={thumb} alt={item.name} loading="lazy" />
+                <div className="aurelia-rec-image overflow-hidden">
+                  <motion.img
+                    src={thumb}
+                    alt={item.name}
+                    loading="lazy"
+                    whileHover={{ scale: 1.06 }}
+                    transition={transition.slow}
+                  />
                 </div>
                 <h3 className="aurelia-rec-name">{item.name}</h3>
                 <p className="aurelia-rec-price">{formatPrice(item.price)}</p>
               </Link>
+              </motion.div>
             )
           })}
-        </div>
+        </motion.div>
       )}
-    </section>
+    </motion.section>
   )
 }

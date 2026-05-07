@@ -1,3 +1,4 @@
+import { motion } from "motion/react"
 import { Link, Route, Routes } from "react-router-dom"
 import { FiSearch, FiShoppingBag } from "react-icons/fi"
 import { ToastContainer } from "react-toastify"
@@ -27,6 +28,7 @@ import { ProductDetailsPage } from "./pages/ProductDetailsPage"
 import { ProductsPage } from "./pages/ProductsPage"
 import { ProfilePage } from "./pages/ProfilePage"
 import { RegisterPage } from "./pages/RegisterPage"
+import { fadeUp } from "./lib/motion"
 
 const Shell = () => {
   useSocketLifecycle()
@@ -183,7 +185,9 @@ const Shell = () => {
 
 export const App = () => (
   <>
-    <Shell />
+    <motion.div variants={fadeUp} initial="hidden" animate="visible">
+      <Shell />
+    </motion.div>
     <ToastContainer
       position="top-right"
       autoClose={3500}

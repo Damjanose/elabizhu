@@ -2,7 +2,9 @@ import { useState } from "react"
 import { Formik, Form, type FormikHelpers } from "formik"
 import * as Yup from "yup"
 import { FiEye, FiEyeOff } from "react-icons/fi"
+import { motion } from "motion/react"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
+import { transition } from "../lib/motion"
 import { AuthShell } from "../components/auth/AuthShell"
 import { AuthFormField } from "../components/forms/FormFields"
 import { useAuth } from "../types/auth-context"
@@ -120,14 +122,17 @@ export const LoginPage = () => {
                 </div>
               )}
 
-              <button
+              <motion.button
                 type="submit"
                 className="aurelia-auth-submit"
                 disabled={isSubmitting}
                 style={{ marginTop: "2rem" }}
+                whileHover={isSubmitting ? undefined : { scale: 1.02, y: -1 }}
+                whileTap={isSubmitting ? undefined : { scale: 0.97 }}
+                transition={transition.quick}
               >
                 {isSubmitting ? "Signing In…" : "Sign In"}
-              </button>
+              </motion.button>
 
               <p className="aurelia-auth-footnote">
                 New to Aurelia?

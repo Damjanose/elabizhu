@@ -1,7 +1,11 @@
+import { animated, useSpring } from "@react-spring/web"
 import type { CartLine } from "@jewellery/types"
+import { motion, type Variants } from "motion/react"
 import { Link } from "react-router-dom"
+import { MotionLink } from "../components/motion/MotionLink"
 import { useCart } from "../hooks/useCart"
 import { EmptyState } from "../components/feedback/EmptyState"
+import { fadeUp, listItem, listStagger, transition } from "../lib/motion"
 import { successToast, toastFromError } from "../utils/toast"
 
 const TAX_RATE = 0.2
@@ -99,7 +103,7 @@ export const CartPage = () => {
   const checkoutLabel = isGuest ? "Sign in to Checkout" : "Proceed to Checkout"
 
   return (
-    <section className="aurelia-cart-shell">
+    <motion.section className="aurelia-cart-shell" variants={fadeUp} initial="hidden" animate="visible">
       <Stepper activeIndex={0} />
 
       <div className="aurelia-cart-grid">
@@ -113,11 +117,12 @@ export const CartPage = () => {
               <span role="columnheader" className="text-end">Total</span>
             </div>
 
-            <ul className="aurelia-cart-rows">
+            <motion.ul className="aurelia-cart-rows" variants={listStagger} initial="hidden" animate="visible">
               {items.map((line) => (
                 <CartRow
                   key={line.productId}
                   line={line}
+                  variants={listItem}
                   isUpdating={isUpdating}
                   onChangeQty={async (quantity) => {
                     try {
@@ -136,7 +141,7 @@ export const CartPage = () => {
                   }}
                 />
               ))}
-            </ul>
+            </motion.ul>
           </div>
 
           <ShippingBanner />
@@ -167,12 +172,18 @@ export const CartPage = () => {
             </div>
 
             <div className="aurelia-cart-summary-actions">
-              <Link to={checkoutTo} className="aurelia-cart-checkout">
+              <MotionLink
+                to={checkoutTo}
+                className="aurelia-cart-checkout"
+                whileHover={{ scale: 1.02, y: -1 }}
+                whileTap={{ scale: 0.97 }}
+                transition={transition.quick}
+              >
                 <span>{checkoutLabel}</span>
                 <span className="material-symbols-outlined" aria-hidden>
                   arrow_forward
                 </span>
-              </Link>
+              </MotionLink>
               <p className="aurelia-cart-finance-note">
                 {isGuest
                   ? "Your selection is saved on this device. Sign in to securely complete the order."
@@ -193,7 +204,7 @@ export const CartPage = () => {
           </div>
         </aside>
       </div>
-    </section>
+    </motion.section>
   )
 }
 
@@ -220,26 +231,42 @@ const Stepper = ({ activeIndex }: { activeIndex: number }) => (
 
 const CartRow = ({
   line,
+  variants,
   isUpdating,
   onChangeQty,
   onRemove,
 }: {
   line: CartLine
+  variants: Variants
   isUpdating: boolean
   onChangeQty: (quantity: number) => void
   onRemove: () => void
 }) => {
   const meta = describeLine(line)
+  const qtySpring = useSpring({
+    from: { transform: "scale(0.92)" },
+    to: { transform: "scale(1)" },
+    reset: true,
+    config: { tension: 250, friction: 14 },
+    pause: line.quantity <= 0,
+  })
+
   return (
-    <li role="row" className="aurelia-cart-row">
+    <motion.li role="row" className="aurelia-cart-row" variants={variants}>
       <div className="aurelia-cart-cell aurelia-cart-cell--product" role="cell">
         <Link
           to={`/products/${line.productId}`}
-          className="aurelia-cart-row-image"
+          className="aurelia-cart-row-image overflow-hidden"
           aria-label={`View ${line.name}`}
         >
           {line.imageUrl ? (
-            <img src={line.imageUrl} alt={line.name} loading="lazy" />
+            <motion.img
+              src={line.imageUrl}
+              alt={line.name}
+              loading="lazy"
+              whileHover={{ scale: 1.05 }}
+              transition={transition.quick}
+            />
           ) : (
             <div className="aurelia-cart-row-image-fallback" aria-hidden />
           )}
@@ -249,39 +276,45 @@ const CartRow = ({
             {line.name}
           </Link>
           {meta && <p className="aurelia-cart-row-sub">{meta}</p>}
-          <button
+          <motion.button
             type="button"
             className="aurelia-cart-row-remove"
             onClick={onRemove}
             disabled={isUpdating}
+            whileTap={isUpdating ? undefined : { scale: 0.97 }}
+            transition={transition.quick}
           >
             Remove
-          </button>
+          </motion.button>
         </div>
       </div>
 
       <div className="aurelia-cart-cell aurelia-cart-cell--qty" role="cell">
         <span className="aurelia-cart-cell-label">Qty</span>
         <div className="aurelia-cart-qty" role="group" aria-label={`Quantity for ${line.name}`}>
-          <button
+          <motion.button
             type="button"
             aria-label="Decrease quantity"
             disabled={isUpdating || line.quantity <= 1}
             onClick={() => onChangeQty(Math.max(1, line.quantity - 1))}
+            whileTap={isUpdating || line.quantity <= 1 ? undefined : { scale: 0.9 }}
+            transition={transition.quick}
           >
             <span className="material-symbols-outlined" aria-hidden>remove</span>
-          </button>
-          <span className="aurelia-cart-qty-value" aria-live="polite">
+          </motion.button>
+          <animated.span className="aurelia-cart-qty-value" aria-live="polite" style={qtySpring}>
             {line.quantity}
-          </span>
-          <button
+          </animated.span>
+          <motion.button
             type="button"
             aria-label="Increase quantity"
             disabled={isUpdating}
             onClick={() => onChangeQty(line.quantity + 1)}
+            whileTap={isUpdating ? undefined : { scale: 0.9 }}
+            transition={transition.quick}
           >
             <span className="material-symbols-outlined" aria-hidden>add</span>
-          </button>
+          </motion.button>
         </div>
       </div>
 
@@ -291,7 +324,7 @@ const CartRow = ({
           {formatCurrency(Number(line.price) * line.quantity)}
         </span>
       </div>
-    </li>
+    </motion.li>
   )
 }
 

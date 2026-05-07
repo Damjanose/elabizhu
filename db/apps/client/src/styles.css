@@ -301,14 +301,6 @@ h4,
   background: transparent;
 }
 
-.aurelia-product-image {
-  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.aurelia-product-card:hover .aurelia-product-image {
-  transform: scale(1.03);
-}
-
 .aurelia-product-name {
   color: var(--aurelia-text);
   font-family: "Noto Serif", serif;

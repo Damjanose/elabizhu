@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom"
+import { MotionLink, linkPressProps } from "../components/motion/MotionLink"
 import { useCategories } from "../hooks/useCatalog"
 
 const CATEGORY_IMAGES: Record<string, string> = {
@@ -118,9 +119,9 @@ export const CategoriesPage = () => {
       )}
 
       <div className="text-center mt-12 md:mt-16">
-        <Link to="/products" className="aurelia-btn aurelia-btn-primary text-decoration-none">
+        <MotionLink to="/products" className="aurelia-btn aurelia-btn-primary text-decoration-none" {...linkPressProps}>
           View All Products
-        </Link>
+        </MotionLink>
       </div>
     </section>
   )
