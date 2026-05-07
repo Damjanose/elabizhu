@@ -1,35 +1,207 @@
+import { useMemo, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
+import type { OrderStatus, OrderSummary } from "@jewellery/types"
 import { Link } from "react-router-dom"
 import { fetchOrders } from "../services/orders"
 
+type FilterId = "all" | "active" | "delivered" | "cancelled"
+
+const STATUS_DISPLAY: Record<OrderStatus, { label: string; tone: "neutral" | "primary" | "secondary" | "success" | "danger" }> = {
+  pending: { label: "Pending", tone: "neutral" },
+  confirmed: { label: "Confirmed", tone: "primary" },
+  shipped: { label: "Shipped", tone: "secondary" },
+  delivered: { label: "Delivered", tone: "success" },
+  cancelled: { label: "Cancelled", tone: "danger" },
+}
+
+const ACTIVE_STATUSES: OrderStatus[] = ["pending", "confirmed", "shipped"]
+
+const FILTERS: Array<{ id: FilterId; label: string; matches: (status: OrderStatus) => boolean }> = [
+  { id: "all", label: "All", matches: () => true },
+  { id: "active", label: "Active", matches: (s) => ACTIVE_STATUSES.includes(s) },
+  { id: "delivered", label: "Delivered", matches: (s) => s === "delivered" },
+  { id: "cancelled", label: "Cancelled", matches: (s) => s === "cancelled" },
+]
+
+const formatCurrency = (value: string | number) =>
+  new Intl.NumberFormat("en-GB", {
+    style: "currency",
+    currency: "GBP",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(Number(value))
+
+const formatDate = (iso: string) => {
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return iso
+  return d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" })
+}
+
+const orderRef = (id: string) => `#AUR-${id.slice(0, 6).toUpperCase()}`
+
 export const OrdersPage = () => {
   const { data, isLoading, isError } = useQuery({ queryKey: ["orders"], queryFn: fetchOrders })
+  const [filter, setFilter] = useState<FilterId>("all")
 
-  if (isLoading) return <div className="alert alert-info">Loading orders…</div>
-  if (isError) return <div className="alert alert-danger">Could not load orders</div>
+  const sorted = useMemo(
+    () =>
+      (data ?? []).slice().sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      ),
+    [data],
+  )
+
+  const counts = useMemo(() => {
+    const result: Record<FilterId, number> = { all: 0, active: 0, delivered: 0, cancelled: 0 }
+    for (const o of sorted) {
+      for (const f of FILTERS) {
+        if (f.matches(o.status)) result[f.id] += 1
+      }
+    }
+    return result
+  }, [sorted])
+
+  const visible = useMemo(() => {
+    const matcher = FILTERS.find((f) => f.id === filter)?.matches ?? (() => true)
+    return sorted.filter((o) => matcher(o.status))
+  }, [sorted, filter])
 
   return (
-    <div className="card border-0 shadow-sm">
-      <div className="card-body p-4">
-        <h1 className="h3 fw-bold mb-3">Orders</h1>
-        {data?.length === 0 ? (
-          <p className="text-secondary mb-0">
-            No orders yet. <Link to="/products">Shop the catalogue</Link>
-          </p>
-        ) : (
-          <div className="list-group">
-            {data?.map((o) => (
-              <Link key={o.id} className="list-group-item list-group-item-action d-flex justify-content-between" to={`/orders/${o.id}`}>
-                <span>
-                  <span className="fw-semibold text-capitalize">{o.status}</span>
-                  <span className="text-secondary small ms-2">{new Date(o.createdAt).toLocaleString()}</span>
-                </span>
-                <span className="fw-medium">${Number(o.total).toFixed(2)}</span>
-              </Link>
-            ))}
-          </div>
-        )}
+    <section className="aurelia-orders">
+      <header className="aurelia-orders-hero">
+        <span className="aurelia-admin-kicker d-block mb-3">Personal Atelier</span>
+        <h1 className="aurelia-orders-hero-title">Order History</h1>
+        <p className="aurelia-orders-hero-copy">
+          A complete record of your bespoke acquisitions and journeys with the atelier.
+        </p>
+      </header>
+
+      <div className="aurelia-orders-toolbar" role="tablist" aria-label="Filter orders">
+        {FILTERS.map((f) => (
+          <button
+            key={f.id}
+            type="button"
+            role="tab"
+            aria-selected={filter === f.id}
+            className={`aurelia-orders-chip ${filter === f.id ? "is-active" : ""}`}
+            onClick={() => setFilter(f.id)}
+          >
+            <span>{f.label}</span>
+            <span className="aurelia-orders-chip-count">{counts[f.id]}</span>
+          </button>
+        ))}
       </div>
-    </div>
+
+      {isLoading ? (
+        <OrdersSkeleton />
+      ) : isError ? (
+        <OrdersState
+          icon="error"
+          title="We couldn’t load your orders"
+          copy="Please refresh the page or come back in a moment."
+        />
+      ) : sorted.length === 0 ? (
+        <OrdersState
+          icon="auto_stories"
+          title="No orders yet"
+          copy="Begin your collection and your acquisitions will appear here."
+          cta={{ to: "/products", label: "Explore Collections" }}
+        />
+      ) : visible.length === 0 ? (
+        <OrdersState
+          icon="filter_alt"
+          title="Nothing in this view"
+          copy="Try a different filter to see more of your history."
+        />
+      ) : (
+        <OrdersTable orders={visible} />
+      )}
+    </section>
   )
 }
+
+const OrdersTable = ({ orders }: { orders: OrderSummary[] }) => (
+  <div className="aurelia-orders-list" role="table" aria-label="Orders">
+    <div className="aurelia-orders-list-head" role="row">
+      <span role="columnheader">Order</span>
+      <span role="columnheader">Placed</span>
+      <span role="columnheader">Status</span>
+      <span role="columnheader" className="text-end">Total</span>
+      <span role="columnheader" aria-hidden />
+    </div>
+
+    <ul className="aurelia-orders-rows">
+      {orders.map((order) => {
+        const display = STATUS_DISPLAY[order.status]
+        return (
+          <li key={order.id} role="row" className="aurelia-orders-row">
+            <Link to={`/orders/${order.id}`} className="aurelia-orders-row-link">
+              <span className="aurelia-orders-cell aurelia-orders-cell--ref" role="cell">
+                <span className="aurelia-orders-cell-label">Order</span>
+                <span className="aurelia-orders-cell-value">{orderRef(order.id)}</span>
+              </span>
+              <span className="aurelia-orders-cell aurelia-orders-cell--date" role="cell">
+                <span className="aurelia-orders-cell-label">Placed</span>
+                <span className="aurelia-orders-cell-value">{formatDate(order.createdAt)}</span>
+              </span>
+              <span className="aurelia-orders-cell aurelia-orders-cell--status" role="cell">
+                <span className="aurelia-orders-cell-label">Status</span>
+                <span className={`aurelia-orders-status aurelia-orders-status--${display.tone}`}>
+                  <span className="aurelia-orders-status-dot" aria-hidden />
+                  {display.label}
+                </span>
+              </span>
+              <span className="aurelia-orders-cell aurelia-orders-cell--total" role="cell">
+                <span className="aurelia-orders-cell-label">Total</span>
+                <span className="aurelia-orders-cell-value aurelia-orders-cell-value--total">
+                  {formatCurrency(order.total)}
+                </span>
+              </span>
+              <span className="aurelia-orders-cell aurelia-orders-cell--cta" role="cell">
+                <span className="aurelia-orders-cta">
+                  <span className="aurelia-orders-cta-label">View</span>
+                  <span className="material-symbols-outlined aurelia-orders-cta-icon" aria-hidden>
+                    east
+                  </span>
+                </span>
+              </span>
+            </Link>
+          </li>
+        )
+      })}
+    </ul>
+  </div>
+)
+
+const OrdersSkeleton = () => (
+  <div className="aurelia-orders-skeleton" aria-busy="true" aria-live="polite">
+    {[0, 1, 2].map((i) => (
+      <div key={i} className="aurelia-orders-skeleton-row" />
+    ))}
+  </div>
+)
+
+const OrdersState = ({
+  icon,
+  title,
+  copy,
+  cta,
+}: {
+  icon: string
+  title: string
+  copy: string
+  cta?: { to: string; label: string }
+}) => (
+  <div className="aurelia-orders-empty">
+    <span className="material-symbols-outlined aurelia-orders-empty-icon" aria-hidden>
+      {icon}
+    </span>
+    <h2 className="aurelia-orders-empty-title">{title}</h2>
+    <p className="aurelia-orders-empty-copy">{copy}</p>
+    {cta && (
+      <Link to={cta.to} className="aurelia-orders-empty-cta">
+        {cta.label}
+      </Link>
+    )}
+  </div>
+)
