@@ -1,5 +1,5 @@
 import { motion } from "motion/react"
-import { Link, Route, Routes } from "react-router-dom"
+import { Link, NavLink, Route, Routes } from "react-router-dom"
 import { FiSearch, FiShoppingBag } from "react-icons/fi"
 import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
@@ -15,9 +15,12 @@ import { AdminDashboardPage } from "./pages/admin/AdminDashboardPage"
 import { AdminOrdersPage } from "./pages/admin/AdminOrdersPage"
 import { AdminProductsPage } from "./pages/admin/AdminProductsPage"
 import { CartPage } from "./pages/CartPage"
+import { CheckoutPage } from "./pages/CheckoutPage"
 import { CategoriesPage } from "./pages/CategoriesPage"
 import { CategoryProductsPage } from "./pages/CategoryProductsPage"
-import { CheckoutPage } from "./pages/CheckoutPage"
+import { CollectionsPage } from "./pages/CollectionsPage"
+import { JournalPage } from "./pages/JournalPage"
+import { JournalPostPage } from "./pages/JournalPostPage"
 import { HomePage } from "./pages/HomePage"
 import { LoginPage } from "./pages/LoginPage"
 import { NotFoundPage } from "./pages/NotFoundPage"
@@ -30,6 +33,9 @@ import { ProfilePage } from "./pages/ProfilePage"
 import { RegisterPage } from "./pages/RegisterPage"
 import { fadeUp } from "./lib/motion"
 
+const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+  `aurelia-nav-link${isActive ? " aurelia-nav-link-active" : ""}`
+
 const Shell = () => {
   useSocketLifecycle()
   const { itemCount } = useCart()
@@ -39,18 +45,18 @@ const Shell = () => {
       <nav className="aurelia-topbar sticky-top">
         <div className="aurelia-container aurelia-nav-grid">
           <div className="aurelia-nav-left">
-            <Link className="aurelia-nav-link" to="/products">
+            <NavLink className={navLinkClass} to="/collections">
               Collections
-            </Link>
-            <Link className="aurelia-nav-link" to="/categories">
+            </NavLink>
+            <NavLink className={navLinkClass} to="/categories">
               Story
-            </Link>
-            <Link className="aurelia-nav-link" to="/account">
+            </NavLink>
+            <NavLink className={navLinkClass} to="/account">
               Bespoke
-            </Link>
-            <Link className="aurelia-nav-link" to="/products">
+            </NavLink>
+            <NavLink className={navLinkClass} to="/journal">
               Journal
-            </Link>
+            </NavLink>
           </div>
 
           <Link className="aurelia-brand text-decoration-none text-center" to="/">
@@ -58,7 +64,7 @@ const Shell = () => {
           </Link>
 
           <div className="aurelia-nav-right">
-            <Link className="aurelia-icon-link text-decoration-none" to="/products" aria-label="Search">
+            <Link className="aurelia-icon-link text-decoration-none" to="/collections" aria-label="Search">
               <FiSearch />
             </Link>
             <UserMenu />
@@ -95,6 +101,9 @@ const Shell = () => {
               </GuestRoute>
             }
           />
+          <Route path="/collections" element={<CollectionsPage />} />
+          <Route path="/journal" element={<JournalPage />} />
+          <Route path="/journal/:slug" element={<JournalPostPage />} />
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/categories/:categoryId/products" element={<CategoryProductsPage />} />
           <Route path="/products" element={<ProductsPage />} />

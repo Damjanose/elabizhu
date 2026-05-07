@@ -209,9 +209,9 @@ h4,
   border-bottom-color: var(--aurelia-primary);
 }
 
-.aurelia-nav-left .aurelia-nav-link:first-child {
-  color: var(--aurelia-primary);
-  border-bottom-color: var(--aurelia-primary);
+.aurelia-journal-post-hero {
+  max-height: min(56vh, 520px);
+  width: 100%;
 }
 
 .aurelia-icon-link {
