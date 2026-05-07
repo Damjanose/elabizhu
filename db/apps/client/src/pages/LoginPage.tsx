@@ -1,9 +1,10 @@
 import { useState } from "react"
 import { FiEye, FiEyeOff } from "react-icons/fi"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import { AuthShell } from "../components/auth/AuthShell"
 import { useAuth } from "../types/auth-context"
 import { extractFieldErrors } from "../utils/form-errors"
+import { sanitizeRedirect } from "../utils/post-auth-redirect"
 
 const LOGIN_VISUAL =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuANIPK2sA_DRxWB_X0cI9oci-WSe6NXAJqBeV5uM-oNM7loqG2k7g7pBlapLwp_wZ0OGa0R5npIpEr_XD2x6SU_bAp-g1C4KGl3UWFPuM8rO2rSEXdTBlWO_NA8AIjlf12oCTHnMehix8fRwglYRDYfBVhKfagn1YN0QkTILB3_eqtipyes0e1P19vkR6oMivth7PNQftjceEEOaZOXTFns8iInHoDjkLH2_WFlWb1Z8DfLkCbBl_DV6jrISOgov80h7lOFKCn4Gw"
@@ -11,6 +12,8 @@ const LOGIN_VISUAL =
 export const LoginPage = () => {
   const { login } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const redirectTo = sanitizeRedirect(searchParams.get("redirect")) ?? "/categories"
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
@@ -35,7 +38,7 @@ export const LoginPage = () => {
     setSubmitting(true)
     try {
       await login({ email, password })
-      navigate("/categories")
+      navigate(redirectTo, { replace: true })
     } catch (err) {
       const { fieldErrors: nextFieldErrors, formError } = extractFieldErrors(err)
       setFieldErrors(nextFieldErrors)
@@ -124,7 +127,15 @@ export const LoginPage = () => {
 
         <p className="aurelia-auth-footnote">
           New to Aurelia?
-          <Link to="/register">Create an account</Link>
+          <Link
+            to={
+              redirectTo !== "/categories"
+                ? `/register?redirect=${encodeURIComponent(redirectTo)}`
+                : "/register"
+            }
+          >
+            Create an account
+          </Link>
         </p>
       </form>
     </AuthShell>

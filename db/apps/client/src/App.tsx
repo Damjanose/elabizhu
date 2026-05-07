@@ -5,6 +5,7 @@ import { GuestRoute } from "./components/GuestRoute"
 import { ProtectedRoute } from "./components/ProtectedRoute"
 import { StaffRoute } from "./components/StaffRoute"
 import { UserMenu } from "./components/auth/UserMenu"
+import { useCart } from "./hooks/useCart"
 import { useSocketLifecycle } from "./hooks/useSocketLifecycle"
 import { AccountPage } from "./pages/AccountPage"
 import { AdminDashboardPage } from "./pages/admin/AdminDashboardPage"
@@ -23,11 +24,10 @@ import { OrdersPage } from "./pages/OrdersPage"
 import { ProductDetailsPage } from "./pages/ProductDetailsPage"
 import { ProductsPage } from "./pages/ProductsPage"
 import { RegisterPage } from "./pages/RegisterPage"
-import { useAuth } from "./types/auth-context"
 
 const Shell = () => {
   useSocketLifecycle()
-  const { user } = useAuth()
+  const { itemCount } = useCart()
 
   return (
     <div className="aurelia-app-shell min-vh-100">
@@ -57,9 +57,15 @@ const Shell = () => {
               <FiSearch />
             </Link>
             <UserMenu />
-            <Link className="aurelia-cart-icon text-decoration-none" to={user ? "/cart" : "/login"} aria-label="Cart">
+            <Link
+              className="aurelia-cart-icon text-decoration-none"
+              to="/cart"
+              aria-label={itemCount > 0 ? `Cart, ${itemCount} item${itemCount === 1 ? "" : "s"}` : "Cart"}
+            >
               <FiShoppingBag />
-              <span className="aurelia-cart-badge">{user ? "1" : "0"}</span>
+              {itemCount > 0 && (
+                <span className="aurelia-cart-badge">{itemCount > 99 ? "99+" : itemCount}</span>
+              )}
             </Link>
           </div>
         </div>
@@ -89,14 +95,7 @@ const Shell = () => {
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/products/:productId" element={<ProductDetailsPage />} />
 
-          <Route
-            path="/cart"
-            element={
-              <ProtectedRoute>
-                <CartPage />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/cart" element={<CartPage />} />
           <Route
             path="/checkout"
             element={

@@ -5,7 +5,6 @@ import { Link, useParams } from "react-router-dom"
 import { useCart } from "../hooks/useCart"
 import { useCategories } from "../hooks/useCatalog"
 import { fetchProduct, fetchProductRecommendations } from "../services/products"
-import { useAuth } from "../types/auth-context"
 
 const PLACEHOLDER_IMAGE = "https://placehold.co/800x1000?text=Aurelia"
 
@@ -19,8 +18,7 @@ const formatPrice = (value: string | number) =>
 
 export const ProductDetailsPage = () => {
   const { productId = "" } = useParams()
-  const { user } = useAuth()
-  const { addItem, isUpdating } = useCart()
+  const { addItem, isUpdating, isGuest } = useCart()
 
   const productQuery = useQuery({
     queryKey: ["product", productId],
@@ -69,8 +67,8 @@ export const ProductDetailsPage = () => {
         categoryName={categoryName}
         canBuy={product.stockQuantity > 0}
         isUpdating={isUpdating}
-        canAdd={!!user}
-        onAdd={(quantity) => void addItem({ productId: product.id, quantity })}
+        isGuest={isGuest}
+        onAdd={(quantity) => void addItem({ product, quantity })}
       />
       <RecommendationsRail
         title="Recommended for You"
@@ -85,15 +83,16 @@ type HeroProps = {
   product: Product
   categoryName: string | null
   canBuy: boolean
-  canAdd: boolean
+  isGuest: boolean
   isUpdating: boolean
   onAdd: (quantity: number) => void
 }
 
-const ProductHero = ({ product, categoryName, canBuy, canAdd, isUpdating, onAdd }: HeroProps) => {
+const ProductHero = ({ product, categoryName, canBuy, isGuest, isUpdating, onAdd }: HeroProps) => {
   const images = product.images.length > 0 ? product.images : []
   const [activeIndex, setActiveIndex] = useState(0)
   const [quantity, setQuantity] = useState(1)
+  const [justAdded, setJustAdded] = useState(false)
   const maxQty = Math.max(1, product.stockQuantity || 1)
   const activeImage = images[activeIndex]?.url ?? PLACEHOLDER_IMAGE
 
@@ -106,8 +105,10 @@ const ProductHero = ({ product, categoryName, canBuy, canAdd, isUpdating, onAdd 
   const collectionLabel = (categoryName ?? "Aurelia").toUpperCase() + " COLLECTION"
 
   const handleAdd = () => {
-    if (!canBuy || isUpdating || !canAdd) return
+    if (!canBuy || isUpdating) return
     onAdd(Math.min(quantity, maxQty))
+    setJustAdded(true)
+    window.setTimeout(() => setJustAdded(false), 2200)
   }
 
   const viewingMailto =
@@ -179,18 +180,25 @@ const ProductHero = ({ product, categoryName, canBuy, canAdd, isUpdating, onAdd 
             <button
               type="button"
               className="aurelia-pdp-add"
-              disabled={!canBuy || isUpdating || !canAdd}
+              disabled={!canBuy || isUpdating}
               onClick={handleAdd}
             >
-              {!canBuy ? "Sold Out" : isUpdating ? "Adding…" : "Add to Cart"}
+              {!canBuy
+                ? "Sold Out"
+                : isUpdating
+                  ? "Adding…"
+                  : justAdded
+                    ? "Added to Cart ✓"
+                    : "Add to Cart"}
             </button>
           </div>
           <a className="aurelia-pdp-secondary" href={viewingMailto}>
             Book a Private Viewing
           </a>
-          {!canAdd && (
+          {isGuest && (
             <p className="aurelia-pdp-signin">
-              <Link to="/login">Sign in</Link> to add this piece to your cart.
+              Shopping as a guest. <Link to="/login">Sign in</Link> to sync your selection across
+              devices and check out securely.
             </p>
           )}
         </div>
