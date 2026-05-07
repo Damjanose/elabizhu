@@ -62,7 +62,8 @@ export const CategoriesPage = () => {
             <Link
               key={category.id}
               to={`/categories/${category.id}/products`}
-              className="relative group block aspect-square overflow-hidden bg-surface-dim no-underline"
+              className="relative group block aspect-square overflow-hidden bg-surface-dim"
+              style={{ color: "#fff8f3", textDecoration: "none" }}
               aria-label={`Browse ${category.name}`}
             >
               <img
@@ -76,10 +77,16 @@ export const CategoriesPage = () => {
                 className="absolute inset-0 bg-on-background/15 group-hover:bg-on-background/30 transition-colors"
               />
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center">
-                <h2 className="text-surface font-display-xl text-headline-md tracking-widest uppercase font-normal m-0">
+                <h2
+                  className="font-display-xl text-headline-md tracking-widest uppercase font-normal m-0"
+                  style={{ color: "#fff8f3" }}
+                >
                   {category.name}
                 </h2>
-                <span className="text-surface/80 font-body-md text-label-sm uppercase tracking-widest border-b border-surface/60 pb-1 opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500">
+                <span
+                  className="font-body-md text-label-sm uppercase tracking-widest border-b pb-1 opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500"
+                  style={{ color: "rgba(255,248,243,0.8)", borderColor: "rgba(255,248,243,0.6)" }}
+                >
                   Explore Collection
                 </span>
               </div>

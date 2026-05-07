@@ -113,7 +113,8 @@ export const HomePage = () => {
             <Link
               key={tile.label}
               to={tile.to}
-              className="relative group block aspect-square overflow-hidden bg-surface-dim no-underline"
+              className="relative group block aspect-square overflow-hidden bg-surface-dim"
+              style={{ color: "#fff8f3", textDecoration: "none" }}
             >
               <img
                 src={tile.image}
@@ -125,7 +126,10 @@ export const HomePage = () => {
                 className="absolute inset-0 bg-on-background/10 group-hover:bg-on-background/20 transition-colors"
               />
               <div className="absolute inset-0 flex items-center justify-center px-6">
-                <h3 className="text-surface font-display-xl text-headline-md tracking-widest uppercase font-normal text-center">
+                <h3
+                  className="font-display-xl text-headline-md tracking-widest uppercase font-normal text-center"
+                  style={{ color: "#fff8f3" }}
+                >
                   {tile.label}
                 </h3>
               </div>
