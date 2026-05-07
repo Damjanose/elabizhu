@@ -1,27 +1,424 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&family=Inter:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
 :root {
-  color-scheme: light;
+  --aurelia-primary: #c5a059;
+  --aurelia-secondary: #8e9b8e;
+  --aurelia-tertiary: #d4a373;
+  --aurelia-neutral: #7c766f;
+  --aurelia-surface: #fff8f3;
+  --aurelia-surface-soft: #f5ede4;
+  --aurelia-surface-border: #d1c5b4;
+  --aurelia-text: #1e1b16;
+  --aurelia-text-muted: #4e4639;
+}
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 20px;
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
 }
 
 body {
-  margin: 0;
-  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
-  color: #0f172a;
+  background-color: var(--aurelia-surface);
+  font-family: Inter, sans-serif;
+  color: var(--aurelia-text);
 }
 
-#root {
-  min-height: 100vh;
+h1,
+h2,
+h3,
+h4,
+.font-display,
+.aurelia-brand,
+.aurelia-admin-title,
+.aurelia-hero-title {
+  font-family: "Noto Serif", serif;
 }
 
-.object-fit-cover {
+.hero-gradient {
+  background: linear-gradient(to bottom, rgba(255, 248, 243, 0) 0%, rgba(255, 248, 243, 0.8) 100%);
+}
+
+.aurelia-container {
+  width: min(1440px, calc(100% - 3rem));
+  margin: 0 auto;
+}
+
+.aurelia-app-shell {
+  background: var(--aurelia-surface);
+}
+
+.aurelia-topbar {
+  background: rgba(255, 248, 243, 0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--aurelia-surface-border);
+  padding: 0.95rem 0;
+}
+
+.aurelia-brand {
+  font-family: "Noto Serif", serif;
+  letter-spacing: 0.2em;
+  color: var(--aurelia-text);
+  font-size: 1.1rem;
+}
+
+.aurelia-nav-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  min-height: 56px;
+}
+
+.aurelia-nav-left,
+.aurelia-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.aurelia-nav-right {
+  justify-content: flex-end;
+}
+
+.aurelia-nav-link {
+  color: var(--aurelia-text-muted);
+  text-decoration: none;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 0.2rem;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.aurelia-nav-link:hover {
+  color: var(--aurelia-primary);
+}
+
+.aurelia-nav-link-active {
+  color: var(--aurelia-primary);
+  border-bottom-color: var(--aurelia-primary);
+}
+
+.aurelia-nav-left .aurelia-nav-link:first-child {
+  color: var(--aurelia-primary);
+  border-bottom-color: var(--aurelia-primary);
+}
+
+.aurelia-icon-link {
+  color: var(--aurelia-primary);
+  font-size: 1rem;
+  line-height: 1;
+  transition: opacity 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aurelia-icon-link:hover {
+  opacity: 0.75;
+}
+
+.aurelia-cart-icon {
+  position: relative;
+  color: var(--aurelia-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aurelia-icon-link svg,
+.aurelia-cart-icon svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.aurelia-cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background: var(--aurelia-primary);
+  color: var(--aurelia-text);
+  border-radius: 999px;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 4px;
+  font-size: 0.55rem;
+  display: grid;
+  place-content: center;
+}
+
+.aurelia-btn {
+  border: 1px solid var(--aurelia-neutral);
+  padding: 0.5rem 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.68rem;
+  background: transparent;
+  color: var(--aurelia-neutral);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.aurelia-btn:hover {
+  opacity: 0.9;
+}
+
+.aurelia-btn-primary {
+  background: var(--aurelia-primary);
+  color: #fff;
+  border-color: var(--aurelia-primary);
+}
+
+.aurelia-btn-outline {
+  border-color: var(--aurelia-secondary);
+  color: var(--aurelia-secondary);
+}
+
+.aurelia-btn-ghost {
+  border-color: var(--aurelia-surface-border);
+  color: var(--aurelia-text-muted);
+}
+
+.aurelia-btn-ghost-danger {
+  border-color: #ba1a1a;
+  color: #ba1a1a;
+}
+
+.aurelia-muted {
+  color: var(--aurelia-text-muted);
+}
+
+.aurelia-product-card {
+  background: transparent;
+}
+
+.aurelia-product-image {
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.aurelia-product-card:hover .aurelia-product-image {
+  transform: scale(1.03);
+}
+
+.aurelia-product-name {
+  color: var(--aurelia-text);
+  font-family: "Noto Serif", serif;
+  font-size: 1.03rem;
+}
+
+.aurelia-product-price {
+  color: var(--aurelia-primary);
+  font-weight: 600;
+}
+
+.aurelia-featured-badge {
+  background: rgba(197, 160, 89, 0.14);
+  color: var(--aurelia-primary);
+  border-radius: 999px;
+  padding: 0.18rem 0.55rem;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.aurelia-admin-page {
+  padding-top: 0.25rem;
+}
+
+.aurelia-admin-kicker {
+  color: var(--aurelia-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.72rem;
+}
+
+.aurelia-admin-title {
+  font-size: clamp(1.8rem, 3.2vw, 2.5rem);
+  font-weight: 400;
+  color: var(--aurelia-text);
+}
+
+.aurelia-admin-card {
+  display: block;
+  border: 1px solid var(--aurelia-surface-border);
+  background: #fff;
+  color: var(--aurelia-text);
+  box-shadow: 0 10px 28px -14px rgba(51, 34, 17, 0.12);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.aurelia-admin-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px -14px rgba(51, 34, 17, 0.18);
+}
+
+.aurelia-admin-card-title {
+  font-family: "Noto Serif", serif;
+  font-size: 1.35rem;
+  margin-bottom: 0.5rem;
+}
+
+.aurelia-admin-panel {
+  border: 1px solid var(--aurelia-surface-border);
+  background: #fff;
+}
+
+.aurelia-admin-table-wrap {
+  border: 1px solid var(--aurelia-surface-border);
+  background: #fff;
+}
+
+.aurelia-admin-table thead th {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.72rem;
+  color: var(--aurelia-text-muted);
+  font-weight: 600;
+  border-bottom-color: #d1c5b4;
+}
+
+.aurelia-admin-table tbody td {
+  color: var(--aurelia-text);
+  border-bottom-color: #efe7de;
+}
+
+.aurelia-home {
+  display: grid;
+  gap: 4.5rem;
+  padding-bottom: 3rem;
+}
+
+.aurelia-hero {
+  position: relative;
+  min-height: 62vh;
+  overflow: hidden;
+}
+
+.aurelia-hero-image {
+  width: 100%;
+  height: 62vh;
   object-fit: cover;
 }
 
-.navbar-brand {
-  letter-spacing: 0.2px;
+.aurelia-hero-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  background: linear-gradient(to bottom, rgba(255, 248, 243, 0.04), rgba(255, 248, 243, 0.72));
+  padding: 1.5rem;
 }
 
-.card {
-  border-radius: 1rem;
+.aurelia-hero-title {
+  font-family: "Noto Serif", serif;
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight: 400;
+  line-height: 1.08;
+  max-width: 16ch;
+  margin: 0 auto 0.8rem;
+}
+
+.aurelia-hero-copy {
+  max-width: 52ch;
+  margin: 0 auto;
+  color: var(--aurelia-text-muted);
+}
+
+.aurelia-feature-block {
+  background: var(--aurelia-surface-soft);
+  padding: 2rem;
+}
+
+.aurelia-feature-image {
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+
+.aurelia-feature-point {
+  border-left: 2px solid var(--aurelia-tertiary);
+  padding-left: 0.7rem;
+  font-family: "Noto Serif", serif;
+  font-size: 1rem;
+}
+
+.aurelia-category-tile {
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
+
+.aurelia-category-tile img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.aurelia-category-tile span {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #fff8f3;
+  font-family: "Noto Serif", serif;
+  background: rgba(30, 27, 22, 0.22);
+}
+
+.aurelia-category-tile:hover img {
+  transform: scale(1.06);
+}
+
+.aurelia-newsletter {
+  border-top: 1px solid var(--aurelia-surface-border);
+  border-bottom: 1px solid var(--aurelia-surface-border);
+  padding: 3.5rem 1rem;
+}
+
+.aurelia-newsletter-input {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--aurelia-neutral);
+  min-width: 260px;
+  padding: 0.6rem 0.2rem;
+}
+
+.aurelia-newsletter-input:focus {
+  outline: none;
+  border-bottom-color: var(--aurelia-primary);
+}
+
+@media (max-width: 991px) {
+  .aurelia-nav-left {
+    display: none;
+  }
+
+  .aurelia-nav-grid {
+    grid-template-columns: auto 1fr auto;
+    gap: 0.8rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .aurelia-home {
+    gap: 3rem;
+  }
 }
 
 .card .form-control,

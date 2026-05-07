@@ -18,11 +18,10 @@ export const NotificationBell = () => {
   const unread = data?.filter((n) => !n.readAt).length ?? 0
 
   return (
-    <Link className="btn btn-outline-secondary btn-sm position-relative" to="/notifications" aria-label="Notifications">
-      <span className="me-1">🔔</span>
-      Inbox
+    <Link className="aurelia-cart-icon text-decoration-none" to="/notifications" aria-label="Notifications">
+      <span className="material-symbols-outlined">notifications</span>
       {unread > 0 && (
-        <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">{unread}</span>
+        <span className="aurelia-cart-badge">{unread}</span>
       )}
     </Link>
   )

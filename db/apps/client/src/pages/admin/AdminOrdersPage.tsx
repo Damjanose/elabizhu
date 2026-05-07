@@ -28,10 +28,15 @@ export const AdminOrdersPage = () => {
   if (isLoading) return <div className="alert alert-info">Loading…</div>
 
   return (
-    <div>
-      <h1 className="h3 fw-bold mb-3">Admin orders</h1>
-      <div className="table-responsive card border-0 shadow-sm">
-        <table className="table align-middle mb-0">
+    <div className="aurelia-admin-page">
+      <div className="d-flex justify-content-between align-items-end mb-4">
+        <div>
+          <p className="aurelia-admin-kicker mb-2">Operations</p>
+          <h1 className="aurelia-admin-title mb-0">Order flow</h1>
+        </div>
+      </div>
+      <div className="table-responsive aurelia-admin-table-wrap">
+        <table className="table align-middle mb-0 aurelia-admin-table">
           <thead>
             <tr>
               <th>When</th>
@@ -53,7 +58,7 @@ export const AdminOrdersPage = () => {
                       <button
                         key={s}
                         type="button"
-                        className="btn btn-sm btn-outline-primary"
+                        className="aurelia-btn aurelia-btn-outline"
                         disabled={patch.isPending}
                         onClick={() => void patch.mutateAsync({ id: o.id, status: s })}
                       >
@@ -63,7 +68,7 @@ export const AdminOrdersPage = () => {
                   </div>
                 </td>
                 <td>
-                  <Link to={`/orders/${o.id}`} className="btn btn-sm btn-outline-secondary">
+                  <Link to={`/orders/${o.id}`} className="aurelia-btn aurelia-btn-ghost text-decoration-none">
                     Open
                   </Link>
                 </td>

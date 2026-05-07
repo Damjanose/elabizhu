@@ -53,17 +53,20 @@ export const AdminProductsPage = () => {
   if (isLoading) return <div className="alert alert-info">Loading…</div>
 
   return (
-    <div>
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h1 className="h3 fw-bold mb-0">Admin products</h1>
-        <button type="button" className="btn btn-primary btn-sm" onClick={() => setCreating((v) => !v)}>
+    <div className="aurelia-admin-page">
+      <div className="d-flex justify-content-between align-items-end mb-4">
+        <div>
+          <p className="aurelia-admin-kicker mb-2">Curation Suite</p>
+          <h1 className="aurelia-admin-title mb-0">Products</h1>
+        </div>
+        <button type="button" className="aurelia-btn aurelia-btn-primary" onClick={() => setCreating((v) => !v)}>
           {creating ? "Close" : "New product"}
         </button>
       </div>
 
       {creating && (
-        <div className="card border-0 shadow-sm mb-4">
-          <div className="card-body">
+        <div className="aurelia-admin-panel mb-4">
+          <div className="p-4">
             <div className="row g-2">
               <div className="col-md-4">
                 <label className="form-label">Category</label>
@@ -144,7 +147,7 @@ export const AdminProductsPage = () => {
             </div>
             <button
               type="button"
-              className="btn btn-success mt-3"
+              className="aurelia-btn aurelia-btn-primary mt-3"
               disabled={c.isPending || !form.categoryId || !form.name || !form.price}
               onClick={() =>
                 void c.mutateAsync({
@@ -168,8 +171,8 @@ export const AdminProductsPage = () => {
         </div>
       )}
 
-      <div className="table-responsive card border-0 shadow-sm">
-        <table className="table align-middle mb-0">
+      <div className="table-responsive aurelia-admin-table-wrap">
+        <table className="table align-middle mb-0 aurelia-admin-table">
           <thead>
             <tr>
               <th>Name</th>
@@ -234,7 +237,7 @@ const AdminProductRow = ({
         <input type="checkbox" className="form-check-input" checked={featured} onChange={(e) => setFeatured(e.target.checked)} onBlur={() => onPatch({ stockQuantity: stock, urgencyBadge: badge, featured })} />
       </td>
       <td className="text-end">
-        <button type="button" className="btn btn-sm btn-outline-danger" onClick={onDelete}>
+        <button type="button" className="aurelia-btn aurelia-btn-ghost-danger" onClick={onDelete}>
           Delete
         </button>
       </td>

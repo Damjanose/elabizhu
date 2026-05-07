@@ -1,5 +1,5 @@
 import { Link, Navigate, Route, Routes } from "react-router-dom"
-import { NotificationBell } from "./components/notifications/NotificationBell"
+import { FiSearch, FiShoppingBag, FiUser } from "react-icons/fi"
 import { ProtectedRoute } from "./components/ProtectedRoute"
 import { StaffRoute } from "./components/StaffRoute"
 import { useSocketLifecycle } from "./hooks/useSocketLifecycle"
@@ -23,66 +23,50 @@ import { useAuth } from "./types/auth-context"
 
 const Shell = () => {
   useSocketLifecycle()
-  const { user, logout } = useAuth()
-
-  const staff =
-    user &&
-    (user.permissions.includes("admin") ||
-      user.permissions.includes("product.write") ||
-      user.permissions.includes("order.write"))
+  const { user } = useAuth()
 
   return (
-    <div className="min-vh-100 bg-body-tertiary">
-      <nav className="navbar navbar-expand-lg bg-white border-bottom sticky-top shadow-sm">
-        <div className="container">
-          <Link className="navbar-brand fw-semibold" to="/">
-            Jewellery
+    <div className="aurelia-app-shell min-vh-100">
+      <nav className="aurelia-topbar sticky-top">
+        <div className="aurelia-container aurelia-nav-grid">
+          <div className="aurelia-nav-left">
+            <Link className="aurelia-nav-link" to="/products">
+              Collections
+            </Link>
+            <Link className="aurelia-nav-link" to="/categories">
+              Story
+            </Link>
+            <Link className="aurelia-nav-link" to="/account">
+              Bespoke
+            </Link>
+            <Link className="aurelia-nav-link" to="/products">
+              Journal
+            </Link>
+          </div>
+
+          <Link className="aurelia-brand text-decoration-none text-center" to="/">
+            AURELIA
           </Link>
-          <div className="navbar-nav d-flex flex-row flex-wrap gap-2 gap-md-3 align-items-center">
-            <Link className="nav-link" to="/">
-              Home
+
+          <div className="aurelia-nav-right">
+            <Link className="aurelia-icon-link text-decoration-none" to="/products" aria-label="Search">
+              <FiSearch />
             </Link>
-            <Link className="nav-link" to="/categories">
-              Categories
+            <Link
+              className="aurelia-icon-link text-decoration-none"
+              to={user ? "/account" : "/login"}
+              aria-label="Account"
+            >
+              <FiUser />
             </Link>
-            <Link className="nav-link" to="/products">
-              Products
+            <Link className="aurelia-cart-icon text-decoration-none" to={user ? "/cart" : "/login"} aria-label="Cart">
+              <FiShoppingBag />
+              <span className="aurelia-cart-badge">{user ? "1" : "0"}</span>
             </Link>
-            {user && (
-              <>
-                <Link className="nav-link" to="/cart">
-                  Cart
-                </Link>
-                <Link className="nav-link" to="/account">
-                  Account
-                </Link>
-                <NotificationBell />
-              </>
-            )}
-            {staff && (
-              <Link className="nav-link text-primary fw-medium" to="/admin">
-                Admin
-              </Link>
-            )}
-            {!user && (
-              <Link className="nav-link" to="/login">
-                Login
-              </Link>
-            )}
-            {!user && (
-              <Link className="btn btn-primary btn-sm px-3" to="/register">
-                Register
-              </Link>
-            )}
-            {user && (
-              <button className="btn btn-outline-danger btn-sm px-3" onClick={() => void logout()}>
-                Logout
-              </button>
-            )}
           </div>
         </div>
       </nav>
-      <main className="container py-4 py-md-5">
+      <main className="aurelia-container py-4 py-md-5">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
