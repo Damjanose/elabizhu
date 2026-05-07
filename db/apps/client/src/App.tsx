@@ -1,5 +1,6 @@
-import { Link, Navigate, Route, Routes } from "react-router-dom"
+import { Link, Route, Routes } from "react-router-dom"
 import { FiSearch, FiShoppingBag } from "react-icons/fi"
+import { ErrorBoundary } from "./components/feedback/ErrorBoundary"
 import { GuestRoute } from "./components/GuestRoute"
 import { ProtectedRoute } from "./components/ProtectedRoute"
 import { StaffRoute } from "./components/StaffRoute"
@@ -15,6 +16,7 @@ import { CategoryProductsPage } from "./pages/CategoryProductsPage"
 import { CheckoutPage } from "./pages/CheckoutPage"
 import { HomePage } from "./pages/HomePage"
 import { LoginPage } from "./pages/LoginPage"
+import { NotFoundPage } from "./pages/NotFoundPage"
 import { NotificationsPage } from "./pages/NotificationsPage"
 import { OrderDetailPage } from "./pages/OrderDetailPage"
 import { OrdersPage } from "./pages/OrdersPage"
@@ -63,6 +65,7 @@ const Shell = () => {
         </div>
       </nav>
       <main className="aurelia-container py-4 py-md-5">
+        <ErrorBoundary>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route
@@ -160,8 +163,9 @@ const Shell = () => {
             }
           />
 
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
+        </ErrorBoundary>
       </main>
     </div>
   )

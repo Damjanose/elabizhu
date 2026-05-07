@@ -1,11 +1,36 @@
 import { Link } from "react-router-dom"
 import { useCart } from "../hooks/useCart"
+import { EmptyState } from "../components/feedback/EmptyState"
 
 export const CartPage = () => {
-  const { data, isLoading, isError, setQty, removeLine, isUpdating } = useCart()
+  const { data, isLoading, isError, setQty, removeLine, isUpdating, refetch, isFetching } = useCart()
 
-  if (isLoading) return <div className="alert alert-info">Loading cart…</div>
-  if (isError) return <div className="alert alert-danger">Could not load cart</div>
+  if (isLoading) {
+    return (
+      <EmptyState
+        variant="card"
+        icon="hourglass_empty"
+        kicker="Loading"
+        title="Retrieving your selection…"
+        copy="One moment while we gather what you’ve set aside."
+      />
+    )
+  }
+
+  if (isError) {
+    return (
+      <EmptyState
+        variant="card"
+        tone="danger"
+        icon="error"
+        kicker="Connection Issue"
+        title="We couldn’t load your cart"
+        copy="An unexpected error interrupted our request. Please try again."
+        cta={{ label: isFetching ? "Retrying…" : "Try Again", onClick: () => void refetch() }}
+        secondaryCta={{ to: "/products", label: "Browse Collections" }}
+      />
+    )
+  }
 
   const items = data?.items ?? []
 
@@ -14,9 +39,15 @@ export const CartPage = () => {
       <div className="card-body p-4">
         <h1 className="h3 fw-bold mb-3">Cart</h1>
         {items.length === 0 ? (
-          <p className="text-secondary mb-0">
-            Your cart is empty. <Link to="/products">Continue shopping</Link>
-          </p>
+          <EmptyState
+            variant="inline"
+            icon="shopping_bag"
+            kicker="Your Atelier"
+            title="Your cart is empty"
+            copy="When you set a piece aside, it will rest here until you’re ready to continue."
+            cta={{ to: "/products", label: "Browse Collections" }}
+            secondaryCta={{ to: "/categories", label: "Shop by Category" }}
+          />
         ) : (
           <>
             <div className="table-responsive">

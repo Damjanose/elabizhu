@@ -1,9 +1,33 @@
+import { useMemo } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { fetchNotifications, markAllNotificationsRead, markNotificationRead } from "../services/notifications"
+import type { NotificationDto } from "@jewellery/types"
+import { EmptyState } from "../components/feedback/EmptyState"
+import {
+  fetchNotifications,
+  markAllNotificationsRead,
+  markNotificationRead,
+} from "../services/notifications"
+
+const formatRelative = (iso: string) => {
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) return ""
+  const diffMs = Date.now() - date.getTime()
+  const minutes = Math.round(diffMs / 60000)
+  if (minutes < 1) return "Just now"
+  if (minutes < 60) return `${minutes} min ago`
+  const hours = Math.round(minutes / 60)
+  if (hours < 24) return `${hours} hr ago`
+  const days = Math.round(hours / 24)
+  if (days < 7) return `${days} d ago`
+  return date.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" })
+}
 
 export const NotificationsPage = () => {
   const queryClient = useQueryClient()
-  const { data, isLoading } = useQuery({ queryKey: ["notifications"], queryFn: fetchNotifications })
+  const { data, isLoading, isError, refetch, isFetching } = useQuery({
+    queryKey: ["notifications"],
+    queryFn: fetchNotifications,
+  })
 
   const markOne = useMutation({
     mutationFn: markNotificationRead,
@@ -15,37 +39,118 @@ export const NotificationsPage = () => {
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: ["notifications"] }),
   })
 
-  if (isLoading) return <div className="alert alert-info">Loading…</div>
+  const sorted = useMemo(
+    () =>
+      (data ?? [])
+        .slice()
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
+    [data],
+  )
+
+  const unreadCount = useMemo(() => sorted.filter((n) => !n.readAt).length, [sorted])
 
   return (
-    <div className="card border-0 shadow-sm">
-      <div className="card-body p-4">
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <h1 className="h3 fw-bold mb-0">Notifications</h1>
-          <button type="button" className="btn btn-sm btn-outline-secondary" disabled={markAll.isPending} onClick={() => void markAll.mutateAsync()}>
-            Mark all read
+    <section className="aurelia-notifications">
+      <header className="aurelia-notifications-hero">
+        <div>
+          <span className="aurelia-admin-kicker d-block mb-3">Personal Atelier</span>
+          <h1 className="aurelia-notifications-title">Notifications</h1>
+          <p className="aurelia-notifications-copy">
+            Updates on your orders, atelier announcements, and curated stories — all in one place.
+          </p>
+        </div>
+        {sorted.length > 0 && (
+          <button
+            type="button"
+            className="aurelia-notifications-mark"
+            disabled={markAll.isPending || unreadCount === 0}
+            onClick={() => void markAll.mutateAsync()}
+          >
+            {unreadCount === 0
+              ? "All Caught Up"
+              : markAll.isPending
+                ? "Marking…"
+                : `Mark All as Read (${unreadCount})`}
           </button>
-        </div>
-        <div className="list-group">
-          {data?.map((n) => (
-            <button
-              type="button"
-              key={n.id}
-              className={`list-group-item list-group-item-action text-start ${n.readAt ? "" : "fw-semibold"}`}
-              onClick={() => {
-                if (!n.readAt) void markOne.mutateAsync(n.id)
-              }}
-            >
-              <div className="d-flex justify-content-between">
-                <span>{n.title}</span>
-                <time className="small text-secondary">{new Date(n.createdAt).toLocaleString()}</time>
-              </div>
-              {n.body && <div className="small text-secondary">{n.body}</div>}
-            </button>
+        )}
+      </header>
+
+      {isLoading ? (
+        <NotificationsSkeleton />
+      ) : isError ? (
+        <EmptyState
+          variant="card"
+          tone="danger"
+          icon="error"
+          kicker="Connection Issue"
+          title="We couldn’t fetch your notifications"
+          copy="Please refresh, or come back in a moment."
+          cta={{ label: isFetching ? "Retrying…" : "Try Again", onClick: () => void refetch() }}
+        />
+      ) : sorted.length === 0 ? (
+        <EmptyState
+          variant="card"
+          icon="notifications_off"
+          kicker="All Quiet"
+          title="You’re all caught up"
+          copy="When orders progress or your atelier has news, updates will appear here."
+          cta={{ to: "/products", label: "Browse Collections" }}
+        />
+      ) : (
+        <ul className="aurelia-notifications-list">
+          {sorted.map((notification) => (
+            <NotificationRow
+              key={notification.id}
+              notification={notification}
+              onMarkRead={() => void markOne.mutateAsync(notification.id)}
+            />
           ))}
-        </div>
-        {data?.length === 0 && <p className="text-secondary mb-0">You are all caught up.</p>}
-      </div>
-    </div>
+        </ul>
+      )}
+    </section>
   )
 }
+
+const NotificationRow = ({
+  notification,
+  onMarkRead,
+}: {
+  notification: NotificationDto
+  onMarkRead: () => void
+}) => {
+  const isUnread = !notification.readAt
+  return (
+    <li className={`aurelia-notifications-row ${isUnread ? "is-unread" : ""}`}>
+      <button
+        type="button"
+        className="aurelia-notifications-row-link"
+        onClick={isUnread ? onMarkRead : undefined}
+        aria-label={isUnread ? `Mark "${notification.title}" as read` : notification.title}
+      >
+        <span className="aurelia-notifications-row-marker" aria-hidden />
+        <div className="aurelia-notifications-row-body">
+          <div className="aurelia-notifications-row-head">
+            <span className="aurelia-notifications-row-kicker">
+              {notification.type.replace(/_/g, " ").toUpperCase()}
+            </span>
+            <time className="aurelia-notifications-row-time" dateTime={notification.createdAt}>
+              {formatRelative(notification.createdAt)}
+            </time>
+          </div>
+          <p className="aurelia-notifications-row-title">{notification.title}</p>
+          {notification.body && (
+            <p className="aurelia-notifications-row-copy">{notification.body}</p>
+          )}
+        </div>
+      </button>
+    </li>
+  )
+}
+
+const NotificationsSkeleton = () => (
+  <div className="aurelia-notifications-skeleton" aria-busy="true" aria-live="polite">
+    {[0, 1, 2, 3].map((i) => (
+      <div key={i} className="aurelia-notifications-skeleton-row" />
+    ))}
+  </div>
+)

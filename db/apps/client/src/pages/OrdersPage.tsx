@@ -2,6 +2,7 @@ import { useMemo, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import type { OrderStatus, OrderSummary } from "@jewellery/types"
 import { Link } from "react-router-dom"
+import { EmptyState } from "../components/feedback/EmptyState"
 import { fetchOrders } from "../services/orders"
 
 type FilterId = "all" | "active" | "delivered" | "cancelled"
@@ -40,7 +41,10 @@ const formatDate = (iso: string) => {
 const orderRef = (id: string) => `#AUR-${id.slice(0, 6).toUpperCase()}`
 
 export const OrdersPage = () => {
-  const { data, isLoading, isError } = useQuery({ queryKey: ["orders"], queryFn: fetchOrders })
+  const { data, isLoading, isError, refetch, isFetching } = useQuery({
+    queryKey: ["orders"],
+    queryFn: fetchOrders,
+  })
   const [filter, setFilter] = useState<FilterId>("all")
 
   const sorted = useMemo(
@@ -95,23 +99,33 @@ export const OrdersPage = () => {
       {isLoading ? (
         <OrdersSkeleton />
       ) : isError ? (
-        <OrdersState
+        <EmptyState
+          variant="card"
+          tone="danger"
           icon="error"
+          kicker="Connection Issue"
           title="We couldn’t load your orders"
-          copy="Please refresh the page or come back in a moment."
+          copy="An unexpected error interrupted our request. Please try again."
+          cta={{ label: isFetching ? "Retrying…" : "Try Again", onClick: () => void refetch() }}
+          secondaryCta={{ to: "/products", label: "Browse Collections" }}
         />
       ) : sorted.length === 0 ? (
-        <OrdersState
+        <EmptyState
+          variant="card"
           icon="auto_stories"
+          kicker="A Blank Page"
           title="No orders yet"
           copy="Begin your collection and your acquisitions will appear here."
           cta={{ to: "/products", label: "Explore Collections" }}
+          secondaryCta={{ to: "/categories", label: "Shop by Category" }}
         />
       ) : visible.length === 0 ? (
-        <OrdersState
+        <EmptyState
+          variant="card"
           icon="filter_alt"
           title="Nothing in this view"
           copy="Try a different filter to see more of your history."
+          cta={{ label: "Show All Orders", onClick: () => setFilter("all") }}
         />
       ) : (
         <OrdersTable orders={visible} />
@@ -178,30 +192,5 @@ const OrdersSkeleton = () => (
     {[0, 1, 2].map((i) => (
       <div key={i} className="aurelia-orders-skeleton-row" />
     ))}
-  </div>
-)
-
-const OrdersState = ({
-  icon,
-  title,
-  copy,
-  cta,
-}: {
-  icon: string
-  title: string
-  copy: string
-  cta?: { to: string; label: string }
-}) => (
-  <div className="aurelia-orders-empty">
-    <span className="material-symbols-outlined aurelia-orders-empty-icon" aria-hidden>
-      {icon}
-    </span>
-    <h2 className="aurelia-orders-empty-title">{title}</h2>
-    <p className="aurelia-orders-empty-copy">{copy}</p>
-    {cta && (
-      <Link to={cta.to} className="aurelia-orders-empty-cta">
-        {cta.label}
-      </Link>
-    )}
   </div>
 )
