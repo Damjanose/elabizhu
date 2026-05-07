@@ -958,7 +958,7 @@ h4,
   cursor: not-allowed;
 }
 
-/* ---------- Account page (editorial salon) ---------- */
+/* ---------- Account page (Personal Atelier dashboard) ---------- */
 
 .aurelia-account {
   display: grid;
@@ -973,46 +973,440 @@ h4,
   }
 }
 
+/* Hero */
+
 .aurelia-account-hero {
-  text-align: center;
-  max-width: 38rem;
-  margin: 0 auto;
+  max-width: 60rem;
 }
 
 .aurelia-account-hero-title {
   font-family: "Noto Serif", serif;
   font-weight: 400;
-  font-size: clamp(2.25rem, 4vw, 3.25rem);
-  line-height: 1.1;
-  letter-spacing: -0.005em;
-  margin: 1.25rem 0 1.25rem;
+  font-size: clamp(2.25rem, 4.2vw, 3.25rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 0.5rem 0 0.75rem;
   color: var(--aurelia-text);
 }
 
 .aurelia-account-hero-copy {
   font-family: Inter, sans-serif;
-  font-size: 1rem;
+  font-size: 1.05rem;
   line-height: 1.6;
   color: var(--aurelia-text-muted);
-  max-width: 32rem;
-  margin: 0 auto;
+  max-width: 38rem;
+  margin: 0;
 }
 
-.aurelia-account-grid {
+/* Bento grid (12-col on desktop) */
+
+.aurelia-bento {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 3rem;
+  gap: 1.5rem;
+}
+
+@media (min-width: 992px) {
+  .aurelia-bento {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 32px;
+  }
+}
+
+.aurelia-bento-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2.5rem;
+  padding: 2rem;
+  min-height: 280px;
+  box-shadow: 0 4px 20px -2px rgba(51, 34, 17, 0.06);
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.aurelia-bento-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 28px -10px rgba(51, 34, 17, 0.12);
+}
+
+.aurelia-bento-card.is-loading {
+  background: var(--aurelia-surface-soft);
+  min-height: 280px;
+  position: relative;
+  overflow: hidden;
+}
+
+.aurelia-bento-card.is-loading::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(255, 248, 243, 0.6) 50%,
+    transparent 100%
+  );
+  animation: aurelia-shimmer 1.6s infinite;
+}
+
+@keyframes aurelia-shimmer {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+@media (min-width: 992px) {
+  .aurelia-bento-card--profile { grid-column: span 4; background: var(--aurelia-surface-container-low, #fbf2e9); }
+  .aurelia-bento-card--order { grid-column: span 5; }
+  .aurelia-bento-card--notifications { grid-column: span 3; background: #efe7de; }
+}
+
+.aurelia-bento-card--profile {
+  background: #fbf2e9;
+}
+
+.aurelia-bento-card--order {
+  background: #34302a;
+  color: #f8efe6;
+}
+
+.aurelia-bento-card--notifications {
+  background: #efe7de;
+}
+
+/* Bento internals */
+
+.aurelia-bento-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.aurelia-bento-card-body {
+  flex: 1;
+}
+
+.aurelia-bento-card-foot {
+  margin-top: auto;
+}
+
+.aurelia-bento-icon {
+  font-size: 2rem;
+  color: #775a19;
+  line-height: 1;
+}
+
+.aurelia-bento-icon--inverse {
+  color: #e9c176;
+}
+
+.aurelia-bento-icon-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.aurelia-bento-icon-dot {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 8px;
+  height: 8px;
+  background: #ba1a1a;
+  border-radius: 50%;
+  border: 2px solid #efe7de;
+}
+
+.aurelia-bento-action {
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: #775a19;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.aurelia-bento-action:hover {
+  text-decoration: underline;
+}
+
+.aurelia-bento-action--inverse {
+  color: #e9c176;
+}
+
+.aurelia-bento-headline {
+  font-family: "Noto Serif", serif;
+  font-weight: 400;
+  font-size: 1.6rem;
+  line-height: 1.2;
+  margin: 0 0 0.4rem;
+  color: var(--aurelia-text);
+  word-break: break-word;
+}
+
+.aurelia-bento-headline--inverse {
+  color: #f8efe6;
+}
+
+.aurelia-bento-meta {
+  font-family: Inter, sans-serif;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--aurelia-text-muted);
+  margin: 0 0 0.25rem;
+  word-break: break-word;
+}
+
+.aurelia-bento-meta--inverse {
+  color: rgba(248, 239, 230, 0.78);
+}
+
+.aurelia-bento-meta--spaced {
+  margin-top: 1rem;
+}
+
+.aurelia-tier-pill {
+  display: inline-block;
+  padding: 0.25rem 0.7rem;
+  background: rgba(233, 193, 118, 0.22);
+  color: #5d4201;
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  border-radius: 999px;
+}
+
+.aurelia-bento-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border: 1px solid #e9c176;
+  background: transparent;
+  color: #e9c176;
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.aurelia-bento-button:hover {
+  background: #e9c176;
+  color: #34302a;
+}
+
+.aurelia-bento-notifications {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.aurelia-bento-notification-kicker {
+  display: block;
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--aurelia-text);
+  margin-bottom: 0.3rem;
+}
+
+.aurelia-bento-notification-title {
+  font-family: Inter, sans-serif;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  margin: 0 0 0.15rem;
+  color: var(--aurelia-text);
+}
+
+.aurelia-bento-notification-body {
+  font-family: Inter, sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--aurelia-text-muted);
+  margin: 0;
+}
+
+/* Detail row: Tracking + Item detail */
+
+.aurelia-account-detail {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
   align-items: start;
 }
 
 @media (min-width: 992px) {
-  .aurelia-account-grid {
-    grid-template-columns: minmax(260px, 1fr) minmax(0, 2fr);
-    gap: 5rem;
+  .aurelia-account-detail {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: 32px;
   }
 }
 
-.aurelia-account-section-label {
+.aurelia-account-detail-stack {
+  display: grid;
+  gap: 32px;
+}
+
+/* Tracking timeline */
+
+.aurelia-timeline-card {
+  background: #ffffff;
+  border: 1px solid var(--aurelia-surface-border);
+  padding: 2.25rem 2rem;
+}
+
+.aurelia-timeline-title {
+  font-family: "Noto Serif", serif;
+  font-weight: 400;
+  font-size: 1.6rem;
+  line-height: 1.2;
+  margin: 0 0 2.25rem;
+  color: var(--aurelia-text);
+}
+
+.aurelia-timeline-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.aurelia-timeline-list::before {
+  content: "";
+  position: absolute;
+  left: 11px;
+  top: 6px;
+  bottom: 6px;
+  width: 1px;
+  background: var(--aurelia-surface-border);
+}
+
+.aurelia-timeline-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  align-items: flex-start;
+  gap: 1rem;
+  padding-bottom: 2.25rem;
+}
+
+.aurelia-timeline-step:last-child {
+  padding-bottom: 0;
+}
+
+.aurelia-timeline-dot {
+  width: 23px;
+  height: 23px;
+  border-radius: 50%;
+  background: #e9c176;
+  border: 4px solid #fff8f3;
+  position: relative;
+  z-index: 1;
+}
+
+.aurelia-timeline-step.is-active .aurelia-timeline-dot {
+  background: #775a19;
+}
+
+.aurelia-timeline-step-body {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.aurelia-timeline-label {
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: var(--aurelia-text);
+}
+
+.aurelia-timeline-step.is-active .aurelia-timeline-label {
+  color: #775a19;
+}
+
+.aurelia-timeline-text {
+  margin: 0;
+  font-family: Inter, sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--aurelia-text);
+}
+
+.aurelia-timeline-step:not(.is-active) .aurelia-timeline-text {
+  color: var(--aurelia-text-muted);
+}
+
+.aurelia-timeline-meta {
+  font-family: Inter, sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  color: var(--aurelia-text-muted);
+}
+
+/* Item detail card */
+
+.aurelia-item-detail {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  background: var(--aurelia-surface-soft);
+  padding: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .aurelia-item-detail {
+    grid-template-columns: 16rem 1fr;
+    gap: 2rem;
+    padding: 1.25rem;
+  }
+}
+
+.aurelia-item-detail-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--aurelia-surface-soft);
+}
+
+.aurelia-item-detail-image img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.aurelia-item-detail-image:hover img {
+  transform: scale(1.04);
+}
+
+.aurelia-item-detail-image-fallback {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #efe7de 0%, #e1d9d0 100%);
+}
+
+.aurelia-item-detail-meta {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0.5rem 0;
+}
+
+.aurelia-item-detail-kicker {
   display: block;
   font-family: Inter, sans-serif;
   font-size: 11px;
@@ -1020,137 +1414,101 @@ h4,
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--aurelia-text-muted);
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.85rem;
-  border-bottom: 1px solid var(--aurelia-surface-border);
+  margin-bottom: 0.65rem;
 }
 
-.aurelia-account-identity-list {
-  display: grid;
-  gap: 1.4rem;
-  margin: 0;
-}
-
-.aurelia-account-identity-list > div {
-  display: grid;
-  gap: 0.3rem;
-}
-
-.aurelia-account-identity-list dt {
-  font-family: Inter, sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--aurelia-text-muted);
-}
-
-.aurelia-account-identity-list dd {
+.aurelia-item-detail-title {
   font-family: "Noto Serif", serif;
-  font-size: 1.05rem;
+  font-weight: 400;
+  font-size: 1.7rem;
+  line-height: 1.2;
+  margin: 0 0 1rem;
+  color: var(--aurelia-text);
+}
+
+.aurelia-item-detail-copy {
+  font-family: Inter, sans-serif;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--aurelia-text-muted);
+  margin: 0 0 1.5rem;
+  max-width: 36rem;
+}
+
+.aurelia-item-detail-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3rem;
   margin: 0;
-  color: var(--aurelia-text);
-  word-break: break-word;
-  line-height: 1.4;
-}
-
-.aurelia-account-links nav {
-  display: grid;
-  gap: 0;
-}
-
-.aurelia-account-link-row {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 1.5rem;
-  padding: 1.4rem 0.5rem;
-  text-decoration: none;
-  color: var(--aurelia-text);
-  border-bottom: 1px solid var(--aurelia-surface-border);
-  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    padding 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.aurelia-account-link-row:first-child {
+  padding-top: 1.25rem;
   border-top: 1px solid var(--aurelia-surface-border);
 }
 
-.aurelia-account-link-row:hover {
-  background: var(--aurelia-surface-soft);
-  padding-left: 1.25rem;
-  padding-right: 1.25rem;
-  color: #775a19;
+.aurelia-item-detail-stats > div {
+  display: grid;
+  gap: 0.25rem;
 }
 
-.aurelia-account-link-num {
+.aurelia-item-detail-stats dt {
   font-family: Inter, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
-  color: #775a19;
-}
-
-.aurelia-account-link-meta {
-  display: grid;
-  gap: 0.3rem;
-  min-width: 0;
-}
-
-.aurelia-account-link-title {
-  font-family: "Noto Serif", serif;
-  font-size: 1.15rem;
-  line-height: 1.2;
-}
-
-.aurelia-account-link-subtitle {
-  font-family: Inter, sans-serif;
-  font-size: 0.82rem;
+  text-transform: uppercase;
   color: var(--aurelia-text-muted);
-  line-height: 1.5;
 }
 
-.aurelia-account-link-arrow {
-  font-size: 1.4rem;
-  font-weight: 200;
-  line-height: 1;
-  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+.aurelia-item-detail-stats dd {
+  margin: 0;
+  font-family: Inter, sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--aurelia-text);
 }
 
-.aurelia-account-link-row:hover .aurelia-account-link-arrow {
-  transform: translateX(6px);
-}
+/* Account alert (signature required) */
 
-.aurelia-account-signout-block {
-  border-top: 1px solid var(--aurelia-surface-border);
-  padding-top: 2.5rem;
+.aurelia-account-alert {
   display: flex;
-  flex-direction: column;
   align-items: flex-start;
-  gap: 1.5rem;
+  gap: 1rem;
+  padding: 1.5rem;
+  border: 1px solid #ffdad6;
+  background: rgba(255, 218, 214, 0.18);
 }
 
-@media (min-width: 640px) {
-  .aurelia-account-signout-block {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 3rem;
-  }
+.aurelia-account-alert-icon {
+  color: #ba1a1a;
+  font-size: 1.35rem;
+  margin-top: 0.15rem;
+  line-height: 1;
 }
 
-.aurelia-account-signout-title {
-  font-family: "Noto Serif", serif;
-  font-weight: 400;
-  font-size: 1.5rem;
+.aurelia-account-alert-title {
+  font-family: Inter, sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
   margin: 0 0 0.4rem;
   color: var(--aurelia-text);
 }
 
-.aurelia-account-signout-copy {
-  margin: 0;
-  font-size: 0.9rem;
+.aurelia-account-alert-copy {
+  margin: 0 0 1rem;
+  font-family: Inter, sans-serif;
+  font-size: 0.92rem;
+  line-height: 1.55;
   color: var(--aurelia-text-muted);
-  max-width: 38ch;
+}
+
+.aurelia-account-alert-link {
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: #ba1a1a;
+  text-decoration: none;
+}
+
+.aurelia-account-alert-link:hover {
+  text-decoration: underline;
 }
