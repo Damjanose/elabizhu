@@ -278,13 +278,19 @@ h4,
   text-transform: uppercase;
   letter-spacing: 0.12em;
   font-size: 0.68rem;
-  background: transparent;
+  background: rgba(250, 247, 244, 0.72);
   color: var(--aurelia-neutral);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
 }
 
-.aurelia-btn:hover {
-  opacity: 0.9;
+.aurelia-btn:hover:not(:disabled) {
+  background: rgba(244, 238, 230, 0.95);
+  border-color: #b8a99a;
+}
+
+.aurelia-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .aurelia-btn-primary {
@@ -293,19 +299,64 @@ h4,
   border-color: var(--aurelia-primary);
 }
 
+.aurelia-btn-primary:hover:not(:disabled) {
+  background: #b08f4a;
+  border-color: #b08f4a;
+  color: #fff;
+  opacity: 1;
+}
+
 .aurelia-btn-outline {
   border-color: var(--aurelia-secondary);
   color: var(--aurelia-secondary);
+  background: rgba(250, 247, 244, 0.92);
+}
+
+.aurelia-btn-outline:hover:not(:disabled) {
+  background: rgba(244, 238, 230, 0.98);
+  border-color: #7a6022;
+  color: #5a4720;
+  opacity: 1;
 }
 
 .aurelia-btn-ghost {
   border-color: var(--aurelia-surface-border);
   color: var(--aurelia-text-muted);
+  background: rgba(250, 247, 244, 0.55);
+}
+
+.aurelia-btn-ghost:hover:not(:disabled) {
+  background: rgba(244, 238, 230, 0.88);
+  border-color: #d9cdbf;
+  color: var(--aurelia-text);
+  opacity: 1;
 }
 
 .aurelia-btn-ghost-danger {
+  border-color: rgba(186, 26, 26, 0.55);
+  color: #9f1616;
+  background: rgba(186, 26, 26, 0.12);
+}
+
+.aurelia-btn-ghost-danger:hover:not(:disabled) {
+  background: rgba(186, 26, 26, 0.22);
   border-color: #ba1a1a;
-  color: #ba1a1a;
+  color: #7a0f0f;
+  opacity: 1;
+}
+
+/* Secondary destructive — e.g. remove one asset */
+.aurelia-btn-soft-danger {
+  border-color: rgba(186, 26, 26, 0.45);
+  background: rgba(186, 26, 26, 0.12);
+  color: #7a0f0f;
+}
+
+.aurelia-btn-soft-danger:hover:not(:disabled) {
+  background: rgba(186, 26, 26, 0.22);
+  border-color: #ba1a1a;
+  color: #5c0c0c;
+  opacity: 1;
 }
 
 .aurelia-btn-solid-danger {
@@ -314,10 +365,11 @@ h4,
   color: #fff;
 }
 
-.aurelia-btn-solid-danger:hover {
+.aurelia-btn-solid-danger:hover:not(:disabled) {
   background: #9f1616;
   border-color: #9f1616;
   color: #fff;
+  opacity: 1;
 }
 
 .aurelia-btn-solid-success {
@@ -326,9 +378,76 @@ h4,
   color: #fff;
 }
 
-.aurelia-btn-solid-success:hover {
+.aurelia-btn-solid-success:hover:not(:disabled) {
   background: #266829;
   border-color: #266829;
+  color: #fff;
+  opacity: 1;
+}
+
+/* Admin order workflow: filled tonal actions */
+.aurelia-admin-next-step-btn {
+  min-width: 7.5rem;
+  font-weight: 600;
+}
+
+.aurelia-admin-next-step-btn.is-success {
+  border-color: #2f7d32;
+  background: #2f7d32;
+  color: #fff;
+}
+
+.aurelia-admin-next-step-btn.is-success:hover:not(:disabled) {
+  background: #266829;
+  border-color: #266829;
+  color: #fff;
+}
+
+.aurelia-admin-next-step-btn.is-info {
+  border-color: #1565c0;
+  background: #1565c0;
+  color: #fff;
+}
+
+.aurelia-admin-next-step-btn.is-info:hover:not(:disabled) {
+  background: #0d47a1;
+  border-color: #0d47a1;
+  color: #fff;
+}
+
+.aurelia-admin-next-step-btn.is-warning {
+  border-color: #b8860b;
+  background: #c5a059;
+  color: #1e1b16;
+}
+
+.aurelia-admin-next-step-btn.is-warning:hover:not(:disabled) {
+  background: #b08f4a;
+  border-color: #9a7a3f;
+  color: #1e1b16;
+}
+
+.aurelia-admin-next-step-btn.is-danger {
+  border-color: #ba1a1a;
+  background: #ba1a1a;
+  color: #fff;
+}
+
+.aurelia-admin-next-step-btn.is-danger:hover:not(:disabled) {
+  background: #9f1616;
+  border-color: #9f1616;
+  color: #fff;
+}
+
+.aurelia-admin-next-step-btn.is-muted {
+  border-color: #8a8174;
+  background: #8a8174;
+  color: #fff;
+}
+
+.aurelia-admin-next-step-btn.is-muted:hover:not(:disabled) {
+  background: #736b61;
+  border-color: #736b61;
   color: #fff;
 }
 
@@ -6682,11 +6801,15 @@ h4,
 }
 
 .aurelia-admin-products-media-btn.is-danger {
-  color: #93000a;
+  color: #fff;
+  background: rgba(186, 26, 26, 0.88);
+  border: 1px solid rgba(159, 22, 22, 0.9);
 }
 
 .aurelia-admin-products-media-btn.is-danger:hover:not(:disabled) {
-  background: rgba(186, 26, 26, 0.1);
+  background: #9f1616;
+  border-color: #9f1616;
+  color: #fff;
 }
 
 .aurelia-admin-products-dropzone {

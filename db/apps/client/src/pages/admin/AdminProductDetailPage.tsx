@@ -475,7 +475,7 @@ export const AdminProductDetailPage = () => {
               {form.videoUrl && (
                 <button
                   type="button"
-                  className="aurelia-btn aurelia-btn-ghost-danger"
+                  className="aurelia-btn aurelia-btn-soft-danger"
                   onClick={removeVideo}
                 >
                   Remove video
@@ -629,7 +629,7 @@ export const AdminProductDetailPage = () => {
               </p>
               <button
                 type="button"
-                className="aurelia-btn aurelia-btn-ghost-danger"
+                className="aurelia-btn aurelia-btn-solid-danger"
                 onClick={() => setConfirmDelete(true)}
               >
                 Delete product
@@ -692,7 +692,7 @@ export const AdminProductDetailPage = () => {
               </button>
               <button
                 type="button"
-                className="aurelia-btn aurelia-btn-ghost-danger"
+                className="aurelia-btn aurelia-btn-solid-danger"
                 onClick={() => {
                   setConfirmDelete(false)
                   void remove.mutateAsync()
