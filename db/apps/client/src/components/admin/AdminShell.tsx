@@ -1,14 +1,15 @@
-import { FiBell, FiGrid, FiHelpCircle, FiPackage, FiSearch, FiSettings, FiShoppingBag, FiUsers } from "react-icons/fi"
-import { NavLink, Outlet } from "react-router-dom"
-import { AdminCurrencySelect } from "./AdminCurrencySelect"
+import { FiGrid, FiHelpCircle, FiPackage, FiSearch, FiSettings, FiShoppingBag, FiUsers } from "react-icons/fi"
+import { Link, NavLink, Outlet } from "react-router-dom"
 import { useAuth } from "../../types/auth-context"
+import { AdminCurrencySelect } from "./AdminCurrencySelect"
+import { AdminOrderAlerts } from "./AdminOrderAlerts"
+import { AdminShellUserMenu } from "./AdminShellUserMenu"
 
 const shellNavClass = ({ isActive }: { isActive: boolean }) =>
   `aurelia-admin-shell-nav-link${isActive ? " is-active" : ""}`
 
 export const AdminShell = () => {
   const { user } = useAuth()
-  const displayName = user?.fullName?.trim() || user?.email || "Admin User"
   const canManageUsers = user?.permissions.includes("admin")
 
   return (
@@ -61,21 +62,16 @@ export const AdminShell = () => {
             </label>
             <div className="aurelia-admin-shell-topbar-right">
               <AdminCurrencySelect />
-              <button type="button" className="aurelia-admin-shell-icon-btn" aria-label="Notifications">
-                <FiBell />
-              </button>
-              <button type="button" className="aurelia-admin-shell-icon-btn" aria-label="Operations feed">
+              <AdminOrderAlerts />
+              <Link
+                to="/admin/orders"
+                className="aurelia-admin-shell-icon-btn"
+                aria-label="Admin orders"
+                title="Orders queue"
+              >
                 <FiShoppingBag />
-              </button>
-              <div className="aurelia-admin-shell-user">
-                <div>
-                  <p className="aurelia-admin-shell-user-kicker mb-0">Admin User</p>
-                  <p className="aurelia-admin-shell-user-name mb-0">Director of Operations</p>
-                </div>
-                <span className="aurelia-admin-shell-user-avatar" aria-hidden>
-                  {displayName.charAt(0).toUpperCase()}
-                </span>
-              </div>
+              </Link>
+              <AdminShellUserMenu />
             </div>
           </header>
 

@@ -768,13 +768,48 @@ h4,
   color: var(--aurelia-primary);
 }
 
-.aurelia-admin-shell-user {
+.aurelia-admin-shell-topbar-right a.aurelia-admin-shell-icon-btn {
+  text-decoration: none;
+}
+
+.aurelia-admin-shell-icon-btn:focus-visible {
+  outline: 2px solid rgba(197, 160, 89, 0.45);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.aurelia-admin-shell-user-menu {
+  position: relative;
   margin-left: 0.6rem;
   padding-left: 0.95rem;
   border-left: 1px solid var(--aurelia-surface-border);
+}
+
+.aurelia-admin-shell-user {
   display: flex;
   align-items: center;
   gap: 0.48rem;
+}
+
+.aurelia-admin-shell-user.aurelia-admin-shell-user-trigger {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+  border-radius: 4px;
+}
+
+.aurelia-admin-shell-user-trigger:hover .aurelia-admin-shell-user-display {
+  color: var(--aurelia-primary);
+}
+
+.aurelia-admin-shell-user-trigger:focus-visible {
+  outline: 2px solid rgba(197, 160, 89, 0.45);
+  outline-offset: 3px;
 }
 
 .aurelia-admin-shell-user-kicker {
@@ -784,10 +819,24 @@ h4,
   color: var(--aurelia-primary);
 }
 
-.aurelia-admin-shell-user-name {
-  font-size: 0.52rem;
+.aurelia-admin-shell-user-display {
+  font-family: "Noto Serif", serif;
+  font-size: 0.72rem;
+  color: var(--aurelia-text);
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  max-width: 11rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aurelia-admin-shell-user-role {
+  font-size: 0.48rem;
   color: var(--aurelia-text-muted);
-  text-transform: capitalize;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-top: 0.12rem;
 }
 
 .aurelia-admin-shell-user-avatar {
@@ -801,6 +850,162 @@ h4,
   border: 1px solid rgba(31, 64, 72, 0.35);
   font-size: 0.52rem;
   font-weight: 600;
+}
+
+.aurelia-admin-shell-user-popover {
+  z-index: 5500;
+}
+
+/* Admin · new orders bell (pending queue, not customer notifications) */
+.aurelia-admin-order-alerts {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.aurelia-admin-order-alerts-trigger {
+  position: relative;
+}
+
+.aurelia-admin-order-alerts-badge {
+  position: absolute;
+  top: -0.15rem;
+  right: -0.1rem;
+  min-width: 1rem;
+  height: 1rem;
+  padding: 0 0.28rem;
+  border-radius: 999px;
+  background: var(--aurelia-primary);
+  color: #1e1b16;
+  font-size: 0.55rem;
+  font-weight: 700;
+  line-height: 1rem;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.aurelia-admin-order-alerts-panel {
+  position: absolute;
+  top: calc(100% + 0.55rem);
+  right: 0;
+  width: min(320px, calc(100vw - 2rem));
+  background: var(--aurelia-surface);
+  border: 1px solid var(--aurelia-surface-border);
+  border-radius: 4px;
+  box-shadow: 0 16px 40px -20px rgba(51, 34, 17, 0.28);
+  z-index: 5500;
+  overflow: hidden;
+  animation: aurelia-menu-in 220ms cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: top right;
+}
+
+.aurelia-admin-order-alerts-head {
+  padding: 0.85rem 1rem 0.65rem;
+  border-bottom: 1px solid rgba(209, 197, 180, 0.55);
+}
+
+.aurelia-admin-order-alerts-kicker {
+  display: block;
+  font-size: 0.48rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--aurelia-primary);
+  margin-bottom: 0.35rem;
+}
+
+.aurelia-admin-order-alerts-title {
+  font-family: "Noto Serif", serif;
+  font-size: 1.05rem;
+  margin: 0 0 0.35rem;
+  color: var(--aurelia-text);
+  line-height: 1.2;
+}
+
+.aurelia-admin-order-alerts-sub {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--aurelia-text-muted);
+  line-height: 1.35;
+}
+
+.aurelia-admin-order-alerts-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.35rem 0;
+  max-height: min(280px, 42vh);
+  overflow-y: auto;
+}
+
+.aurelia-admin-order-alerts-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  padding: 0.55rem 1rem;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: var(--aurelia-text);
+  transition: background-color 0.15s ease;
+}
+
+.aurelia-admin-order-alerts-row:hover {
+  background: rgba(197, 160, 89, 0.1);
+}
+
+.aurelia-admin-order-alerts-row-id {
+  font-family: "Noto Serif", serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.aurelia-admin-order-alerts-row-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.12rem;
+  flex-shrink: 0;
+}
+
+.aurelia-admin-order-alerts-row-amount {
+  font-size: 0.78rem;
+  color: var(--aurelia-text);
+}
+
+.aurelia-admin-order-alerts-row-time {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--aurelia-text-muted);
+}
+
+.aurelia-admin-order-alerts-empty {
+  margin: 0;
+  padding: 1rem 1rem 0.85rem;
+  font-size: 0.8rem;
+  color: var(--aurelia-text-muted);
+}
+
+.aurelia-admin-order-alerts-foot {
+  padding: 0.55rem 1rem 0.75rem;
+  border-top: 1px solid rgba(209, 197, 180, 0.55);
+}
+
+.aurelia-admin-order-alerts-link {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--aurelia-primary);
+  text-decoration: none;
+}
+
+.aurelia-admin-order-alerts-link:hover {
+  color: #a67c32;
 }
 
 .aurelia-admin-shell-content {
@@ -1809,9 +2014,18 @@ select.aurelia-select.aurelia-select--compact:hover {
     align-items: stretch;
   }
 
-  .aurelia-admin-shell-user {
+  .aurelia-admin-shell-user-menu {
     margin-left: 0;
     padding-left: 0.8rem;
+    border-left: 0;
+    border-top: 1px solid var(--aurelia-surface-border);
+    padding-top: 0.65rem;
+    margin-top: 0.35rem;
+    width: 100%;
+  }
+
+  .aurelia-admin-shell-user-display {
+    max-width: min(11rem, 70vw);
   }
 
   .aurelia-admin-shell-content {

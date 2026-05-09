@@ -23,7 +23,7 @@ const orderLabel = (id: string) => `#AUR-${id.slice(0, 4).toUpperCase()}`
 export const AdminDashboardPage = () => {
   const navigate = useNavigate()
   const displayCurrency = useAdminDisplayCurrency()
-  const ordersQuery = useQuery({ queryKey: ["orders", "admin-dashboard"], queryFn: fetchOrders })
+  const ordersQuery = useQuery({ queryKey: ["orders"], queryFn: fetchOrders })
   const productsQuery = useQuery({ queryKey: ["products", "admin-dashboard"], queryFn: () => fetchProducts() })
 
   if (ordersQuery.isLoading || productsQuery.isLoading) {
