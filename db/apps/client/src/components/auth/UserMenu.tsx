@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { FiLogOut, FiPackage, FiUser } from "react-icons/fi"
+import { FiGrid, FiLogOut, FiPackage, FiUser } from "react-icons/fi"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../../types/auth-context"
 import { loginHrefWithReturn } from "../../utils/post-auth-redirect"
@@ -81,6 +81,17 @@ export const UserMenu = () => {
 
           <div className="aurelia-user-menu-divider" aria-hidden />
 
+          {(user.permissions.includes("admin") || user.permissions.includes("administrator")) && (
+            <Link
+              to="/admin"
+              role="menuitem"
+              className="aurelia-user-menu-item"
+              onClick={() => setOpen(false)}
+            >
+              <FiGrid aria-hidden="true" />
+              <span>Admin Dashboard</span>
+            </Link>
+          )}
           <Link
             to="/account"
             role="menuitem"

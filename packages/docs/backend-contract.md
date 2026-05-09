@@ -76,6 +76,34 @@ Requires `product.write` or `admin`:
 
 Category writes require `category.write` or `admin`.
 
+## Client admin dashboard access
+
+Client routes `/admin`, `/admin/products`, and `/admin/orders` are restricted to users with the `admin` permission in the route guard.
+
+This is a UX gate only; server-side authorization is still enforced by protected API routes (`requireAuth` + `requirePermission(...)`), which prevents DevTools/client-state bypass of privileged actions.
+
+The admin shell dashboard currently derives live metrics from:
+
+- `GET /orders` for recent orders, active/pending counts, and weekly revenue.
+- `GET /products` for low-stock/inventory alert counts.
+
+No dashboard metric grants additional privileges; write operations still require backend permission checks.
+
+## Admin users management
+
+All endpoints below require auth + `admin` permission:
+
+| Method | Path | Body | Notes |
+|--------|------|------|------|
+| GET | `/admin/users` | | Returns `{ users, availablePermissions }`. |
+| PATCH | `/admin/users/:id/active` | `{ isActive: boolean }` | Soft block/unblock account via `users.is_active`. |
+| PATCH | `/admin/users/:id/permissions` | `{ permissions: PermissionName[] }` | Replaces user permissions, including optional `admin`. |
+
+Guardrails:
+- Admin cannot deactivate their own account.
+- Admin cannot remove their own `admin` permission.
+- Deactivated users are blocked in auth middleware and receive `403 Account is deactivated`.
+
 ## Socket.IO
 
 - Connect to the **same host** as the API (HTTP server also serves Socket.IO).

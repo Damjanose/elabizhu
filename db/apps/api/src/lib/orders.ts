@@ -55,6 +55,21 @@ export const getOrderDetail = async (orderId: string, requesterUserId: string, i
     ])
     .execute()
 
+  const productIds = items.map((i) => i.product_id)
+  const imgs =
+    productIds.length === 0
+      ? []
+      : await db
+          .selectFrom("product_images")
+          .selectAll()
+          .where("product_id", "in", productIds)
+          .orderBy("sort_order asc")
+          .execute()
+  const imgByProduct = new Map<string, string>()
+  for (const im of imgs) {
+    if (!imgByProduct.has(im.product_id)) imgByProduct.set(im.product_id, im.url)
+  }
+
   const timeline = await db
     .selectFrom("order_status_events")
     .selectAll()
@@ -70,6 +85,7 @@ export const getOrderDetail = async (orderId: string, requesterUserId: string, i
       productName: i.product_name,
       quantity: i.quantity,
       unitPrice: i.unit_price,
+      imageUrl: imgByProduct.get(i.product_id) ?? null,
     })),
     timeline: timeline.map((t) => ({
       id: t.id,

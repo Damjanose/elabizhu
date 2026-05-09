@@ -10,6 +10,7 @@ if (!connectionString) {
 
 const permissions = [
   "admin",
+  "administrator",
   "product.read",
   "product.write",
   "category.read",
@@ -37,7 +38,7 @@ const seed = async () => {
       INSERT INTO users(email, password_hash)
       VALUES($1, $2)
       ON CONFLICT (email)
-      DO UPDATE SET password_hash = EXCLUDED.password_hash, updated_at = NOW()
+      DO UPDATE SET password_hash = EXCLUDED.password_hash, is_active = true, updated_at = NOW()
       RETURNING id
       `,
       ["admin@example.com", passwordHash],

@@ -1,19 +1,23 @@
 import { motion } from "motion/react"
-import { Link, NavLink, Route, Routes } from "react-router-dom"
+import { Link, NavLink, Route, Routes, useLocation } from "react-router-dom"
 import { FiSearch, FiShoppingBag } from "react-icons/fi"
 import { Slide, ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { ErrorBoundary } from "./components/feedback/ErrorBoundary"
+import { AdminRoute } from "./components/AdminRoute"
+import { AdminShell } from "./components/admin/AdminShell"
 import { GuestRoute } from "./components/GuestRoute"
 import { ProtectedRoute } from "./components/ProtectedRoute"
-import { StaffRoute } from "./components/StaffRoute"
 import { UserMenu } from "./components/auth/UserMenu"
 import { useCart } from "./hooks/useCart"
 import { useSocketLifecycle } from "./hooks/useSocketLifecycle"
 import { AccountPage } from "./pages/AccountPage"
 import { AdminDashboardPage } from "./pages/admin/AdminDashboardPage"
+import { AdminOrderDetailPage } from "./pages/admin/AdminOrderDetailPage"
 import { AdminOrdersPage } from "./pages/admin/AdminOrdersPage"
+import { AdminProductDetailPage } from "./pages/admin/AdminProductDetailPage"
 import { AdminProductsPage } from "./pages/admin/AdminProductsPage"
+import { AdminUsersPage } from "./pages/admin/AdminUsersPage"
 import { CartPage } from "./pages/CartPage"
 import { CheckoutPage } from "./pages/CheckoutPage"
 import { CategoriesPage } from "./pages/CategoriesPage"
@@ -39,49 +43,53 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
 const Shell = () => {
   useSocketLifecycle()
   const { itemCount } = useCart()
+  const location = useLocation()
+  const isAdminView = location.pathname.startsWith("/admin")
 
   return (
-    <div className="aurelia-app-shell min-vh-100">
-      <nav className="aurelia-topbar sticky-top">
-        <div className="aurelia-container aurelia-nav-grid">
-          <div className="aurelia-nav-left">
-            <NavLink className={navLinkClass} to="/collections">
-              Collections
-            </NavLink>
-            <NavLink className={navLinkClass} to="/categories">
-              Story
-            </NavLink>
-            <NavLink className={navLinkClass} to="/account">
-              Bespoke
-            </NavLink>
-            <NavLink className={navLinkClass} to="/journal">
-              Journal
-            </NavLink>
-          </div>
+    <div className={`aurelia-app-shell min-vh-100${isAdminView ? " aurelia-app-shell--admin" : ""}`}>
+      {!isAdminView && (
+        <nav className="aurelia-topbar sticky-top">
+          <div className="aurelia-container aurelia-nav-grid">
+            <div className="aurelia-nav-left">
+              <NavLink className={navLinkClass} to="/collections">
+                Collections
+              </NavLink>
+              <NavLink className={navLinkClass} to="/categories">
+                Story
+              </NavLink>
+              <NavLink className={navLinkClass} to="/account">
+                Bespoke
+              </NavLink>
+              <NavLink className={navLinkClass} to="/journal">
+                Journal
+              </NavLink>
+            </div>
 
-          <Link className="aurelia-brand text-decoration-none text-center" to="/">
-            AURELIA
-          </Link>
+            <Link className="aurelia-brand text-decoration-none text-center" to="/">
+              AURELIA
+            </Link>
 
-          <div className="aurelia-nav-right">
-            <Link className="aurelia-icon-link text-decoration-none" to="/collections" aria-label="Search">
-              <FiSearch />
-            </Link>
-            <UserMenu />
-            <Link
-              className="aurelia-cart-icon text-decoration-none"
-              to="/cart"
-              aria-label={itemCount > 0 ? `Cart, ${itemCount} item${itemCount === 1 ? "" : "s"}` : "Cart"}
-            >
-              <FiShoppingBag />
-              {itemCount > 0 && (
-                <span className="aurelia-cart-badge">{itemCount > 99 ? "99+" : itemCount}</span>
-              )}
-            </Link>
+            <div className="aurelia-nav-right">
+              <Link className="aurelia-icon-link text-decoration-none" to="/collections" aria-label="Search">
+                <FiSearch />
+              </Link>
+              <UserMenu />
+              <Link
+                className="aurelia-cart-icon text-decoration-none"
+                to="/cart"
+                aria-label={itemCount > 0 ? `Cart, ${itemCount} item${itemCount === 1 ? "" : "s"}` : "Cart"}
+              >
+                <FiShoppingBag />
+                {itemCount > 0 && (
+                  <span className="aurelia-cart-badge">{itemCount > 99 ? "99+" : itemCount}</span>
+                )}
+              </Link>
+            </div>
           </div>
-        </div>
-      </nav>
-      <main className="aurelia-container py-4 py-md-5">
+        </nav>
+      )}
+      <main className={isAdminView ? "aurelia-container aurelia-admin-main" : "aurelia-container py-4 py-md-5"}>
         <ErrorBoundary>
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -162,27 +170,26 @@ const Shell = () => {
           <Route
             path="/admin"
             element={
-              <StaffRoute>
-                <AdminDashboardPage />
-              </StaffRoute>
+              <AdminRoute requiredPermissions={["admin", "administrator"]}>
+                <AdminShell />
+              </AdminRoute>
             }
-          />
-          <Route
-            path="/admin/products"
-            element={
-              <StaffRoute>
-                <AdminProductsPage />
-              </StaffRoute>
-            }
-          />
-          <Route
-            path="/admin/orders"
-            element={
-              <StaffRoute>
-                <AdminOrdersPage />
-              </StaffRoute>
-            }
-          />
+          >
+            <Route index element={<AdminDashboardPage />} />
+            <Route path="products" element={<AdminProductsPage />} />
+            <Route path="products/new" element={<AdminProductDetailPage />} />
+            <Route path="products/:productId" element={<AdminProductDetailPage />} />
+            <Route path="orders" element={<AdminOrdersPage />} />
+            <Route path="orders/:orderId" element={<AdminOrderDetailPage />} />
+            <Route
+              path="users"
+              element={
+                <AdminRoute requiredPermissions={["admin"]}>
+                  <AdminUsersPage />
+                </AdminRoute>
+              }
+            />
+          </Route>
 
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

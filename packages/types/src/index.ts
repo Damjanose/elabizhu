@@ -1,5 +1,6 @@
 export type PermissionName =
   | "admin"
+  | "administrator"
   | "product.read"
   | "product.write"
   | "category.read"
@@ -77,6 +78,7 @@ export type Product = {
   featured: boolean
   publishedAt: string | null
   images: ProductImage[]
+  videoUrl: string | null
   createdAt: string
   updatedAt: string
 }
@@ -122,6 +124,7 @@ export type CreateProductInput = {
   urgencyBadge?: UrgencyBadge
   featured?: boolean
   imageUrls?: string[]
+  videoUrl?: string | null
 }
 
 export type UpdateProductInput = {
@@ -135,6 +138,21 @@ export type UpdateProductInput = {
   urgencyBadge?: UrgencyBadge
   featured?: boolean
   imageUrls?: string[]
+  videoUrl?: string | null
+}
+
+export type AdminProductListResponse = {
+  items: Product[]
+  total: number
+  page: number
+  limit: number
+}
+
+export type UploadKind = "image" | "video"
+
+export type UploadResponse = {
+  url: string
+  kind: UploadKind
 }
 
 export type CartLine = {
@@ -163,6 +181,8 @@ export type OrderItemDto = {
   productName: string
   quantity: number
   unitPrice: string
+  /** First product image by sort order, when present */
+  imageUrl: string | null
 }
 
 export type OrderStatusEventDto = {
@@ -201,4 +221,29 @@ export type NotificationDto = {
 export type UpdateOrderStatusInput = {
   status: OrderStatus
   note?: string
+}
+
+export type AdminUserRow = {
+  id: string
+  email: string
+  fullName: string
+  phone: string | null
+  isActive: boolean
+  hasActiveSession: boolean
+  permissions: PermissionName[]
+  createdAt: string
+  updatedAt: string
+}
+
+export type AdminUsersListResponse = {
+  users: AdminUserRow[]
+  availablePermissions: PermissionName[]
+}
+
+export type UpdateUserActiveInput = {
+  isActive: boolean
+}
+
+export type UpdateUserPermissionsInput = {
+  permissions: PermissionName[]
 }

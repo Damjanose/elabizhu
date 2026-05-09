@@ -14,6 +14,7 @@ const createSchema = z.object({
   urgencyBadge: urgency.optional(),
   featured: z.boolean().optional(),
   imageUrls: z.array(z.string().min(1)).optional(),
+  videoUrl: z.string().min(1).nullable().optional(),
 })
 
 const updateSchema = z.object({
@@ -27,6 +28,7 @@ const updateSchema = z.object({
   urgencyBadge: urgency.optional(),
   featured: z.boolean().optional(),
   imageUrls: z.array(z.string().min(1)).optional(),
+  videoUrl: z.string().min(1).nullable().optional(),
 })
 
 export const list = async (req: Request, res: Response) => {
@@ -37,6 +39,40 @@ export const list = async (req: Request, res: Response) => {
     categoryId: categoryId && categoryId.length > 0 ? categoryId : undefined,
   })
   return res.json(data)
+}
+
+const adminListSchema = z.object({
+  q: z.string().optional(),
+  page: z.coerce.number().int().min(1).optional(),
+  limit: z.coerce.number().int().min(1).max(100).optional(),
+  categoryId: z.string().uuid().optional(),
+  urgencyBadge: urgency.optional(),
+  featured: z
+    .union([z.literal("true"), z.literal("false")])
+    .optional()
+    .transform((value) => (value === undefined ? undefined : value === "true")),
+  includeInactive: z
+    .union([z.literal("true"), z.literal("false")])
+    .optional()
+    .transform((value) => (value === undefined ? undefined : value === "true")),
+})
+
+export const adminList = async (req: Request, res: Response) => {
+  try {
+    const parsed = adminListSchema.parse(req.query)
+    const data = await products.listProductsAdmin({
+      q: parsed.q && parsed.q.length > 0 ? parsed.q : undefined,
+      page: parsed.page,
+      limit: parsed.limit,
+      categoryId: parsed.categoryId,
+      urgencyBadge: parsed.urgencyBadge,
+      featured: parsed.featured,
+      includeInactive: parsed.includeInactive,
+    })
+    return res.json(data)
+  } catch (error) {
+    return handleError(res, error)
+  }
 }
 
 export const getById = async (req: Request, res: Response) => {

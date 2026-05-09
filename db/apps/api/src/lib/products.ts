@@ -29,6 +29,57 @@ export const listProducts = async (filters?: { featured?: boolean; categoryId?: 
   return rows.map((row) => toProduct(row, imgMap.get(row.id) ?? []))
 }
 
+export const listProductsAdmin = async (filters: {
+  q?: string
+  page?: number
+  limit?: number
+  categoryId?: string
+  urgencyBadge?: string
+  featured?: boolean
+  includeInactive?: boolean
+}) => {
+  const page = Math.max(1, Math.floor(filters.page ?? 1))
+  const limit = Math.min(100, Math.max(1, Math.floor(filters.limit ?? 20)))
+  const offset = (page - 1) * limit
+  const term = filters.q?.trim()
+  const likePattern = term ? `%${term}%` : null
+
+  let rowsQuery = db.selectFrom("products").selectAll()
+  if (filters.includeInactive === false) rowsQuery = rowsQuery.where("is_active", "=", true)
+  if (filters.categoryId) rowsQuery = rowsQuery.where("category_id", "=", filters.categoryId)
+  if (filters.urgencyBadge) rowsQuery = rowsQuery.where("urgency_badge", "=", filters.urgencyBadge)
+  if (filters.featured !== undefined) rowsQuery = rowsQuery.where("featured", "=", filters.featured)
+  if (likePattern) {
+    rowsQuery = rowsQuery.where((eb) =>
+      eb.or([eb("name", "ilike", likePattern), eb("description", "ilike", likePattern)]),
+    )
+  }
+
+  const rows = await rowsQuery
+    .orderBy("created_at desc")
+    .limit(limit)
+    .offset(offset)
+    .execute()
+
+  let countQuery = db.selectFrom("products").select(({ fn }) => fn.countAll<string>().as("count"))
+  if (filters.includeInactive === false) countQuery = countQuery.where("is_active", "=", true)
+  if (filters.categoryId) countQuery = countQuery.where("category_id", "=", filters.categoryId)
+  if (filters.urgencyBadge) countQuery = countQuery.where("urgency_badge", "=", filters.urgencyBadge)
+  if (filters.featured !== undefined) countQuery = countQuery.where("featured", "=", filters.featured)
+  if (likePattern) {
+    countQuery = countQuery.where((eb) =>
+      eb.or([eb("name", "ilike", likePattern), eb("description", "ilike", likePattern)]),
+    )
+  }
+
+  const countRow = await countQuery.executeTakeFirst()
+  const total = Number(countRow?.count ?? 0)
+
+  const imgMap = await loadImagesForProducts(rows.map((r) => r.id))
+  const items = rows.map((row) => toProduct(row, imgMap.get(row.id) ?? []))
+  return { items, total, page, limit }
+}
+
 export const getProduct = async (id: string) => {
   const row = await db.selectFrom("products").selectAll().where("id", "=", id).executeTakeFirst()
   if (!row) return undefined
@@ -86,6 +137,7 @@ export const createProduct = async (input: {
   urgencyBadge?: string
   featured?: boolean
   imageUrls?: string[]
+  videoUrl?: string | null
 }) => {
   const row = await db
     .insertInto("products")
@@ -100,6 +152,7 @@ export const createProduct = async (input: {
       urgency_badge: input.urgencyBadge ?? "none",
       featured: input.featured ?? false,
       published_at: new Date(),
+      video_url: input.videoUrl ?? null,
     })
     .returningAll()
     .executeTakeFirstOrThrow()
@@ -134,6 +187,7 @@ export const updateProduct = async (
     urgencyBadge?: string
     featured?: boolean
     imageUrls?: string[]
+    videoUrl?: string | null
   },
 ) => {
   const patch: Record<string, unknown> = { updated_at: new Date() }
@@ -146,6 +200,7 @@ export const updateProduct = async (
   if (input.lowStockThreshold !== undefined) patch.low_stock_threshold = input.lowStockThreshold
   if (input.urgencyBadge !== undefined) patch.urgency_badge = input.urgencyBadge
   if (input.featured !== undefined) patch.featured = input.featured
+  if (input.videoUrl !== undefined) patch.video_url = input.videoUrl
 
   const row = await db.updateTable("products").set(patch as never).where("id", "=", id).returningAll().executeTakeFirst()
   if (!row) return undefined

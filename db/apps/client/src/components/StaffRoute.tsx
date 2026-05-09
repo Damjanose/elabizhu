@@ -10,6 +10,7 @@ export const StaffRoute = ({ children }: { children: React.ReactNode }) => {
 
   const ok =
     user.permissions.includes("admin") ||
+    user.permissions.includes("administrator") ||
     user.permissions.includes("product.write") ||
     user.permissions.includes("order.write")
 
