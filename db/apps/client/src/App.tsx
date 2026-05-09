@@ -15,6 +15,7 @@ import { AccountPage } from "./pages/AccountPage"
 import { AdminDashboardPage } from "./pages/admin/AdminDashboardPage"
 import { AdminOrderDetailPage } from "./pages/admin/AdminOrderDetailPage"
 import { AdminOrdersPage } from "./pages/admin/AdminOrdersPage"
+import { AdminProductDetailPage } from "./pages/admin/AdminProductDetailPage"
 import { AdminProductsPage } from "./pages/admin/AdminProductsPage"
 import { AdminUsersPage } from "./pages/admin/AdminUsersPage"
 import { CartPage } from "./pages/CartPage"
@@ -176,6 +177,8 @@ const Shell = () => {
           >
             <Route index element={<AdminDashboardPage />} />
             <Route path="products" element={<AdminProductsPage />} />
+            <Route path="products/new" element={<AdminProductDetailPage />} />
+            <Route path="products/:productId" element={<AdminProductDetailPage />} />
             <Route path="orders" element={<AdminOrdersPage />} />
             <Route path="orders/:orderId" element={<AdminOrderDetailPage />} />
             <Route

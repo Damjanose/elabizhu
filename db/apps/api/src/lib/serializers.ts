@@ -31,6 +31,7 @@ export const toProduct = (row: Selectable<ProductsTable>, images: Selectable<Pro
   featured: row.featured,
   publishedAt: row.published_at ? iso(row.published_at) : null,
   images: images.sort((a, b) => a.sort_order - b.sort_order).map(toProductImage),
+  videoUrl: row.video_url ?? null,
   createdAt: iso(row.created_at),
   updatedAt: iso(row.updated_at),
 })

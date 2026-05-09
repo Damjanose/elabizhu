@@ -15,6 +15,7 @@ const baseProduct = (over: Partial<Product>): Product => ({
   featured: false,
   publishedAt: null,
   images: [],
+  videoUrl: null,
   createdAt: "",
   updatedAt: "",
   ...over,

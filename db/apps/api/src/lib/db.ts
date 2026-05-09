@@ -76,6 +76,7 @@ export interface ProductsTable {
   urgency_badge: string
   featured: boolean
   published_at: Date | null
+  video_url: string | null
   created_at: Generated<Date>
   updated_at: Generated<Date>
 }

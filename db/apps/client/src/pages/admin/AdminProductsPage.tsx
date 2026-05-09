@@ -1,56 +1,91 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { useState } from "react"
-import type { Product, UpdateProductInput, UrgencyBadge } from "@jewellery/types"
+import { useEffect, useMemo, useState } from "react"
+import { keepPreviousData, useQuery } from "@tanstack/react-query"
+import { FiSearch } from "react-icons/fi"
+import { useNavigate } from "react-router-dom"
+import type { Product, UrgencyBadge } from "@jewellery/types"
+import { EmptyState } from "../../components/feedback/EmptyState"
 import { useCategories } from "../../hooks/useCatalog"
-import { createProduct, deleteProduct, updateProduct } from "../../services/admin"
-import { fetchProducts } from "../../services/products"
+import { useDebouncedValue } from "../../hooks/useDebouncedValue"
+import { fetchAdminProducts, resolveMediaUrl } from "../../services/admin"
+
+const PAGE_SIZE = 20
+
+const BADGE_LABEL: Record<UrgencyBadge, string> = {
+  none: "Standard",
+  new: "New",
+  low_stock: "Low stock",
+  sold_out: "Sold out",
+}
+
+const BADGE_TONE: Record<UrgencyBadge, string> = {
+  none: "is-muted",
+  new: "is-info",
+  low_stock: "is-warning",
+  sold_out: "is-danger",
+}
+
+const formatCurrency = (value: string) =>
+  new Intl.NumberFormat("en-GB", {
+    style: "currency",
+    currency: "GBP",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  }).format(Number(value || 0))
+
+const productThumb = (product: Product) => {
+  const first = product.images[0]?.url
+  return first ? resolveMediaUrl(first) : null
+}
 
 export const AdminProductsPage = () => {
-  const queryClient = useQueryClient()
+  const navigate = useNavigate()
   const { data: categories } = useCategories()
-  const { data: products, isLoading } = useQuery({ queryKey: ["products", "admin"], queryFn: () => fetchProducts() })
 
-  const [creating, setCreating] = useState(false)
-  const [form, setForm] = useState({
-    categoryId: "",
-    name: "",
-    description: "",
-    price: "",
-    stockQuantity: 10,
-    urgencyBadge: "none" as UrgencyBadge,
-    featured: false,
-    imageUrls: "",
+  const [search, setSearch] = useState("")
+  const [categoryId, setCategoryId] = useState<string>("")
+  const [page, setPage] = useState(1)
+  const debouncedSearch = useDebouncedValue(search.trim(), 300)
+
+  useEffect(() => {
+    setPage(1)
+  }, [debouncedSearch, categoryId])
+
+  const queryParams = useMemo(
+    () => ({
+      q: debouncedSearch || undefined,
+      page,
+      limit: PAGE_SIZE,
+      categoryId: categoryId || undefined,
+    }),
+    [debouncedSearch, page, categoryId],
+  )
+
+  const { data, isLoading, isFetching } = useQuery({
+    queryKey: ["admin-products", queryParams],
+    queryFn: () => fetchAdminProducts(queryParams),
+    placeholderData: keepPreviousData,
   })
 
-  const c = useMutation({
-    mutationFn: createProduct,
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["products"] })
-      setCreating(false)
-      setForm({
-        categoryId: form.categoryId,
-        name: "",
-        description: "",
-        price: "",
-        stockQuantity: 10,
-        urgencyBadge: "none",
-        featured: false,
-        imageUrls: "",
-      })
-    },
-  })
+  const items = data?.items ?? []
+  const total = data?.total ?? 0
+  const limit = data?.limit ?? PAGE_SIZE
+  const currentPage = data?.page ?? page
+  const startIndex = total === 0 ? 0 : (currentPage - 1) * limit + 1
+  const endIndex = total === 0 ? 0 : Math.min(total, startIndex + items.length - 1)
+  const totalPages = Math.max(1, Math.ceil(total / limit))
+  const canPrev = currentPage > 1
+  const canNext = currentPage < totalPages
 
-  const patch = useMutation({
-    mutationFn: ({ id, body }: { id: string; body: Parameters<typeof updateProduct>[1] }) => updateProduct(id, body),
-    onSuccess: () => void queryClient.invalidateQueries({ queryKey: ["products"] }),
-  })
+  const categoryName = (id: string) => categories?.find((c) => c.id === id)?.name ?? "—"
 
-  const del = useMutation({
-    mutationFn: deleteProduct,
-    onSuccess: () => void queryClient.invalidateQueries({ queryKey: ["products"] }),
-  })
+  const goToProduct = (productId: string) => navigate(`/admin/products/${productId}`)
 
-  if (isLoading) return <div className="aurelia-admin-panel p-4">Loading products…</div>
+  const onRowKey = (event: React.KeyboardEvent<HTMLTableRowElement>, productId: string) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault()
+      goToProduct(productId)
+    }
+  }
 
   return (
     <div className="aurelia-admin-page">
@@ -59,188 +94,192 @@ export const AdminProductsPage = () => {
           <p className="aurelia-admin-kicker mb-2">Curation Suite</p>
           <h1 className="aurelia-admin-title mb-0">Products</h1>
         </div>
-        <button type="button" className="aurelia-btn aurelia-btn-primary" onClick={() => setCreating((v) => !v)}>
-          {creating ? "Close" : "New product"}
+        <button
+          type="button"
+          className="aurelia-btn aurelia-btn-primary"
+          onClick={() => navigate("/admin/products/new")}
+        >
+          New product
         </button>
       </div>
 
-      {creating && (
-        <div className="aurelia-admin-panel aurelia-admin-form-panel mb-4">
-          <div className="p-4">
-            <div className="row g-3">
-              <div className="col-md-4">
-                <label className="form-label">Category</label>
-                <select
-                  className="form-select aurelia-admin-input"
-                  value={form.categoryId}
-                  onChange={(e) => setForm((f) => ({ ...f, categoryId: e.target.value }))}
-                >
-                  <option value="">Select…</option>
-                  {categories?.map((cat) => (
-                    <option key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="col-md-4">
-                <label className="form-label">Name</label>
-                <input className="form-control aurelia-admin-input" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} />
-              </div>
-              <div className="col-md-4">
-                <label className="form-label">Price</label>
-                <input className="form-control aurelia-admin-input" value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))} />
-              </div>
-              <div className="col-12">
-                <label className="form-label">Description</label>
-                <input
-                  className="form-control aurelia-admin-input"
-                  value={form.description}
-                  onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-                />
-              </div>
-              <div className="col-md-3">
-                <label className="form-label">Stock</label>
-                <input
-                  type="number"
-                  className="form-control aurelia-admin-input"
-                  value={form.stockQuantity}
-                  onChange={(e) => setForm((f) => ({ ...f, stockQuantity: Number(e.target.value) }))}
-                />
-              </div>
-              <div className="col-md-3">
-                <label className="form-label">Badge</label>
-                <select
-                  className="form-select aurelia-admin-input"
-                  value={form.urgencyBadge}
-                  onChange={(e) => setForm((f) => ({ ...f, urgencyBadge: e.target.value as UrgencyBadge }))}
-                >
-                  {(["none", "new", "low_stock", "sold_out"] as const).map((b) => (
-                    <option key={b} value={b}>
-                      {b}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="col-md-3 d-flex align-items-end">
-                <div className="form-check">
-                  <input
-                    id="feat"
-                    type="checkbox"
-                    className="form-check-input"
-                    checked={form.featured}
-                    onChange={(e) => setForm((f) => ({ ...f, featured: e.target.checked }))}
-                  />
-                  <label className="form-check-label" htmlFor="feat">
-                    Featured
-                  </label>
-                </div>
-              </div>
-              <div className="col-12">
-                <label className="form-label">Image URLs (comma separated)</label>
-                <input
-                  className="form-control aurelia-admin-input"
-                  value={form.imageUrls}
-                  onChange={(e) => setForm((f) => ({ ...f, imageUrls: e.target.value }))}
-                />
-              </div>
-            </div>
-            <button
-              type="button"
-              className="aurelia-btn aurelia-btn-primary mt-3"
-              disabled={c.isPending || !form.categoryId || !form.name || !form.price}
-              onClick={() =>
-                void c.mutateAsync({
-                  categoryId: form.categoryId,
-                  name: form.name,
-                  description: form.description || undefined,
-                  price: form.price,
-                  stockQuantity: form.stockQuantity,
-                  urgencyBadge: form.urgencyBadge,
-                  featured: form.featured,
-                  imageUrls: form.imageUrls
-                    .split(",")
-                    .map((s) => s.trim())
-                    .filter(Boolean),
-                })
-              }
+      <section className="aurelia-admin-orders-section">
+        <div className="aurelia-admin-products-toolbar">
+          <label className="aurelia-admin-products-search" aria-label="Search products">
+            <FiSearch aria-hidden />
+            <input
+              type="search"
+              placeholder="Search by name or description..."
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+            />
+          </label>
+          <div className="aurelia-admin-products-filter">
+            <label className="form-label mb-0" htmlFor="admin-products-category">
+              Category
+            </label>
+            <select
+              id="admin-products-category"
+              className="form-select aurelia-admin-input"
+              value={categoryId}
+              onChange={(event) => setCategoryId(event.target.value)}
             >
-              Save product
-            </button>
+              <option value="">All categories</option>
+              {categories?.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
-      )}
 
-      <div className="table-responsive aurelia-admin-table-wrap">
-        <table className="table align-middle mb-0 aurelia-admin-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Stock</th>
-              <th>Badge</th>
-              <th>Featured</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
-            {products?.map((p) => (
-              <AdminProductRow
-                key={p.id}
-                product={p}
-                onPatch={(body: UpdateProductInput) => void patch.mutateAsync({ id: p.id, body })}
-                onDelete={() => void del.mutateAsync(p.id)}
+        <div className="table-responsive aurelia-admin-table-wrap aurelia-admin-orders-table-wrap">
+          <table className="table align-middle mb-0 aurelia-admin-table aurelia-admin-orders-table">
+            <thead>
+              <tr>
+                <th style={{ width: 64 }} aria-label="Image" />
+                <th>Product</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Badge</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((product) => {
+                const thumb = productThumb(product)
+                const lowStock =
+                  product.stockQuantity <= product.lowStockThreshold && product.stockQuantity > 0
+                return (
+                  <tr
+                    key={product.id}
+                    className="aurelia-admin-orders-row aurelia-admin-orders-row--clickable"
+                    role="link"
+                    tabIndex={0}
+                    onClick={() => goToProduct(product.id)}
+                    onKeyDown={(event) => onRowKey(event, product.id)}
+                    aria-label={`Open ${product.name}`}
+                  >
+                    <td>
+                      <div className="aurelia-admin-products-thumb" aria-hidden>
+                        {thumb ? (
+                          <img src={thumb} alt="" loading="lazy" />
+                        ) : (
+                          <span className="material-symbols-outlined">diamond</span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="aurelia-admin-orders-piece">
+                      <strong>{product.name}</strong>
+                      <span>
+                        {product.description
+                          ? product.description.length > 80
+                            ? `${product.description.slice(0, 80)}…`
+                            : product.description
+                          : "No description"}
+                      </span>
+                    </td>
+                    <td>{categoryName(product.categoryId)}</td>
+                    <td className="fw-medium">{formatCurrency(product.price)}</td>
+                    <td>
+                      <span
+                        className={`aurelia-admin-products-stock ${
+                          product.stockQuantity === 0 ? "is-out" : lowStock ? "is-low" : ""
+                        }`}
+                      >
+                        {product.stockQuantity}
+                      </span>
+                    </td>
+                    <td>
+                      <span
+                        className={`aurelia-admin-status-chip ${BADGE_TONE[product.urgencyBadge]}`}
+                      >
+                        {BADGE_LABEL[product.urgencyBadge]}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="aurelia-admin-products-flags">
+                        {product.featured && (
+                          <span className="aurelia-admin-products-flag is-featured">Featured</span>
+                        )}
+                        <span
+                          className={`aurelia-admin-products-flag ${
+                            product.isActive ? "is-active" : "is-archived"
+                          }`}
+                        >
+                          {product.isActive ? "Active" : "Archived"}
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+
+          {!isLoading && total === 0 && (
+            <div className="aurelia-admin-products-empty">
+              <EmptyState
+                variant="inline"
+                icon="inventory_2"
+                kicker="Empty catalog"
+                title={debouncedSearch || categoryId ? "No matches found" : "No products yet"}
+                copy={
+                  debouncedSearch || categoryId
+                    ? "Try a different search or clear filters."
+                    : "Add your first piece to start curating the collection."
+                }
+                cta={
+                  debouncedSearch || categoryId
+                    ? {
+                        label: "Clear filters",
+                        onClick: () => {
+                          setSearch("")
+                          setCategoryId("")
+                        },
+                      }
+                    : { label: "New product", onClick: () => navigate("/admin/products/new") }
+                }
               />
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </div>
+          )}
+
+          <div className="aurelia-admin-table-foot aurelia-admin-orders-foot">
+            <span>
+              {total === 0
+                ? isLoading || isFetching
+                  ? "Loading products..."
+                  : "Showing 0 products"
+                : `Showing ${startIndex}–${endIndex} of ${total} product${total === 1 ? "" : "s"}`}
+            </span>
+            <div className="aurelia-admin-orders-pager" role="navigation" aria-label="Pagination">
+              <button
+                type="button"
+                className="aurelia-admin-orders-pager-btn"
+                onClick={() => setPage((current) => Math.max(1, current - 1))}
+                disabled={!canPrev}
+                aria-label="Previous page"
+              >
+                <span className="material-symbols-outlined">chevron_left</span>
+              </button>
+              <span className="aurelia-admin-products-pager-page" aria-live="polite">
+                {currentPage} / {totalPages}
+              </span>
+              <button
+                type="button"
+                className="aurelia-admin-orders-pager-btn"
+                onClick={() => setPage((current) => current + 1)}
+                disabled={!canNext}
+                aria-label="Next page"
+              >
+                <span className="material-symbols-outlined">chevron_right</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
-  )
-}
-
-const AdminProductRow = ({
-  product,
-  onPatch,
-  onDelete,
-}: {
-  product: Product
-  onPatch: (body: UpdateProductInput) => void
-  onDelete: () => void
-}) => {
-  const [stock, setStock] = useState(product.stockQuantity)
-  const [badge, setBadge] = useState(product.urgencyBadge)
-  const [featured, setFeatured] = useState(product.featured)
-
-  return (
-    <tr>
-      <td className="fw-medium">{product.name}</td>
-      <td>
-        <input
-          type="number"
-          className="form-control form-control-sm aurelia-admin-input"
-          style={{ width: 88 }}
-          value={stock}
-          onChange={(e) => setStock(Number(e.target.value))}
-          onBlur={() => onPatch({ stockQuantity: stock, urgencyBadge: badge, featured })}
-        />
-      </td>
-      <td>
-        <select className="form-select form-select-sm aurelia-admin-input" value={badge} onChange={(e) => setBadge(e.target.value as UrgencyBadge)} onBlur={() => onPatch({ stockQuantity: stock, urgencyBadge: badge, featured })}>
-          {(["none", "new", "low_stock", "sold_out"] as const).map((b) => (
-            <option key={b} value={b}>
-              {b}
-            </option>
-          ))}
-        </select>
-      </td>
-      <td>
-        <input type="checkbox" className="form-check-input" checked={featured} onChange={(e) => setFeatured(e.target.checked)} onBlur={() => onPatch({ stockQuantity: stock, urgencyBadge: badge, featured })} />
-      </td>
-      <td className="text-end">
-        <button type="button" className="aurelia-btn aurelia-btn-ghost-danger" onClick={onDelete}>
-          Delete
-        </button>
-      </td>
-    </tr>
   )
 }

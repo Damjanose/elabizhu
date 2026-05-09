@@ -78,6 +78,7 @@ export type Product = {
   featured: boolean
   publishedAt: string | null
   images: ProductImage[]
+  videoUrl: string | null
   createdAt: string
   updatedAt: string
 }
@@ -123,6 +124,7 @@ export type CreateProductInput = {
   urgencyBadge?: UrgencyBadge
   featured?: boolean
   imageUrls?: string[]
+  videoUrl?: string | null
 }
 
 export type UpdateProductInput = {
@@ -136,6 +138,21 @@ export type UpdateProductInput = {
   urgencyBadge?: UrgencyBadge
   featured?: boolean
   imageUrls?: string[]
+  videoUrl?: string | null
+}
+
+export type AdminProductListResponse = {
+  items: Product[]
+  total: number
+  page: number
+  limit: number
+}
+
+export type UploadKind = "image" | "video"
+
+export type UploadResponse = {
+  url: string
+  kind: UploadKind
 }
 
 export type CartLine = {

@@ -1,7 +1,10 @@
 import { createServer } from "node:http"
+import fs from "node:fs"
+import type { NextFunction, Request, Response } from "express"
 import "dotenv/config"
 import express from "express"
 import cors from "cors"
+import multer from "multer"
 import * as authHandlers from "./handlers/auth.js"
 import * as cartHandlers from "./handlers/cart.js"
 import * as categoryHandlers from "./handlers/categories.js"
@@ -10,6 +13,8 @@ import * as notificationHandlers from "./handlers/notifications.js"
 import * as orderHandlers from "./handlers/orders.js"
 import * as productHandlers from "./handlers/products.js"
 import * as profileHandlers from "./handlers/profile.js"
+import * as uploadHandlers from "./handlers/uploads.js"
+import { upload, uploadsRoot } from "./handlers/uploads.js"
 import { requireAuth, requirePermission } from "./middleware/auth.js"
 import { attachSocket } from "./socketServer.js"
 
@@ -18,6 +23,11 @@ const port = Number(process.env.API_PORT ?? 3001)
 
 app.use(cors())
 app.use(express.json())
+
+if (!fs.existsSync(uploadsRoot)) {
+  fs.mkdirSync(uploadsRoot, { recursive: true })
+}
+app.use("/uploads", express.static(uploadsRoot, { fallthrough: true, maxAge: "7d" }))
 
 app.get("/health", (_req, res) => res.json({ ok: true }))
 
@@ -61,6 +71,37 @@ app.patch("/orders/:id/status", requireAuth, requirePermission("order.write"), o
 app.get("/admin/users", requireAuth, requirePermission("admin"), adminUserHandlers.list)
 app.patch("/admin/users/:id/active", requireAuth, requirePermission("admin"), adminUserHandlers.setActive)
 app.patch("/admin/users/:id/permissions", requireAuth, requirePermission("admin"), adminUserHandlers.setPermissions)
+
+app.get("/admin/products", requireAuth, requirePermission("product.write"), productHandlers.adminList)
+
+app.post(
+  "/admin/uploads",
+  requireAuth,
+  requirePermission("product.write"),
+  (req: Request, res: Response, next: NextFunction) => {
+    upload.single("file")(req, res, (err: unknown) => {
+      if (!err) {
+        next()
+        return
+      }
+      if (err instanceof multer.MulterError) {
+        if (err.code === "LIMIT_FILE_SIZE") {
+          res.status(413).json({ message: "File exceeds the maximum allowed size" })
+          return
+        }
+        res.status(400).json({ message: err.message })
+        return
+      }
+      if (err instanceof Error && err.message === "UNSUPPORTED_MEDIA_TYPE") {
+        res.status(415).json({ message: "Unsupported media type" })
+        return
+      }
+      console.error(err)
+      res.status(500).json({ message: "Upload failed" })
+    })
+  },
+  uploadHandlers.create,
+)
 
 app.get("/notifications", requireAuth, notificationHandlers.list)
 app.patch("/notifications/:id/read", requireAuth, notificationHandlers.markRead)
