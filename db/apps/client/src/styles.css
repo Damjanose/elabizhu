@@ -737,6 +737,222 @@ h4,
   color: #93000a;
 }
 
+.aurelia-admin-next-step-btn {
+  border-width: 1px;
+}
+
+.aurelia-admin-next-step-btn.is-success {
+  border-color: #3e6b4b;
+  color: #3e6b4b;
+  background: rgba(62, 107, 75, 0.08);
+}
+
+.aurelia-admin-next-step-btn.is-info {
+  border-color: #5e3a16;
+  color: #5e3a16;
+  background: rgba(125, 86, 45, 0.1);
+}
+
+.aurelia-admin-next-step-btn.is-warning {
+  border-color: #5d4201;
+  color: #5d4201;
+  background: rgba(197, 160, 89, 0.16);
+}
+
+.aurelia-admin-next-step-btn.is-danger {
+  border-color: #93000a;
+  color: #93000a;
+  background: rgba(186, 26, 26, 0.1);
+}
+
+.aurelia-admin-next-step-btn:hover {
+  filter: brightness(0.97);
+}
+
+.aurelia-admin-orders-table-wrap {
+  border: 1px solid #e2d6c8;
+  background: #fff;
+}
+
+.aurelia-admin-orders-section .aurelia-admin-dashboard-table-header {
+  margin-bottom: 0.7rem;
+}
+
+.aurelia-admin-orders-heading .aurelia-admin-card-title {
+  font-size: clamp(1.9rem, 2.6vw, 2.6rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+.aurelia-admin-orders-heading .aurelia-muted {
+  font-size: 1.03rem;
+  line-height: 1.42;
+  color: #5f5548;
+  max-width: 42rem;
+}
+
+.aurelia-admin-orders-heading .aurelia-btn-primary {
+  min-height: 2.55rem;
+  padding: 0.58rem 1.35rem;
+  letter-spacing: 0.18em;
+  font-size: 0.62rem;
+  background: #7a6022;
+  border-color: #7a6022;
+  color: #fff;
+}
+
+.aurelia-admin-orders-heading .aurelia-btn-primary:hover {
+  background: #6a521d;
+  border-color: #6a521d;
+}
+
+.aurelia-admin-orders-table-wrap .aurelia-admin-table-foot {
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+}
+
+.aurelia-admin-orders-table thead th {
+  background: #ece3d8;
+  border-bottom-color: #e2d6c8;
+  border-right: 1px solid #e8ddd0;
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  color: #6d6458;
+}
+
+.aurelia-admin-orders-table thead th:last-child {
+  border-right: 0;
+}
+
+.aurelia-admin-orders-table tbody td {
+  padding-top: 1.05rem;
+  padding-bottom: 1.05rem;
+  font-size: 0.82rem;
+  border-bottom-color: #e8e0d6;
+}
+
+.aurelia-admin-orders-row {
+  transition: background-color 0.25s ease;
+}
+
+.aurelia-admin-orders-row:hover {
+  background: rgba(245, 237, 228, 0.42);
+}
+
+.aurelia-admin-orders-id strong,
+.aurelia-admin-orders-customer strong,
+.aurelia-admin-orders-piece strong {
+  display: block;
+  font-family: "Noto Serif", serif;
+  font-weight: 500;
+  color: var(--aurelia-text);
+  line-height: 1.2;
+}
+
+.aurelia-admin-orders-id span,
+.aurelia-admin-orders-customer span,
+.aurelia-admin-orders-piece span {
+  display: block;
+  margin-top: 0.28rem;
+  font-size: 0.58rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #9a8f7e;
+}
+
+.aurelia-admin-orders-id strong {
+  color: #7b6225;
+}
+
+.aurelia-admin-orders-open {
+  display: inline-grid;
+  place-content: center;
+  width: 1.95rem;
+  height: 1.95rem;
+  border: 1px solid #d8ccbc;
+  color: #6a6054;
+  background: #fff;
+}
+
+.aurelia-admin-orders-open:hover {
+  border-color: #c6b9a6;
+  color: var(--aurelia-primary);
+}
+
+.aurelia-admin-orders-actions {
+  position: relative;
+  display: inline-flex;
+  justify-content: flex-end;
+}
+
+.aurelia-admin-orders-action-menu {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  right: 0;
+  z-index: 8;
+  min-width: 9rem;
+  display: grid;
+  gap: 0.35rem;
+  border: 1px solid #d8ccbc;
+  background: #fff;
+  padding: 0.45rem;
+  box-shadow: 0 14px 30px -22px rgba(41, 30, 19, 0.6);
+}
+
+.aurelia-admin-orders-action-menu .aurelia-admin-next-step-btn,
+.aurelia-admin-orders-action-menu .aurelia-btn-ghost {
+  width: 100%;
+  justify-content: center;
+  padding: 0.36rem 0.56rem;
+  font-size: 0.5rem;
+  letter-spacing: 0.13em;
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+
+.aurelia-admin-orders-action-menu .aurelia-admin-next-step-btn.is-warning {
+  background: #ece4d2;
+}
+
+.aurelia-admin-orders-action-menu .aurelia-admin-next-step-btn.is-danger {
+  background: #f3dfdf;
+}
+
+.aurelia-admin-orders-action-menu .aurelia-admin-next-step-btn.is-info {
+  background: #e7e4df;
+}
+
+.aurelia-admin-orders-action-menu .aurelia-admin-next-step-btn.is-success {
+  background: #dbe4db;
+}
+
+.aurelia-admin-orders-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.aurelia-admin-orders-pager {
+  display: inline-flex;
+  gap: 0.35rem;
+}
+
+.aurelia-admin-orders-pager-btn {
+  width: 2.35rem;
+  height: 2.2rem;
+  border: 1px solid #d8ccbc;
+  background: #f4eee6;
+  color: #6d6458;
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+}
+
+.aurelia-admin-orders-pager-btn .material-symbols-outlined {
+  font-size: 1.18rem;
+}
+
 .aurelia-admin-icon-link {
   color: var(--aurelia-text-muted);
 }
@@ -3039,7 +3255,23 @@ h4,
   color: #fff8f3;
 }
 
-/* List */
+/* Table */
+.aurelia-orders-table-wrap {
+  overflow-x: auto;
+}
+
+.aurelia-orders-table .aurelia-admin-icon-link .material-symbols-outlined {
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.aurelia-orders-table tbody td:nth-child(4) {
+  white-space: nowrap;
+  font-weight: 600;
+  color: var(--aurelia-primary);
+}
+
+/* Legacy list */
 .aurelia-orders-list {
   border-top: 1px solid var(--aurelia-surface-border);
 }

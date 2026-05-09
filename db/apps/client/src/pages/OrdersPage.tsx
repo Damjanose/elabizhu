@@ -135,55 +135,52 @@ export const OrdersPage = () => {
 }
 
 const OrdersTable = ({ orders }: { orders: OrderSummary[] }) => (
-  <div className="aurelia-orders-list" role="table" aria-label="Orders">
-    <div className="aurelia-orders-list-head" role="row">
-      <span role="columnheader">Order</span>
-      <span role="columnheader">Placed</span>
-      <span role="columnheader">Status</span>
-      <span role="columnheader" className="text-end">Total</span>
-      <span role="columnheader" aria-hidden />
-    </div>
+  <div className="aurelia-admin-table-wrap aurelia-orders-table-wrap">
+    <table className="table align-middle mb-0 aurelia-admin-table aurelia-orders-table">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Placed</th>
+          <th>Status</th>
+          <th>Total</th>
+          <th className="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {orders.map((order) => {
+          const display = STATUS_DISPLAY[order.status]
+          const statusTone =
+            display.tone === "success"
+              ? "is-success"
+              : display.tone === "secondary"
+                ? "is-info"
+                : display.tone === "primary"
+                  ? "is-warning"
+                  : display.tone === "danger"
+                    ? "is-danger"
+                    : "is-muted"
 
-    <ul className="aurelia-orders-rows">
-      {orders.map((order) => {
-        const display = STATUS_DISPLAY[order.status]
-        return (
-          <li key={order.id} role="row" className="aurelia-orders-row">
-            <Link to={`/orders/${order.id}`} className="aurelia-orders-row-link">
-              <span className="aurelia-orders-cell aurelia-orders-cell--ref" role="cell">
-                <span className="aurelia-orders-cell-label">Order</span>
-                <span className="aurelia-orders-cell-value">{orderRef(order.id)}</span>
-              </span>
-              <span className="aurelia-orders-cell aurelia-orders-cell--date" role="cell">
-                <span className="aurelia-orders-cell-label">Placed</span>
-                <span className="aurelia-orders-cell-value">{formatDate(order.createdAt)}</span>
-              </span>
-              <span className="aurelia-orders-cell aurelia-orders-cell--status" role="cell">
-                <span className="aurelia-orders-cell-label">Status</span>
-                <span className={`aurelia-orders-status aurelia-orders-status--${display.tone}`}>
-                  <span className="aurelia-orders-status-dot" aria-hidden />
-                  {display.label}
-                </span>
-              </span>
-              <span className="aurelia-orders-cell aurelia-orders-cell--total" role="cell">
-                <span className="aurelia-orders-cell-label">Total</span>
-                <span className="aurelia-orders-cell-value aurelia-orders-cell-value--total">
-                  {formatCurrency(order.total)}
-                </span>
-              </span>
-              <span className="aurelia-orders-cell aurelia-orders-cell--cta" role="cell">
-                <span className="aurelia-orders-cta">
-                  <span className="aurelia-orders-cta-label">View</span>
-                  <span className="material-symbols-outlined aurelia-orders-cta-icon" aria-hidden>
-                    east
+          return (
+            <tr key={order.id}>
+              <td className="fw-semibold">{orderRef(order.id)}</td>
+              <td>{formatDate(order.createdAt)}</td>
+              <td>
+                <span className={`aurelia-admin-status-chip ${statusTone}`}>{display.label}</span>
+              </td>
+              <td>{formatCurrency(order.total)}</td>
+              <td className="text-end">
+                <Link to={`/orders/${order.id}`} className="aurelia-admin-icon-link" aria-label={`View order ${orderRef(order.id)}`}>
+                  <span className="material-symbols-outlined" aria-hidden>
+                    more_horiz
                   </span>
-                </span>
-              </span>
-            </Link>
-          </li>
-        )
-      })}
-    </ul>
+                </Link>
+              </td>
+            </tr>
+          )
+        })}
+      </tbody>
+    </table>
+    <div className="aurelia-admin-table-foot">Showing {orders.length} order{orders.length === 1 ? "" : "s"}</div>
   </div>
 )
 
