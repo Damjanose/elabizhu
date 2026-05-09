@@ -1,5 +1,6 @@
 import { FiBell, FiGrid, FiHelpCircle, FiPackage, FiSearch, FiSettings, FiShoppingBag, FiUsers } from "react-icons/fi"
 import { NavLink, Outlet } from "react-router-dom"
+import { AdminCurrencySelect } from "./AdminCurrencySelect"
 import { useAuth } from "../../types/auth-context"
 
 const shellNavClass = ({ isActive }: { isActive: boolean }) =>
@@ -59,6 +60,7 @@ export const AdminShell = () => {
               <input type="search" placeholder="Search orders, clients, pieces..." />
             </label>
             <div className="aurelia-admin-shell-topbar-right">
+              <AdminCurrencySelect />
               <button type="button" className="aurelia-admin-shell-icon-btn" aria-label="Notifications">
                 <FiBell />
               </button>

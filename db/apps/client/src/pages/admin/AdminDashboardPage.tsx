@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query"
-import { FiMoreHorizontal } from "react-icons/fi"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { getDashboardMetrics } from "../../lib/admin-dashboard-metrics"
+import { formatDisplayMoney } from "../../lib/display-currency"
 import { fetchOrders } from "../../services/orders"
 import { fetchProducts } from "../../services/products"
-
-const currency = new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP", maximumFractionDigits: 0 })
+import { useAdminDisplayCurrency } from "../../stores/adminDisplayCurrencyStore"
+import { AdminDashboardCharts } from "./AdminDashboardCharts"
 
 const statusTone = (status: string) => {
   if (status === "delivered") return "is-success"
@@ -16,9 +16,13 @@ const statusTone = (status: string) => {
 }
 
 const clientLabel = (userId: string) => `Client ${userId.slice(0, 6).toUpperCase()}`
-const pieceLabel = (id: string) => `Bespoke Commission ${id.slice(0, 4).toUpperCase()}`
+const tierLabel = (id: string) => `Tier ${id.slice(0, 4).toUpperCase()}`
+const pieceLabel = (id: string) => `Signature Piece ${id.slice(0, 4).toUpperCase()}`
+const orderLabel = (id: string) => `#AUR-${id.slice(0, 4).toUpperCase()}`
 
 export const AdminDashboardPage = () => {
+  const navigate = useNavigate()
+  const displayCurrency = useAdminDisplayCurrency()
   const ordersQuery = useQuery({ queryKey: ["orders", "admin-dashboard"], queryFn: fetchOrders })
   const productsQuery = useQuery({ queryKey: ["products", "admin-dashboard"], queryFn: () => fetchProducts() })
 
@@ -85,7 +89,9 @@ export const AdminDashboardPage = () => {
         </article>
         <article className="aurelia-admin-kpi-card">
           <p className="aurelia-admin-kpi-label">Weekly Revenue</p>
-          <p className="aurelia-admin-kpi-value is-money">{currency.format(metrics.weeklyRevenue)}</p>
+          <p className="aurelia-admin-kpi-value is-money">
+            {formatDisplayMoney(metrics.weeklyRevenue, displayCurrency, { maximumFractionDigits: 0 })}
+          </p>
           <p className="aurelia-admin-kpi-meta">Live from placed orders</p>
         </article>
         <article className="aurelia-admin-kpi-card">
@@ -95,15 +101,14 @@ export const AdminDashboardPage = () => {
         </article>
       </section>
 
+      <AdminDashboardCharts orders={orders} />
+
       <section className="aurelia-admin-dashboard-table-section">
         <div className="aurelia-admin-dashboard-table-header">
           <div>
             <h2 className="aurelia-admin-card-title mb-2">Recent Boutique Orders</h2>
             <p className="aurelia-muted mb-0">A curated live view of current acquisitions and fulfilment progress.</p>
           </div>
-          <Link className="aurelia-btn aurelia-btn-primary text-decoration-none" to="/admin/orders">
-            Create New Order
-          </Link>
         </div>
 
         {recentOrders.length === 0 ? (
@@ -111,37 +116,69 @@ export const AdminDashboardPage = () => {
             <p className="mb-0">No orders available yet.</p>
           </div>
         ) : (
-          <div className="aurelia-admin-table-wrap">
-            <table className="table align-middle mb-0 aurelia-admin-table">
+          <div className="table-responsive aurelia-admin-table-wrap aurelia-admin-orders-table-wrap">
+            <table className="table align-middle mb-0 aurelia-admin-table aurelia-admin-orders-table">
               <thead>
                 <tr>
                   <th>Order ID</th>
                   <th>Customer</th>
                   <th>Piece</th>
                   <th>Status</th>
-                  <th className="text-end">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {recentOrders.map((order) => (
-                  <tr key={order.id}>
-                    <td className="fw-semibold">#{order.id.slice(0, 8).toUpperCase()}</td>
-                    <td>{clientLabel(order.userId)}</td>
-                    <td>{pieceLabel(order.id)}</td>
+                  <tr
+                    key={order.id}
+                    className="aurelia-admin-orders-row aurelia-admin-orders-row--clickable"
+                    role="link"
+                    tabIndex={0}
+                    onClick={() => navigate(`/admin/orders/${order.id}`)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault()
+                        navigate(`/admin/orders/${order.id}`)
+                      }
+                    }}
+                    aria-label={`Open order ${orderLabel(order.id)}`}
+                  >
+                    <td className="aurelia-admin-orders-id">
+                      <strong>{orderLabel(order.id)}</strong>
+                      <span>{new Date(order.createdAt).toLocaleDateString("en-GB")}</span>
+                    </td>
+                    <td className="aurelia-admin-orders-customer">
+                      <strong>{clientLabel(order.userId)}</strong>
+                      <span>{tierLabel(order.id)}</span>
+                    </td>
+                    <td className="aurelia-admin-orders-piece">
+                      <strong>{pieceLabel(order.id)}</strong>
+                      <span>
+                        Total{" "}
+                        {formatDisplayMoney(Number(order.total), displayCurrency, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </span>
+                    </td>
                     <td>
                       <span className={`aurelia-admin-status-chip ${statusTone(order.status)}`}>{order.status}</span>
-                    </td>
-                    <td className="text-end">
-                      <Link className="aurelia-admin-icon-link" to={`/admin/orders/${order.id}`} aria-label={`Open order ${order.id}`}>
-                        <FiMoreHorizontal />
-                      </Link>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            <div className="aurelia-admin-table-foot">
-              Showing {Math.min(recentOrders.length, 4)} of {orders.length} active orders
+            <div className="aurelia-admin-table-foot aurelia-admin-orders-foot">
+              <span>
+                Showing {recentOrders.length} of {orders.length} orders
+              </span>
+              <div className="aurelia-admin-orders-pager" aria-hidden>
+                <button type="button" className="aurelia-admin-orders-pager-btn" tabIndex={-1}>
+                  <span className="material-symbols-outlined">chevron_left</span>
+                </button>
+                <button type="button" className="aurelia-admin-orders-pager-btn" tabIndex={-1}>
+                  <span className="material-symbols-outlined">chevron_right</span>
+                </button>
+              </div>
             </div>
           </div>
         )}

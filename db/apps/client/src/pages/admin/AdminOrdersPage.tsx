@@ -2,7 +2,9 @@ import { useMemo, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import type { OrderStatus } from "@jewellery/types"
 import { Link, useNavigate } from "react-router-dom"
+import { formatDisplayMoney } from "../../lib/display-currency"
 import { fetchOrders } from "../../services/orders"
+import { useAdminDisplayCurrency } from "../../stores/adminDisplayCurrencyStore"
 
 type FilterId = "all" | "active" | "delivered" | "cancelled"
 
@@ -23,6 +25,7 @@ const orderLabel = (id: string) => `#AUR-${id.slice(0, 4).toUpperCase()}`
 
 export const AdminOrdersPage = () => {
   const navigate = useNavigate()
+  const displayCurrency = useAdminDisplayCurrency()
   const { data, isLoading } = useQuery({ queryKey: ["orders"], queryFn: fetchOrders })
   const [filter, setFilter] = useState<FilterId>("active")
 
@@ -104,7 +107,13 @@ export const AdminOrdersPage = () => {
                 </td>
                 <td className="aurelia-admin-orders-piece">
                   <strong>{pieceLabel(o.id)}</strong>
-                  <span>{`Total ${Number(o.total).toFixed(2)} GBP`}</span>
+                  <span>
+                    Total{" "}
+                    {formatDisplayMoney(Number(o.total), displayCurrency, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </span>
                 </td>
                 <td>
                   <span className={`aurelia-admin-status-chip ${o.status === "delivered" ? "is-success" : o.status === "shipped" ? "is-info" : o.status === "confirmed" ? "is-warning" : o.status === "cancelled" ? "is-danger" : "is-muted"}`}>

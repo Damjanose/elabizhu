@@ -18,6 +18,7 @@ import {
   uploadMedia,
 } from "../../services/admin"
 import { fetchProduct } from "../../services/products"
+import { useAdminDisplayCurrency } from "../../stores/adminDisplayCurrencyStore"
 import { errorToast, successToast, toastFromError } from "../../utils/toast"
 
 const URGENCY_OPTIONS: { value: UrgencyBadge; label: string }[] = [
@@ -73,6 +74,7 @@ const productToForm = (product: Product): FormState => ({
 })
 
 export const AdminProductDetailPage = () => {
+  const displayCurrency = useAdminDisplayCurrency()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { productId } = useParams<{ productId: string }>()
@@ -529,7 +531,7 @@ export const AdminProductDetailPage = () => {
             <div className="row g-3">
               <div className="col-12">
                 <label className="form-label" htmlFor="prod-price">
-                  Price (GBP)
+                  Price ({displayCurrency})
                 </label>
                 <input
                   id="prod-price"

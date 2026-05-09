@@ -5,7 +5,9 @@ import { Link, useParams } from "react-router-dom"
 import type { OrderStatus } from "@jewellery/types"
 import { OrderTimeline } from "../../components/order/OrderTimeline"
 import { EmptyState } from "../../components/feedback/EmptyState"
+import { formatDisplayMoney } from "../../lib/display-currency"
 import { fetchOrder, updateOrderStatus } from "../../services/orders"
+import { useAdminDisplayCurrency } from "../../stores/adminDisplayCurrencyStore"
 
 const TAX_RATE = 0.2
 
@@ -45,14 +47,6 @@ const PAYMENT_LABELS: Record<string, string> = {
   cod: "Cash on Delivery",
   bank: "Bank Transfer",
 }
-
-const formatCurrency = (value: string | number) =>
-  new Intl.NumberFormat("en-GB", {
-    style: "currency",
-    currency: "GBP",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(Number(value))
 
 const formatDate = (iso: string) => {
   const d = new Date(iso)
@@ -95,6 +89,9 @@ const nextStepTone = (status: OrderStatus) => {
 const statusLabel = (status: OrderStatus) => status.charAt(0).toUpperCase() + status.slice(1)
 
 export const AdminOrderDetailPage = () => {
+  const displayCurrency = useAdminDisplayCurrency()
+  const formatMoney = (value: string | number) =>
+    formatDisplayMoney(Number(value), displayCurrency, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
   const queryClient = useQueryClient()
   const { orderId = "" } = useParams<{ orderId: string }>()
   const [confirmStatus, setConfirmStatus] = useState<OrderStatus | null>(null)
@@ -246,11 +243,11 @@ export const AdminOrderDetailPage = () => {
                         {item.productName}
                       </Link>
                       <p className="aurelia-order-item-sub">
-                        {formatCurrency(item.unitPrice)} each · Qty {item.quantity}
+                        {formatMoney(item.unitPrice)} each · Qty {item.quantity}
                       </p>
                     </div>
                     <span className="aurelia-order-item-total">
-                      {formatCurrency(Number(item.unitPrice) * item.quantity)}
+                      {formatMoney(Number(item.unitPrice) * item.quantity)}
                     </span>
                   </li>
                 ))}
@@ -260,11 +257,11 @@ export const AdminOrderDetailPage = () => {
             <dl className="aurelia-order-detail-totals">
               <div>
                 <dt>Subtotal</dt>
-                <dd>{formatCurrency(itemSubtotal)}</dd>
+                <dd>{formatMoney(itemSubtotal)}</dd>
               </div>
               <div>
                 <dt>Estimated Taxes</dt>
-                <dd>{formatCurrency(estimatedTax)}</dd>
+                <dd>{formatMoney(estimatedTax)}</dd>
               </div>
               <div>
                 <dt>Shipping</dt>
@@ -272,7 +269,7 @@ export const AdminOrderDetailPage = () => {
               </div>
               <div className="aurelia-order-detail-totals-final">
                 <dt>Total Paid</dt>
-                <dd>{formatCurrency(data.total)}</dd>
+                <dd>{formatMoney(data.total)}</dd>
               </div>
             </dl>
           </article>

@@ -6,7 +6,9 @@ import type { Product, UrgencyBadge } from "@jewellery/types"
 import { EmptyState } from "../../components/feedback/EmptyState"
 import { useCategories } from "../../hooks/useCatalog"
 import { useDebouncedValue } from "../../hooks/useDebouncedValue"
+import { formatDisplayMoney } from "../../lib/display-currency"
 import { fetchAdminProducts, resolveMediaUrl } from "../../services/admin"
+import { useAdminDisplayCurrency } from "../../stores/adminDisplayCurrencyStore"
 
 const PAGE_SIZE = 20
 
@@ -24,14 +26,6 @@ const BADGE_TONE: Record<UrgencyBadge, string> = {
   sold_out: "is-danger",
 }
 
-const formatCurrency = (value: string) =>
-  new Intl.NumberFormat("en-GB", {
-    style: "currency",
-    currency: "GBP",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(Number(value || 0))
-
 const productThumb = (product: Product) => {
   const first = product.images[0]?.url
   return first ? resolveMediaUrl(first) : null
@@ -39,6 +33,7 @@ const productThumb = (product: Product) => {
 
 export const AdminProductsPage = () => {
   const navigate = useNavigate()
+  const displayCurrency = useAdminDisplayCurrency()
   const { data: categories } = useCategories()
 
   const [search, setSearch] = useState("")
@@ -182,7 +177,12 @@ export const AdminProductsPage = () => {
                       </span>
                     </td>
                     <td>{categoryName(product.categoryId)}</td>
-                    <td className="fw-medium">{formatCurrency(product.price)}</td>
+                    <td className="fw-medium">
+                      {formatDisplayMoney(Number(product.price || 0), displayCurrency, {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 2,
+                      })}
+                    </td>
                     <td>
                       <span
                         className={`aurelia-admin-products-stock ${
