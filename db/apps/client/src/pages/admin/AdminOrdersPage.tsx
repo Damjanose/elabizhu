@@ -25,11 +25,11 @@ export const AdminOrdersPage = () => {
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: ["orders"] }),
   })
 
-  if (isLoading) return <div className="alert alert-info">Loading…</div>
+  if (isLoading) return <div className="aurelia-admin-panel p-4">Loading orders…</div>
 
   return (
     <div className="aurelia-admin-page">
-      <div className="d-flex justify-content-between align-items-end mb-4">
+      <div className="aurelia-admin-page-header">
         <div>
           <p className="aurelia-admin-kicker mb-2">Operations</p>
           <h1 className="aurelia-admin-title mb-0">Order flow</h1>
@@ -49,8 +49,12 @@ export const AdminOrdersPage = () => {
           <tbody>
             {data?.map((o) => (
               <tr key={o.id}>
-                <td>{new Date(o.createdAt).toLocaleString()}</td>
-                <td className="text-capitalize">{o.status}</td>
+                <td>{new Date(o.createdAt).toLocaleString("en-GB")}</td>
+                <td>
+                  <span className={`aurelia-admin-status-chip ${o.status === "delivered" ? "is-success" : o.status === "shipped" ? "is-info" : o.status === "confirmed" ? "is-warning" : o.status === "cancelled" ? "is-danger" : "is-muted"}`}>
+                    {o.status}
+                  </span>
+                </td>
                 <td>${Number(o.total).toFixed(2)}</td>
                 <td>
                   <div className="d-flex flex-wrap gap-1">

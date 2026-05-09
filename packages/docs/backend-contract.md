@@ -76,6 +76,19 @@ Requires `product.write` or `admin`:
 
 Category writes require `category.write` or `admin`.
 
+## Client admin dashboard access
+
+Client routes `/admin`, `/admin/products`, and `/admin/orders` are restricted to users with the `admin` permission in the route guard.
+
+This is a UX gate only; server-side authorization is still enforced by protected API routes (`requireAuth` + `requirePermission(...)`), which prevents DevTools/client-state bypass of privileged actions.
+
+The admin shell dashboard currently derives live metrics from:
+
+- `GET /orders` for recent orders, active/pending counts, and weekly revenue.
+- `GET /products` for low-stock/inventory alert counts.
+
+No dashboard metric grants additional privileges; write operations still require backend permission checks.
+
 ## Socket.IO
 
 - Connect to the **same host** as the API (HTTP server also serves Socket.IO).

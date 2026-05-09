@@ -50,11 +50,11 @@ export const AdminProductsPage = () => {
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: ["products"] }),
   })
 
-  if (isLoading) return <div className="alert alert-info">Loading…</div>
+  if (isLoading) return <div className="aurelia-admin-panel p-4">Loading products…</div>
 
   return (
     <div className="aurelia-admin-page">
-      <div className="d-flex justify-content-between align-items-end mb-4">
+      <div className="aurelia-admin-page-header">
         <div>
           <p className="aurelia-admin-kicker mb-2">Curation Suite</p>
           <h1 className="aurelia-admin-title mb-0">Products</h1>
@@ -65,13 +65,13 @@ export const AdminProductsPage = () => {
       </div>
 
       {creating && (
-        <div className="aurelia-admin-panel mb-4">
+        <div className="aurelia-admin-panel aurelia-admin-form-panel mb-4">
           <div className="p-4">
-            <div className="row g-2">
+            <div className="row g-3">
               <div className="col-md-4">
                 <label className="form-label">Category</label>
                 <select
-                  className="form-select"
+                  className="form-select aurelia-admin-input"
                   value={form.categoryId}
                   onChange={(e) => setForm((f) => ({ ...f, categoryId: e.target.value }))}
                 >
@@ -85,16 +85,16 @@ export const AdminProductsPage = () => {
               </div>
               <div className="col-md-4">
                 <label className="form-label">Name</label>
-                <input className="form-control" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} />
+                <input className="form-control aurelia-admin-input" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} />
               </div>
               <div className="col-md-4">
                 <label className="form-label">Price</label>
-                <input className="form-control" value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))} />
+                <input className="form-control aurelia-admin-input" value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))} />
               </div>
               <div className="col-12">
                 <label className="form-label">Description</label>
                 <input
-                  className="form-control"
+                  className="form-control aurelia-admin-input"
                   value={form.description}
                   onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
                 />
@@ -103,7 +103,7 @@ export const AdminProductsPage = () => {
                 <label className="form-label">Stock</label>
                 <input
                   type="number"
-                  className="form-control"
+                  className="form-control aurelia-admin-input"
                   value={form.stockQuantity}
                   onChange={(e) => setForm((f) => ({ ...f, stockQuantity: Number(e.target.value) }))}
                 />
@@ -111,7 +111,7 @@ export const AdminProductsPage = () => {
               <div className="col-md-3">
                 <label className="form-label">Badge</label>
                 <select
-                  className="form-select"
+                  className="form-select aurelia-admin-input"
                   value={form.urgencyBadge}
                   onChange={(e) => setForm((f) => ({ ...f, urgencyBadge: e.target.value as UrgencyBadge }))}
                 >
@@ -139,7 +139,7 @@ export const AdminProductsPage = () => {
               <div className="col-12">
                 <label className="form-label">Image URLs (comma separated)</label>
                 <input
-                  className="form-control"
+                  className="form-control aurelia-admin-input"
                   value={form.imageUrls}
                   onChange={(e) => setForm((f) => ({ ...f, imageUrls: e.target.value }))}
                 />
@@ -217,7 +217,7 @@ const AdminProductRow = ({
       <td>
         <input
           type="number"
-          className="form-control form-control-sm"
+          className="form-control form-control-sm aurelia-admin-input"
           style={{ width: 88 }}
           value={stock}
           onChange={(e) => setStock(Number(e.target.value))}
@@ -225,7 +225,7 @@ const AdminProductRow = ({
         />
       </td>
       <td>
-        <select className="form-select form-select-sm" value={badge} onChange={(e) => setBadge(e.target.value as UrgencyBadge)} onBlur={() => onPatch({ stockQuantity: stock, urgencyBadge: badge, featured })}>
+        <select className="form-select form-select-sm aurelia-admin-input" value={badge} onChange={(e) => setBadge(e.target.value as UrgencyBadge)} onBlur={() => onPatch({ stockQuantity: stock, urgencyBadge: badge, featured })}>
           {(["none", "new", "low_stock", "sold_out"] as const).map((b) => (
             <option key={b} value={b}>
               {b}
