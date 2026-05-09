@@ -47,7 +47,7 @@ const Shell = () => {
   const isAdminView = location.pathname.startsWith("/admin")
 
   return (
-    <div className="aurelia-app-shell min-vh-100">
+    <div className={`aurelia-app-shell min-vh-100${isAdminView ? " aurelia-app-shell--admin" : ""}`}>
       {!isAdminView && (
         <nav className="aurelia-topbar sticky-top">
           <div className="aurelia-container aurelia-nav-grid">

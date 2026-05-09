@@ -171,6 +171,29 @@ h4,
   flex-direction: column;
 }
 
+/* Admin (desktop): lock shell to one viewport height so the sidebar does not stretch with long pages.
+   Mobile uses stacked layout and keeps normal document scroll. */
+@media (min-width: 992px) {
+  .aurelia-app-shell--admin {
+    min-height: 100vh;
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
+  }
+
+  @supports (height: 100dvh) {
+    .aurelia-app-shell--admin {
+      min-height: 100dvh;
+      height: 100dvh;
+      max-height: 100dvh;
+    }
+  }
+
+  .aurelia-app-shell--admin > main {
+    overflow: hidden;
+  }
+}
+
 .aurelia-topbar {
   background: rgba(255, 248, 243, 0.95);
   backdrop-filter: blur(8px);
@@ -542,11 +565,12 @@ h4,
 }
 
 .aurelia-admin-shell-bleed {
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
   flex: 1 1 auto;
   min-height: 0;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -555,10 +579,18 @@ h4,
   flex: 1 1 auto;
   min-height: calc(100vh - 7rem);
   display: grid;
-  grid-template-columns: 190px 1fr;
+  grid-template-columns: 212px 1fr;
   align-items: stretch;
   border: 1px solid var(--aurelia-surface-border);
   background: #fff8f3;
+}
+
+@media (min-width: 992px) {
+  .aurelia-admin-shell-bleed > .aurelia-admin-shell {
+    min-height: 0;
+    height: 100%;
+    max-height: 100%;
+  }
 }
 
 
@@ -568,15 +600,17 @@ h4,
   align-self: stretch;
   min-height: 0;
   height: 100%;
+  overflow: hidden;
   border-right: 1px solid var(--aurelia-surface-border);
   background: var(--aurelia-surface);
 }
 
 .aurelia-admin-shell-brand {
   flex-shrink: 0;
-  padding: 1.25rem 0.95rem;
+  padding: 1.25rem 0.85rem;
   display: grid;
   gap: 0.22rem;
+  min-width: 0;
 }
 
 .aurelia-admin-shell-logo {
@@ -585,13 +619,18 @@ h4,
   letter-spacing: 0.08em;
   color: #775a19;
   line-height: 1;
+  min-width: 0;
 }
 
 .aurelia-admin-shell-subtitle {
   text-transform: uppercase;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.1em;
   font-size: 0.5rem;
   color: #4e4639;
+  min-width: 0;
+  line-height: 1.35;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .aurelia-admin-shell-nav {
@@ -602,6 +641,7 @@ h4,
   padding: 0.35rem;
   align-content: start;
   grid-auto-rows: max-content;
+  overflow: hidden;
 }
 
 .aurelia-admin-shell-sidebar-footer {
@@ -661,6 +701,17 @@ h4,
   grid-template-rows: auto 1fr;
 }
 
+@media (min-width: 992px) {
+  .aurelia-admin-shell-main {
+    overflow: hidden;
+  }
+
+  .aurelia-admin-shell-content {
+    min-height: 0;
+    overflow-y: auto;
+  }
+}
+
 .aurelia-admin-shell-topbar {
   border-bottom: 1px solid var(--aurelia-surface-border);
   background: rgba(255, 248, 243, 0.95);
@@ -674,6 +725,10 @@ h4,
 .aurelia-admin-main {
   padding-top: 0;
   padding-bottom: 0;
+  margin-left: 0;
+  margin-right: 0;
+  width: 100%;
+  max-width: none;
 }
 
 .aurelia-admin-shell-search {
