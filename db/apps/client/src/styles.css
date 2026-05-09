@@ -159,6 +159,16 @@ h4,
 
 .aurelia-app-shell {
   background: var(--aurelia-surface);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.aurelia-app-shell > main {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .aurelia-topbar {
@@ -416,25 +426,35 @@ h4,
   width: 100vw;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .aurelia-admin-shell {
+  flex: 1 1 auto;
   min-height: calc(100vh - 7rem);
   display: grid;
   grid-template-columns: 190px 1fr;
+  align-items: stretch;
   border: 1px solid var(--aurelia-surface-border);
   background: #fff8f3;
 }
 
 
 .aurelia-admin-shell-sidebar {
-  display: grid;
-  grid-template-rows: auto 1fr auto;
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  min-height: 0;
+  height: 100%;
   border-right: 1px solid var(--aurelia-surface-border);
   background: var(--aurelia-surface);
 }
 
 .aurelia-admin-shell-brand {
+  flex-shrink: 0;
   padding: 1.25rem 0.95rem;
   display: grid;
   gap: 0.22rem;
@@ -455,8 +475,9 @@ h4,
   color: #4e4639;
 }
 
-.aurelia-admin-shell-nav,
-.aurelia-admin-shell-sidebar-footer {
+.aurelia-admin-shell-nav {
+  flex: 1 1 auto;
+  min-height: 0;
   display: grid;
   gap: 0.1rem;
   padding: 0.35rem;
@@ -465,6 +486,13 @@ h4,
 }
 
 .aurelia-admin-shell-sidebar-footer {
+  flex-shrink: 0;
+  margin-top: auto;
+  display: grid;
+  gap: 0.1rem;
+  padding: 0.35rem;
+  align-content: start;
+  grid-auto-rows: max-content;
   border-top: 1px solid var(--aurelia-surface-border);
 }
 
@@ -508,6 +536,8 @@ h4,
 
 .aurelia-admin-shell-main {
   min-width: 0;
+  min-height: 0;
+  height: 100%;
   display: grid;
   grid-template-rows: auto 1fr;
 }
@@ -900,26 +930,42 @@ h4,
   justify-content: space-between;
   align-items: center;
   gap: 0.8rem;
+  color: rgba(109, 100, 88, 0.7);
+  background: rgba(244, 238, 230, 0.38);
+  border-top-color: rgba(231, 221, 210, 0.55);
+}
+
+.aurelia-admin-orders-foot span {
+  opacity: 0.78;
 }
 
 .aurelia-admin-orders-pager {
   display: inline-flex;
   gap: 0.35rem;
+  opacity: 0.72;
 }
 
 .aurelia-admin-orders-pager-btn {
   width: 2.35rem;
   height: 2.2rem;
-  border: 1px solid #d8ccbc;
-  background: #f4eee6;
-  color: #6d6458;
+  border: 1px solid rgba(216, 204, 188, 0.7);
+  background: rgba(244, 238, 230, 0.6);
+  color: rgba(109, 100, 88, 0.72);
   display: inline-grid;
   place-items: center;
   padding: 0;
+  transition: opacity 0.2s ease, border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
 }
 
 .aurelia-admin-orders-pager-btn .material-symbols-outlined {
   font-size: 1.18rem;
+}
+
+.aurelia-admin-orders-pager-btn:hover {
+  opacity: 0.95;
+  border-color: rgba(198, 185, 166, 0.9);
+  background: rgba(244, 238, 230, 0.82);
+  color: rgba(109, 100, 88, 0.9);
 }
 
 .aurelia-admin-icon-link {
