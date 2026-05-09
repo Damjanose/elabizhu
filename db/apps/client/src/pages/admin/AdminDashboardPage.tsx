@@ -132,7 +132,7 @@ export const AdminDashboardPage = () => {
                       <span className={`aurelia-admin-status-chip ${statusTone(order.status)}`}>{order.status}</span>
                     </td>
                     <td className="text-end">
-                      <Link className="aurelia-admin-icon-link" to={`/orders/${order.id}`} aria-label={`Open order ${order.id}`}>
+                      <Link className="aurelia-admin-icon-link" to={`/admin/orders/${order.id}`} aria-label={`Open order ${order.id}`}>
                         <FiMoreHorizontal />
                       </Link>
                     </td>

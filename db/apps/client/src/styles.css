@@ -737,41 +737,54 @@ h4,
   color: #93000a;
 }
 
-.aurelia-admin-next-step-btn {
-  border-width: 1px;
-}
-
-.aurelia-admin-next-step-btn.is-success {
-  border-color: #3e6b4b;
-  color: #3e6b4b;
-  background: rgba(62, 107, 75, 0.08);
-}
-
-.aurelia-admin-next-step-btn.is-info {
-  border-color: #5e3a16;
-  color: #5e3a16;
-  background: rgba(125, 86, 45, 0.1);
-}
-
-.aurelia-admin-next-step-btn.is-warning {
-  border-color: #5d4201;
-  color: #5d4201;
-  background: rgba(197, 160, 89, 0.16);
-}
-
-.aurelia-admin-next-step-btn.is-danger {
-  border-color: #93000a;
-  color: #93000a;
-  background: rgba(186, 26, 26, 0.1);
-}
-
-.aurelia-admin-next-step-btn:hover {
-  filter: brightness(0.97);
-}
-
 .aurelia-admin-orders-table-wrap {
   border: 1px solid #e2d6c8;
   background: #fff;
+}
+
+.aurelia-admin-orders-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 0 0 0.7rem;
+}
+
+.aurelia-admin-orders-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid #d9cdbf;
+  background: #fff;
+  color: #6d6458;
+  padding: 0.36rem 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.54rem;
+  line-height: 1;
+}
+
+.aurelia-admin-orders-filter-chip.is-active {
+  border-color: #7a6022;
+  background: #7a6022;
+  color: #fff;
+}
+
+.aurelia-admin-orders-filter-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.18rem;
+  height: 1.18rem;
+  border-radius: 999px;
+  background: rgba(109, 100, 88, 0.14);
+  color: #665a49;
+  font-size: 0.52rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.aurelia-admin-orders-filter-chip.is-active .aurelia-admin-orders-filter-count {
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
 }
 
 .aurelia-admin-orders-section .aurelia-admin-dashboard-table-header {
@@ -835,8 +848,26 @@ h4,
   transition: background-color 0.25s ease;
 }
 
+.aurelia-admin-orders-row--clickable {
+  cursor: pointer;
+}
+
 .aurelia-admin-orders-row:hover {
   background: rgba(245, 237, 228, 0.42);
+}
+
+.aurelia-admin-orders-row.is-delivered {
+  background: rgba(219, 228, 219, 0.28);
+}
+
+.aurelia-admin-orders-row.is-delivered:hover {
+  background: rgba(219, 228, 219, 0.38);
+}
+
+.aurelia-admin-orders-row--clickable:focus-visible {
+  outline: 2px solid var(--aurelia-primary);
+  outline-offset: -2px;
+  background: rgba(245, 237, 228, 0.52);
 }
 
 .aurelia-admin-orders-id strong,
@@ -862,68 +893,6 @@ h4,
 
 .aurelia-admin-orders-id strong {
   color: #7b6225;
-}
-
-.aurelia-admin-orders-open {
-  display: inline-grid;
-  place-content: center;
-  width: 1.95rem;
-  height: 1.95rem;
-  border: 1px solid #d8ccbc;
-  color: #6a6054;
-  background: #fff;
-}
-
-.aurelia-admin-orders-open:hover {
-  border-color: #c6b9a6;
-  color: var(--aurelia-primary);
-}
-
-.aurelia-admin-orders-actions {
-  position: relative;
-  display: inline-flex;
-  justify-content: flex-end;
-}
-
-.aurelia-admin-orders-action-menu {
-  position: absolute;
-  top: calc(100% + 0.35rem);
-  right: 0;
-  z-index: 8;
-  min-width: 9rem;
-  display: grid;
-  gap: 0.35rem;
-  border: 1px solid #d8ccbc;
-  background: #fff;
-  padding: 0.45rem;
-  box-shadow: 0 14px 30px -22px rgba(41, 30, 19, 0.6);
-}
-
-.aurelia-admin-orders-action-menu .aurelia-admin-next-step-btn,
-.aurelia-admin-orders-action-menu .aurelia-btn-ghost {
-  width: 100%;
-  justify-content: center;
-  padding: 0.36rem 0.56rem;
-  font-size: 0.5rem;
-  letter-spacing: 0.13em;
-  border-radius: 999px;
-  text-transform: uppercase;
-}
-
-.aurelia-admin-orders-action-menu .aurelia-admin-next-step-btn.is-warning {
-  background: #ece4d2;
-}
-
-.aurelia-admin-orders-action-menu .aurelia-admin-next-step-btn.is-danger {
-  background: #f3dfdf;
-}
-
-.aurelia-admin-orders-action-menu .aurelia-admin-next-step-btn.is-info {
-  background: #e7e4df;
-}
-
-.aurelia-admin-orders-action-menu .aurelia-admin-next-step-btn.is-success {
-  background: #dbe4db;
 }
 
 .aurelia-admin-orders-foot {

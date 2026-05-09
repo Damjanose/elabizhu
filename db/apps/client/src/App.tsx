@@ -13,6 +13,7 @@ import { useCart } from "./hooks/useCart"
 import { useSocketLifecycle } from "./hooks/useSocketLifecycle"
 import { AccountPage } from "./pages/AccountPage"
 import { AdminDashboardPage } from "./pages/admin/AdminDashboardPage"
+import { AdminOrderDetailPage } from "./pages/admin/AdminOrderDetailPage"
 import { AdminOrdersPage } from "./pages/admin/AdminOrdersPage"
 import { AdminProductsPage } from "./pages/admin/AdminProductsPage"
 import { AdminUsersPage } from "./pages/admin/AdminUsersPage"
@@ -176,6 +177,7 @@ const Shell = () => {
             <Route index element={<AdminDashboardPage />} />
             <Route path="products" element={<AdminProductsPage />} />
             <Route path="orders" element={<AdminOrdersPage />} />
+            <Route path="orders/:orderId" element={<AdminOrderDetailPage />} />
             <Route
               path="users"
               element={

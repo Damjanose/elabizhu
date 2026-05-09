@@ -1,75 +1,46 @@
-import { useState } from "react"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useMemo, useState } from "react"
+import { useQuery } from "@tanstack/react-query"
 import type { OrderStatus } from "@jewellery/types"
-import { Link } from "react-router-dom"
-import { fetchOrders, updateOrderStatus } from "../../services/orders"
+import { Link, useNavigate } from "react-router-dom"
+import { fetchOrders } from "../../services/orders"
 
-const nextOptions = (current: OrderStatus): OrderStatus[] => {
-  switch (current) {
-    case "pending":
-      return ["confirmed", "cancelled"]
-    case "confirmed":
-      return ["shipped", "cancelled"]
-    case "shipped":
-      return ["delivered"]
-    default:
-      return []
-  }
-}
+type FilterId = "all" | "active" | "delivered" | "cancelled"
 
-const nextStepTone = (status: OrderStatus) => {
-  if (status === "delivered") return "is-success"
-  if (status === "shipped") return "is-info"
-  if (status === "confirmed") return "is-warning"
-  if (status === "cancelled") return "is-danger"
-  return "is-muted"
-}
+const ACTIVE_STATUSES: OrderStatus[] = ["pending", "confirmed", "shipped"]
+const FILTERS: Array<{ id: FilterId; label: string; matches: (status: OrderStatus) => boolean }> = [
+  { id: "all", label: "All", matches: () => true },
+  { id: "active", label: "Active", matches: (status) => ACTIVE_STATUSES.includes(status) },
+  { id: "delivered", label: "Delivered", matches: (status) => status === "delivered" },
+  { id: "cancelled", label: "Cancelled", matches: (status) => status === "cancelled" },
+]
 
-const statusLabel = (status: OrderStatus) => status.charAt(0).toUpperCase() + status.slice(1)
+const isActiveOrder = (status: OrderStatus) =>
+  status === "pending" || status === "confirmed" || status === "shipped"
 const clientLabel = (userId: string) => `Client ${userId.slice(0, 6).toUpperCase()}`
 const tierLabel = (id: string) => `Tier ${id.slice(0, 4).toUpperCase()}`
 const pieceLabel = (id: string) => `Signature Piece ${id.slice(0, 4).toUpperCase()}`
 const orderLabel = (id: string) => `#AUR-${id.slice(0, 4).toUpperCase()}`
 
 export const AdminOrdersPage = () => {
-  const queryClient = useQueryClient()
+  const navigate = useNavigate()
   const { data, isLoading } = useQuery({ queryKey: ["orders"], queryFn: fetchOrders })
-  const [confirmIntent, setConfirmIntent] = useState<{
-    id: string
-    from: OrderStatus
-    to: OrderStatus
-  } | null>(null)
-  const [undoIntent, setUndoIntent] = useState<{
-    id: string
-    from: OrderStatus
-    to: OrderStatus
-  } | null>(null)
-  const [menuOrderId, setMenuOrderId] = useState<string | null>(null)
-
-  const patch = useMutation({
-    mutationFn: ({ id, status }: { id: string; status: OrderStatus }) => updateOrderStatus(id, status),
-    onSuccess: () => void queryClient.invalidateQueries({ queryKey: ["orders"] }),
-  })
-
-  const runConfirmedAction = () => {
-    if (!confirmIntent) return
-    const currentIntent = confirmIntent
-    void patch.mutateAsync({ id: currentIntent.id, status: currentIntent.to }).then(() => {
-      setUndoIntent(currentIntent)
-    })
-    setConfirmIntent(null)
-  }
-
-  const runUndoAction = () => {
-    if (!undoIntent) return
-    const currentUndoIntent = undoIntent
-    void patch.mutateAsync({ id: currentUndoIntent.id, status: currentUndoIntent.from }).then(() => {
-      setUndoIntent(null)
-    })
-  }
+  const [filter, setFilter] = useState<FilterId>("active")
 
   const orders = data ?? []
-  const activeOrdersCount = orders.filter((order) => nextOptions(order.status).length > 0).length
+  const counts = useMemo(() => {
+    const result: Record<FilterId, number> = { all: 0, active: 0, delivered: 0, cancelled: 0 }
+    for (const order of orders) {
+      for (const filterDef of FILTERS) {
+        if (filterDef.matches(order.status)) result[filterDef.id] += 1
+      }
+    }
+    return result
+  }, [orders])
+  const visibleOrders = useMemo(() => {
+    const matcher = FILTERS.find((f) => f.id === filter)?.matches ?? (() => true)
+    return orders.filter((order) => matcher(order.status))
+  }, [orders, filter])
+  const activeOrdersCount = orders.filter((order) => isActiveOrder(order.status)).length
 
   if (isLoading) return <div className="aurelia-admin-panel p-4">Loading orders…</div>
 
@@ -81,22 +52,22 @@ export const AdminOrdersPage = () => {
           <h1 className="aurelia-admin-title mb-0">Order flow</h1>
         </div>
       </div>
-      {undoIntent && (
-        <div className="aurelia-admin-panel p-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
-          <p className="mb-0">
-            Status updated to <strong>{statusLabel(undoIntent.to)}</strong>. Wrong click?
-          </p>
-          <button
-            type="button"
-            className="aurelia-btn aurelia-btn-outline"
-            onClick={runUndoAction}
-            disabled={patch.isPending}
-          >
-            {patch.isPending ? "Reverting..." : "Undo / Back"}
-          </button>
-        </div>
-      )}
       <section className="aurelia-admin-orders-section">
+        <div className="aurelia-admin-orders-filters" role="tablist" aria-label="Filter admin orders">
+          {FILTERS.map((filterDef) => (
+            <button
+              key={filterDef.id}
+              type="button"
+              role="tab"
+              aria-selected={filter === filterDef.id}
+              className={`aurelia-admin-orders-filter-chip ${filter === filterDef.id ? "is-active" : ""}`}
+              onClick={() => setFilter(filterDef.id)}
+            >
+              <span>{filterDef.label}</span>
+              <span className="aurelia-admin-orders-filter-count">{counts[filterDef.id]}</span>
+            </button>
+          ))}
+        </div>
         <div className="table-responsive aurelia-admin-table-wrap aurelia-admin-orders-table-wrap">
           <table className="table align-middle mb-0 aurelia-admin-table aurelia-admin-orders-table">
           <thead>
@@ -105,12 +76,24 @@ export const AdminOrdersPage = () => {
               <th>Customer</th>
               <th>Piece</th>
               <th>Status</th>
-              <th className="text-end">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {orders.map((o) => (
-              <tr key={o.id} className="aurelia-admin-orders-row">
+            {visibleOrders.map((o) => (
+              <tr
+                key={o.id}
+                className={`aurelia-admin-orders-row aurelia-admin-orders-row--clickable ${o.status === "delivered" ? "is-delivered" : ""}`}
+                role="link"
+                tabIndex={0}
+                onClick={() => navigate(`/admin/orders/${o.id}`)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault()
+                    navigate(`/admin/orders/${o.id}`)
+                  }
+                }}
+                aria-label={`Open order ${orderLabel(o.id)}`}
+              >
                 <td className="aurelia-admin-orders-id">
                   <strong>{orderLabel(o.id)}</strong>
                   <span>{new Date(o.createdAt).toLocaleDateString("en-GB")}</span>
@@ -128,49 +111,20 @@ export const AdminOrdersPage = () => {
                     {o.status}
                   </span>
                 </td>
-                <td className="text-end">
-                  <div className="aurelia-admin-orders-actions">
-                    <button
-                      type="button"
-                      className="aurelia-admin-icon-link aurelia-admin-orders-open"
-                      aria-label={`Actions for order ${orderLabel(o.id)}`}
-                      onClick={() => setMenuOrderId((current) => (current === o.id ? null : o.id))}
-                    >
-                      <span className="material-symbols-outlined" aria-hidden>more_horiz</span>
-                    </button>
-                    {menuOrderId === o.id && (
-                      <div className="aurelia-admin-orders-action-menu" role="menu" aria-label={`Order actions for ${orderLabel(o.id)}`}>
-                        {nextOptions(o.status).map((s) => (
-                          <button
-                            key={s}
-                            type="button"
-                            className={`aurelia-btn aurelia-admin-next-step-btn ${nextStepTone(s)}`}
-                            disabled={patch.isPending}
-                            onClick={() => {
-                              setConfirmIntent({ id: o.id, from: o.status, to: s })
-                              setMenuOrderId(null)
-                            }}
-                          >
-                            {s}
-                          </button>
-                        ))}
-                        <Link
-                          to={`/orders/${o.id}`}
-                          className="aurelia-btn aurelia-btn-ghost text-decoration-none"
-                          onClick={() => setMenuOrderId(null)}
-                        >
-                          Open
-                        </Link>
-                      </div>
-                    )}
-                  </div>
-                </td>
               </tr>
             ))}
           </tbody>
           </table>
+          {orders.length > 0 && visibleOrders.length === 0 && (
+            <div className="aurelia-admin-panel p-3 d-flex justify-content-between align-items-center flex-wrap gap-2 border-top-0">
+              <p className="mb-0">No orders in this view.</p>
+              <button type="button" className="aurelia-btn aurelia-btn-outline" onClick={() => setFilter("all")}>
+                Show all
+              </button>
+            </div>
+          )}
           <div className="aurelia-admin-table-foot aurelia-admin-orders-foot">
-            <span>Showing {orders.length} of {activeOrdersCount} active orders</span>
+            <span>Showing {visibleOrders.length} of {activeOrdersCount} active orders</span>
             <div className="aurelia-admin-orders-pager" aria-hidden>
               <button type="button" className="aurelia-admin-orders-pager-btn" tabIndex={-1}>
                 <span className="material-symbols-outlined">chevron_left</span>
@@ -182,33 +136,6 @@ export const AdminOrdersPage = () => {
           </div>
         </div>
       </section>
-      {confirmIntent && (
-        <div className="aurelia-admin-confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="admin-order-confirm-title">
-          <div className="aurelia-admin-confirm-modal">
-            <p className="aurelia-admin-kicker mb-2">Confirm status change</p>
-            <h3 id="admin-order-confirm-title" className="aurelia-admin-card-title mb-2">
-              Move to {statusLabel(confirmIntent.to)}?
-            </h3>
-            <p className="aurelia-muted mb-3">
-              This order will move from {statusLabel(confirmIntent.from)} to {statusLabel(confirmIntent.to)}.
-              If this was a wrong click, use Back.
-            </p>
-            <div className="aurelia-admin-confirm-actions">
-              <button type="button" className="aurelia-btn aurelia-btn-outline" onClick={() => setConfirmIntent(null)}>
-                Back
-              </button>
-              <button
-                type="button"
-                className={`aurelia-btn aurelia-admin-next-step-btn ${nextStepTone(confirmIntent.to)}`}
-                onClick={runConfirmedAction}
-                disabled={patch.isPending}
-              >
-                {patch.isPending ? "Updating..." : `Confirm ${statusLabel(confirmIntent.to)}`}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
