@@ -298,6 +298,30 @@ h4,
   color: #ba1a1a;
 }
 
+.aurelia-btn-solid-danger {
+  border-color: #ba1a1a;
+  background: #ba1a1a;
+  color: #fff;
+}
+
+.aurelia-btn-solid-danger:hover {
+  background: #9f1616;
+  border-color: #9f1616;
+  color: #fff;
+}
+
+.aurelia-btn-solid-success {
+  border-color: #2f7d32;
+  background: #2f7d32;
+  color: #fff;
+}
+
+.aurelia-btn-solid-success:hover {
+  background: #266829;
+  border-color: #266829;
+  color: #fff;
+}
+
 .aurelia-muted {
   color: var(--aurelia-text-muted);
 }
@@ -904,9 +928,18 @@ h4,
   background: #fbf2e9;
 }
 
+.aurelia-admin-user-row.is-inactive {
+  background: rgba(186, 26, 26, 0.04);
+}
+
 .aurelia-admin-user-row.is-selected {
   background: rgba(197, 160, 89, 0.11);
   box-shadow: inset 2px 0 0 #c5a059;
+}
+
+.aurelia-admin-user-row.is-inactive.is-selected {
+  background: rgba(186, 26, 26, 0.12);
+  box-shadow: inset 2px 0 0 #93000a;
 }
 
 .aurelia-admin-user-row-name {
@@ -956,10 +989,42 @@ h4,
   color: var(--aurelia-text-muted);
 }
 
+.aurelia-status-strong-active {
+  color: #2f4c31;
+}
+
+.aurelia-status-strong-danger {
+  color: #93000a;
+}
+
 .aurelia-admin-users-actions {
   display: flex;
   gap: 0.6rem;
   flex-wrap: wrap;
+}
+
+.aurelia-admin-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(18, 15, 12, 0.48);
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  z-index: 1200;
+}
+
+.aurelia-admin-confirm-modal {
+  width: min(460px, 100%);
+  border: 1px solid var(--aurelia-surface-border);
+  background: #fff;
+  padding: 1rem;
+  box-shadow: 0 24px 48px -28px rgba(27, 22, 16, 0.45);
+}
+
+.aurelia-admin-confirm-actions {
+  display: flex;
+  justify-content: end;
+  gap: 0.55rem;
 }
 
 .aurelia-admin-users-permissions {

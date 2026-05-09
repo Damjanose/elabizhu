@@ -81,7 +81,7 @@ export const UserMenu = () => {
 
           <div className="aurelia-user-menu-divider" aria-hidden />
 
-          {user.permissions.includes("admin") && (
+          {(user.permissions.includes("admin") || user.permissions.includes("administrator")) && (
             <Link
               to="/admin"
               role="menuitem"

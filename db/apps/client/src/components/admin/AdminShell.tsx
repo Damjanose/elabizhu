@@ -8,6 +8,7 @@ const shellNavClass = ({ isActive }: { isActive: boolean }) =>
 export const AdminShell = () => {
   const { user } = useAuth()
   const displayName = user?.fullName?.trim() || user?.email || "Admin User"
+  const canManageUsers = user?.permissions.includes("admin")
 
   return (
     <div className="aurelia-admin-shell-bleed">
@@ -31,10 +32,12 @@ export const AdminShell = () => {
               <FiShoppingBag />
               <span>Orders</span>
             </NavLink>
-            <NavLink to="/admin/users" className={shellNavClass}>
-              <FiUsers />
-              <span>Users</span>
-            </NavLink>
+            {canManageUsers && (
+              <NavLink to="/admin/users" className={shellNavClass}>
+                <FiUsers />
+                <span>Users</span>
+              </NavLink>
+            )}
           </nav>
 
           <div className="aurelia-admin-shell-sidebar-footer">

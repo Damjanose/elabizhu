@@ -1,5 +1,6 @@
 export type PermissionName =
   | "admin"
+  | "administrator"
   | "product.read"
   | "product.write"
   | "category.read"

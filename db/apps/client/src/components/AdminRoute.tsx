@@ -1,8 +1,14 @@
 import { Navigate, useLocation } from "react-router-dom"
+import type { PermissionName } from "@jewellery/types"
 import { useAuthStore } from "../stores/authStore"
 import { useAuth } from "../types/auth-context"
 
-export const AdminRoute = ({ children }: { children: React.ReactNode }) => {
+type AdminRouteProps = {
+  children: React.ReactNode
+  requiredPermissions?: PermissionName[]
+}
+
+export const AdminRoute = ({ children, requiredPermissions = ["admin"] }: AdminRouteProps) => {
   const { user } = useAuth()
   const location = useLocation()
   const sessionReady = useAuthStore((state) => state.sessionReady)
@@ -17,7 +23,8 @@ export const AdminRoute = ({ children }: { children: React.ReactNode }) => {
     return <Navigate to={`/login?redirect=${redirect}`} replace />
   }
 
-  if (!user.permissions.includes("admin")) {
+  const hasAccess = requiredPermissions.some((permission) => user.permissions.includes(permission))
+  if (!hasAccess) {
     return <Navigate to="/" replace />
   }
 

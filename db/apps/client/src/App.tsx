@@ -168,7 +168,7 @@ const Shell = () => {
           <Route
             path="/admin"
             element={
-              <AdminRoute>
+              <AdminRoute requiredPermissions={["admin", "administrator"]}>
                 <AdminShell />
               </AdminRoute>
             }
@@ -176,7 +176,14 @@ const Shell = () => {
             <Route index element={<AdminDashboardPage />} />
             <Route path="products" element={<AdminProductsPage />} />
             <Route path="orders" element={<AdminOrdersPage />} />
-            <Route path="users" element={<AdminUsersPage />} />
+            <Route
+              path="users"
+              element={
+                <AdminRoute requiredPermissions={["admin"]}>
+                  <AdminUsersPage />
+                </AdminRoute>
+              }
+            />
           </Route>
 
           <Route path="*" element={<NotFoundPage />} />

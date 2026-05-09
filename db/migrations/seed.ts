@@ -10,6 +10,7 @@ if (!connectionString) {
 
 const permissions = [
   "admin",
+  "administrator",
   "product.read",
   "product.write",
   "category.read",
