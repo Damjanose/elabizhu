@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import type { Address } from "@jewellery/types"
 import axios from "axios"
 import { Formik, Form, useFormikContext, type FormikHelpers } from "formik"
 import { motion } from "motion/react"
@@ -8,6 +9,7 @@ import * as Yup from "yup"
 import { useNavigate } from "react-router-dom"
 import { fadeUp, listItem, listStagger, scrollRevealViewport, transition } from "../lib/motion"
 import { checkout } from "../services/orders"
+import { fetchAddresses } from "../services/profile"
 import { useOrderStore } from "../stores/orderStore"
 import { useCart } from "../hooks/useCart"
 import { useAuth } from "../types/auth-context"
@@ -77,11 +79,29 @@ const splitName = (fullName?: string | null) => {
   return { firstName: firstName ?? "", lastName: rest.join(" ") }
 }
 
+const pickDefaultSavedAddress = (addresses: Address[] | undefined): Address | null => {
+  if (!addresses?.length) return null
+  return addresses.find((a) => a.isDefault) ?? addresses[0] ?? null
+}
+
+const streetFromAddress = (addr: Address) => {
+  const street = [addr.line1, addr.line2].map((s) => s?.trim()).filter(Boolean).join(", ")
+  const country = addr.country?.trim()
+  if (!country) return street
+  return street ? `${street}, ${country}` : country
+}
+
 export const CheckoutPage = () => {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const setLast = useOrderStore((s) => s.setLastCheckoutId)
   const { user } = useAuth()
+  const isAuthed = !!user
+  const addressesQuery = useQuery({
+    queryKey: ["me", "addresses"],
+    queryFn: fetchAddresses,
+    enabled: isAuthed,
+  })
   const { data: cart, isLoading: cartLoading, isFetching: cartFetching } = useCart()
   const [formError, setFormError] = useState<string | null>(null)
 
@@ -92,13 +112,25 @@ export const CheckoutPage = () => {
 
   const initial = useMemo<CheckoutValues>(() => {
     const { firstName, lastName } = splitName(user?.fullName)
-    return {
+    const base: CheckoutValues = {
       ...initialValues,
       firstName,
       lastName,
       phone: user?.phone ?? "",
     }
-  }, [user])
+    const saved = pickDefaultSavedAddress(addressesQuery.data)
+    if (!saved) return base
+    const { firstName: sf, lastName: sl } = splitName(saved.recipientName)
+    return {
+      ...base,
+      firstName: sf || base.firstName,
+      lastName: sl || base.lastName,
+      address: streetFromAddress(saved),
+      city: saved.city,
+      postalCode: saved.postalCode,
+      phone: saved.phone?.trim() || base.phone,
+    }
+  }, [user, addressesQuery.data])
 
   const m = useMutation({
     mutationFn: checkout,
@@ -151,6 +183,16 @@ export const CheckoutPage = () => {
           cta={{ to: "/products", label: "Browse Collections" }}
           secondaryCta={{ to: "/cart", label: "Return to Cart" }}
         />
+      </motion.section>
+    )
+  }
+
+  const addressesLoading = isAuthed && addressesQuery.isLoading
+  if (addressesLoading) {
+    return (
+      <motion.section className="aurelia-checkout-shell" variants={fadeUp} initial="hidden" animate="visible">
+        <Stepper activeIndex={1} />
+        <p className="aurelia-checkout-prefill-loading">Loading your saved address…</p>
       </motion.section>
     )
   }

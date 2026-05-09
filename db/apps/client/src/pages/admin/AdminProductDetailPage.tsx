@@ -8,6 +8,7 @@ import type {
   UpdateProductInput,
   UrgencyBadge,
 } from "@jewellery/types"
+import { AureliaCustomSelect } from "../../components/forms/AureliaCustomSelect"
 import { EmptyState } from "../../components/feedback/EmptyState"
 import { useCategories } from "../../hooks/useCatalog"
 import {
@@ -111,6 +112,19 @@ export const AdminProductDetailPage = () => {
   }, [isCreate, productQuery.data])
 
   const isDirty = useMemo(() => JSON.stringify(form) !== JSON.stringify(baseline), [form, baseline])
+
+  const categorySelectOptions = useMemo(
+    () => [
+      { value: "", label: "Select category..." },
+      ...(categories?.map((c) => ({ value: c.id, label: c.name })) ?? []),
+    ],
+    [categories],
+  )
+
+  const urgencySelectOptions = useMemo(
+    () => URGENCY_OPTIONS.map((o) => ({ value: o.value, label: o.label })),
+    [],
+  )
 
   const updateField = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }))
@@ -373,19 +387,13 @@ export const AdminProductDetailPage = () => {
                 <label className="form-label" htmlFor="prod-category">
                   Category
                 </label>
-                <select
+                <AureliaCustomSelect
                   id="prod-category"
-                  className="form-select aurelia-admin-input"
                   value={form.categoryId}
-                  onChange={(event) => updateField("categoryId", event.target.value)}
-                >
-                  <option value="">Select category...</option>
-                  {categories?.map((cat) => (
-                    <option key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(v) => updateField("categoryId", v)}
+                  options={categorySelectOptions}
+                  placeholder="Select category..."
+                />
               </div>
               <div className="col-12">
                 <label className="form-label" htmlFor="prod-description">
@@ -575,20 +583,13 @@ export const AdminProductDetailPage = () => {
                 <label className="form-label" htmlFor="prod-badge">
                   Urgency badge
                 </label>
-                <select
+                <AureliaCustomSelect
                   id="prod-badge"
-                  className="form-select aurelia-admin-input"
                   value={form.urgencyBadge}
-                  onChange={(event) =>
-                    updateField("urgencyBadge", event.target.value as UrgencyBadge)
-                  }
-                >
-                  {URGENCY_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(v) => updateField("urgencyBadge", v as UrgencyBadge)}
+                  options={urgencySelectOptions}
+                  placeholder="Select badge…"
+                />
               </div>
               <div className="col-12">
                 <div className="form-check">

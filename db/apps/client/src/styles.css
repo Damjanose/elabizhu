@@ -756,27 +756,6 @@ h4,
   gap: 0.6rem;
 }
 
-.aurelia-admin-currency-select-wrap {
-  margin: 0;
-}
-
-.aurelia-admin-currency-select {
-  border: 1px solid rgba(209, 197, 180, 0.65);
-  background: #fff;
-  color: var(--aurelia-text);
-  font-size: 0.65rem;
-  letter-spacing: 0.05em;
-  padding: 0.38rem 0.55rem;
-  border-radius: 2px;
-  max-width: min(220px, 42vw);
-  cursor: pointer;
-}
-
-.aurelia-admin-currency-select:focus {
-  outline: 2px solid rgba(197, 160, 89, 0.35);
-  outline-offset: 1px;
-}
-
 .aurelia-admin-shell-icon-btn {
   border: 0;
   background: transparent;
@@ -1350,6 +1329,240 @@ h4,
 .aurelia-admin-input:focus {
   border-color: var(--aurelia-primary);
   box-shadow: 0 0 0 0.1rem rgba(197, 160, 89, 0.16);
+}
+
+/* Aurelia-styled native selects (admin + shell) */
+.aurelia-select-wrap {
+  margin: 0;
+  display: block;
+}
+
+.aurelia-select-wrap--topbar {
+  display: inline-flex;
+  align-items: center;
+}
+
+select.aurelia-select {
+  --aurelia-select-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2.75 4.25L6 7.5L9.25 4.25' stroke='%234e4639' stroke-width='1.15' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0.48rem 2.35rem 0.48rem 0.75rem;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 0.82rem;
+  line-height: 1.35;
+  letter-spacing: 0.02em;
+  color: var(--aurelia-text);
+  color-scheme: light;
+  background-color: #fff;
+  background-image: var(--aurelia-select-chevron);
+  background-repeat: no-repeat;
+  background-position: right 0.7rem center;
+  background-size: 0.72rem;
+  border: 1px solid #d1c5b4;
+  border-radius: 3px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.65) inset;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+select.aurelia-select:hover {
+  border-color: rgba(197, 160, 89, 0.55);
+  background-color: #fffefb;
+}
+
+select.aurelia-select:focus {
+  border-color: var(--aurelia-primary);
+  box-shadow:
+    0 0 0 0.1rem rgba(197, 160, 89, 0.22),
+    0 1px 0 rgba(255, 255, 255, 0.65) inset;
+  outline: 0;
+}
+
+select.aurelia-select:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  background-color: #f8f4ef;
+}
+
+select.aurelia-select option {
+  font-size: 0.88rem;
+  color: var(--aurelia-text);
+  background-color: #fff;
+  padding: 0.35rem 0.5rem;
+}
+
+/* Compact: admin topbar currency */
+select.aurelia-select.aurelia-select--compact {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.42rem 2rem 0.42rem 0.65rem;
+  max-width: min(248px, 46vw);
+  border-color: rgba(209, 197, 180, 0.85);
+  background-color: #fffefb;
+  box-shadow: 0 1px 2px rgba(51, 34, 17, 0.04);
+}
+
+select.aurelia-select.aurelia-select--compact:hover {
+  border-color: rgba(197, 160, 89, 0.65);
+  background-color: #fff;
+}
+
+/* Custom select: themed listbox (avoids OS-native dropdown styling) */
+.aurelia-select-custom {
+  width: 100%;
+}
+
+.aurelia-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+  width: 100%;
+  margin: 0;
+  padding: 0.48rem 0.65rem 0.48rem 0.75rem;
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 0.82rem;
+  line-height: 1.35;
+  letter-spacing: 0.02em;
+  color: var(--aurelia-text);
+  background-color: #fff;
+  border: 1px solid #d1c5b4;
+  border-radius: 3px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.65) inset;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.aurelia-select-trigger:hover:not(:disabled) {
+  border-color: rgba(197, 160, 89, 0.55);
+  background-color: #fffefb;
+}
+
+.aurelia-select-trigger:focus {
+  border-color: var(--aurelia-primary);
+  box-shadow:
+    0 0 0 0.1rem rgba(197, 160, 89, 0.22),
+    0 1px 0 rgba(255, 255, 255, 0.65) inset;
+  outline: 0;
+}
+
+.aurelia-select-trigger:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  background-color: #f8f4ef;
+}
+
+.aurelia-select-trigger__text {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aurelia-select-trigger__text.is-placeholder {
+  color: rgba(109, 100, 88, 0.72);
+}
+
+.aurelia-select-trigger__chevron {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  color: rgba(78, 70, 57, 0.85);
+}
+
+.aurelia-select-trigger__chevron .material-symbols-outlined {
+  font-size: 1.25rem;
+  transition: transform 0.2s ease;
+}
+
+.aurelia-select-trigger[aria-expanded="true"] .aurelia-select-trigger__chevron .material-symbols-outlined {
+  transform: rotate(180deg);
+}
+
+.aurelia-select-panel.aurelia-select-panel--portal {
+  position: fixed;
+  z-index: 5000;
+  margin: 0;
+  padding: 0.4rem 0;
+  list-style: none;
+  background: #fffefb;
+  border: 1px solid #d1c5b4;
+  border-radius: 3px;
+  box-shadow:
+    0 10px 40px -12px rgba(51, 34, 17, 0.18),
+    0 4px 14px -6px rgba(51, 34, 17, 0.1);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.aurelia-select-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem 0.85rem 0.5rem 0.75rem;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  color: var(--aurelia-text);
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+
+.aurelia-select-option__label {
+  flex: 1;
+  min-width: 0;
+}
+
+.aurelia-select-option__check {
+  font-size: 1.1rem !important;
+  color: var(--aurelia-primary);
+  font-variation-settings: "FILL" 0, "wght" 500;
+}
+
+.aurelia-select-option.is-highlighted {
+  background: rgba(197, 160, 89, 0.12);
+}
+
+.aurelia-select-option.is-selected {
+  background: rgba(197, 160, 89, 0.16);
+}
+
+.aurelia-select-option.is-selected.is-highlighted {
+  background: rgba(197, 160, 89, 0.2);
+}
+
+.aurelia-select-custom--compact .aurelia-select-trigger--compact {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.42rem 0.55rem 0.42rem 0.65rem;
+  max-width: min(248px, 46vw);
+  border-color: rgba(209, 197, 180, 0.85);
+  background-color: #fffefb;
+  box-shadow: 0 1px 2px rgba(51, 34, 17, 0.04);
+}
+
+.aurelia-select-custom--compact .aurelia-select-trigger--compact:hover:not(:disabled) {
+  border-color: rgba(197, 160, 89, 0.65);
+  background-color: #fff;
+}
+
+.aurelia-select-custom--compact .aurelia-select-panel--portal .aurelia-select-option {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.aurelia-select-wrap--topbar {
+  display: inline-flex;
+  align-items: center;
 }
 
 .aurelia-admin-users-layout {
@@ -4979,6 +5192,15 @@ h4,
 }
 
 /* ---------- Checkout (shipping + payment) ---------- */
+.aurelia-checkout-prefill-loading {
+  margin: 0;
+  padding: 2.5rem 1rem;
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--aurelia-text-muted, #6d6358);
+  letter-spacing: 0.02em;
+}
+
 .aurelia-checkout-shell {
   padding: 1rem 0 4rem;
 }
@@ -6776,7 +6998,7 @@ h4,
   color: #6d6458;
 }
 
-.aurelia-admin-products-filter select.aurelia-admin-input {
+.aurelia-admin-products-filter .aurelia-select-custom {
   min-width: 12rem;
 }
 

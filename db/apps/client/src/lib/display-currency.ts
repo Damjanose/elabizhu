@@ -1,8 +1,8 @@
-export const DISPLAY_CURRENCIES = ["GBP", "EUR", "ALL"] as const
+export const DISPLAY_CURRENCIES = ["EUR", "GBP", "ALL"] as const
 
 export type DisplayCurrencyCode = (typeof DISPLAY_CURRENCIES)[number]
 
-export const DEFAULT_DISPLAY_CURRENCY: DisplayCurrencyCode = "GBP"
+export const DEFAULT_DISPLAY_CURRENCY: DisplayCurrencyCode = "EUR"
 
 const LOCALE_BY_CODE: Record<DisplayCurrencyCode, string> = {
   GBP: "en-GB",

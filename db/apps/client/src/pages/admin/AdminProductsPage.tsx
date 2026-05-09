@@ -3,6 +3,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { FiSearch } from "react-icons/fi"
 import { useNavigate } from "react-router-dom"
 import type { Product, UrgencyBadge } from "@jewellery/types"
+import { AureliaCustomSelect } from "../../components/forms/AureliaCustomSelect"
 import { EmptyState } from "../../components/feedback/EmptyState"
 import { useCategories } from "../../hooks/useCatalog"
 import { useDebouncedValue } from "../../hooks/useDebouncedValue"
@@ -73,6 +74,14 @@ export const AdminProductsPage = () => {
 
   const categoryName = (id: string) => categories?.find((c) => c.id === id)?.name ?? "—"
 
+  const categoryFilterOptions = useMemo(
+    () => [
+      { value: "", label: "All categories" },
+      ...(categories?.map((c) => ({ value: c.id, label: c.name })) ?? []),
+    ],
+    [categories],
+  )
+
   const goToProduct = (productId: string) => navigate(`/admin/products/${productId}`)
 
   const onRowKey = (event: React.KeyboardEvent<HTMLTableRowElement>, productId: string) => {
@@ -113,19 +122,13 @@ export const AdminProductsPage = () => {
             <label className="form-label mb-0" htmlFor="admin-products-category">
               Category
             </label>
-            <select
+            <AureliaCustomSelect
               id="admin-products-category"
-              className="form-select aurelia-admin-input"
               value={categoryId}
-              onChange={(event) => setCategoryId(event.target.value)}
-            >
-              <option value="">All categories</option>
-              {categories?.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
+              onChange={setCategoryId}
+              options={categoryFilterOptions}
+              placeholder="All categories"
+            />
           </div>
         </div>
 
