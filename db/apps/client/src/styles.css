@@ -886,12 +886,14 @@ h4,
   background: rgba(245, 237, 228, 0.42);
 }
 
-.aurelia-admin-orders-row.is-delivered {
-  background: rgba(219, 228, 219, 0.28);
+/* Bootstrap .table paints each td; row bg on tr is invisible — set cells */
+.aurelia-admin-orders-table tbody tr.aurelia-admin-orders-row.is-delivered-in-all > td {
+  background-color: rgba(230, 248, 210, 0.62) !important;
+  transition: background-color 0.25s ease;
 }
 
-.aurelia-admin-orders-row.is-delivered:hover {
-  background: rgba(219, 228, 219, 0.38);
+.aurelia-admin-orders-table tbody tr.aurelia-admin-orders-row.is-delivered-in-all:hover > td {
+  background-color: rgba(212, 236, 185, 0.78) !important;
 }
 
 .aurelia-admin-orders-row--clickable:focus-visible {
@@ -5514,6 +5516,15 @@ h4,
   align-items: center;
   justify-content: center;
   color: var(--aurelia-primary);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.aurelia-order-item-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .aurelia-order-item-thumb .material-symbols-outlined {

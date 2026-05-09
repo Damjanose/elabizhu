@@ -82,7 +82,7 @@ export const AdminOrdersPage = () => {
             {visibleOrders.map((o) => (
               <tr
                 key={o.id}
-                className={`aurelia-admin-orders-row aurelia-admin-orders-row--clickable ${o.status === "delivered" ? "is-delivered" : ""}`}
+                className={`aurelia-admin-orders-row aurelia-admin-orders-row--clickable ${filter === "all" && o.status === "delivered" ? "is-delivered-in-all" : ""}`}
                 role="link"
                 tabIndex={0}
                 onClick={() => navigate(`/admin/orders/${o.id}`)}
@@ -124,7 +124,15 @@ export const AdminOrdersPage = () => {
             </div>
           )}
           <div className="aurelia-admin-table-foot aurelia-admin-orders-foot">
-            <span>Showing {visibleOrders.length} of {activeOrdersCount} active orders</span>
+            <span>
+              {filter === "all" && `Showing ${visibleOrders.length} of ${orders.length} orders`}
+              {filter === "active" &&
+                `Showing ${visibleOrders.length} active order${visibleOrders.length === 1 ? "" : "s"}`}
+              {filter === "delivered" &&
+                `Showing ${visibleOrders.length} delivered order${visibleOrders.length === 1 ? "" : "s"}`}
+              {filter === "cancelled" &&
+                `Showing ${visibleOrders.length} cancelled order${visibleOrders.length === 1 ? "" : "s"}`}
+            </span>
             <div className="aurelia-admin-orders-pager" aria-hidden>
               <button type="button" className="aurelia-admin-orders-pager-btn" tabIndex={-1}>
                 <span className="material-symbols-outlined">chevron_left</span>

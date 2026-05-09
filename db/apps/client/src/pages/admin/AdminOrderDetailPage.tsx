@@ -232,7 +232,11 @@ export const AdminOrderDetailPage = () => {
                 {data.items.map((item) => (
                   <li key={item.id} className="aurelia-order-item">
                     <div className="aurelia-order-item-thumb" aria-hidden>
-                      <span className="material-symbols-outlined">diamond</span>
+                      {item.imageUrl ? (
+                        <img src={item.imageUrl} alt="" loading="lazy" />
+                      ) : (
+                        <span className="material-symbols-outlined">diamond</span>
+                      )}
                     </div>
                     <div className="aurelia-order-item-meta">
                       <Link

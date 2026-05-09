@@ -164,6 +164,8 @@ export type OrderItemDto = {
   productName: string
   quantity: number
   unitPrice: string
+  /** First product image by sort order, when present */
+  imageUrl: string | null
 }
 
 export type OrderStatusEventDto = {
