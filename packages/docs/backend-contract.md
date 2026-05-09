@@ -89,6 +89,21 @@ The admin shell dashboard currently derives live metrics from:
 
 No dashboard metric grants additional privileges; write operations still require backend permission checks.
 
+## Admin users management
+
+All endpoints below require auth + `admin` permission:
+
+| Method | Path | Body | Notes |
+|--------|------|------|------|
+| GET | `/admin/users` | | Returns `{ users, availablePermissions }`. |
+| PATCH | `/admin/users/:id/active` | `{ isActive: boolean }` | Soft block/unblock account via `users.is_active`. |
+| PATCH | `/admin/users/:id/permissions` | `{ permissions: PermissionName[] }` | Replaces user permissions, including optional `admin`. |
+
+Guardrails:
+- Admin cannot deactivate their own account.
+- Admin cannot remove their own `admin` permission.
+- Deactivated users are blocked in auth middleware and receive `403 Account is deactivated`.
+
 ## Socket.IO
 
 - Connect to the **same host** as the API (HTTP server also serves Socket.IO).

@@ -31,10 +31,10 @@ export const AdminShell = () => {
               <FiShoppingBag />
               <span>Orders</span>
             </NavLink>
-            <span className="aurelia-admin-shell-nav-link is-muted" aria-disabled>
+            <NavLink to="/admin/users" className={shellNavClass}>
               <FiUsers />
-              <span>Customers</span>
-            </span>
+              <span>Users</span>
+            </NavLink>
           </nav>
 
           <div className="aurelia-admin-shell-sidebar-footer">

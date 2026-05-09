@@ -78,6 +78,10 @@ export const login = async (input: { email: string; password: string }, context:
     throw new Error("Invalid credentials")
   }
 
+  if (!user.is_active) {
+    throw new Error("Account is deactivated")
+  }
+
   const valid = await bcrypt.compare(input.password, user.password_hash)
   if (!valid) {
     throw new Error("Invalid credentials")

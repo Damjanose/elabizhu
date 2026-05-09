@@ -80,6 +80,10 @@ const handleError = (res: Response, error: unknown) => {
     return res.status(401).json({ message: error.message })
   }
 
+  if (error instanceof Error && error.message === "Account is deactivated") {
+    return res.status(403).json({ message: error.message })
+  }
+
   console.error(error)
   return res.status(500).json({ message: "Internal server error" })
 }

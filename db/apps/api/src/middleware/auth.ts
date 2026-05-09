@@ -38,6 +38,11 @@ export const requireAuth = async (req: Request, res: Response, next: NextFunctio
     .where("up.user_id", "=", decoded.sub)
     .execute()
 
+  const user = await db.selectFrom("users").select("is_active").where("id", "=", decoded.sub).executeTakeFirst()
+  if (!user || !user.is_active) {
+    return res.status(403).json({ message: "Account is deactivated" })
+  }
+
   req.auth = {
     userId: decoded.sub,
     sessionId: decoded.sid,

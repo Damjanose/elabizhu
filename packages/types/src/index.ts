@@ -202,3 +202,28 @@ export type UpdateOrderStatusInput = {
   status: OrderStatus
   note?: string
 }
+
+export type AdminUserRow = {
+  id: string
+  email: string
+  fullName: string
+  phone: string | null
+  isActive: boolean
+  hasActiveSession: boolean
+  permissions: PermissionName[]
+  createdAt: string
+  updatedAt: string
+}
+
+export type AdminUsersListResponse = {
+  users: AdminUserRow[]
+  availablePermissions: PermissionName[]
+}
+
+export type UpdateUserActiveInput = {
+  isActive: boolean
+}
+
+export type UpdateUserPermissionsInput = {
+  permissions: PermissionName[]
+}

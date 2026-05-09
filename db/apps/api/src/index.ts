@@ -5,6 +5,7 @@ import cors from "cors"
 import * as authHandlers from "./handlers/auth.js"
 import * as cartHandlers from "./handlers/cart.js"
 import * as categoryHandlers from "./handlers/categories.js"
+import * as adminUserHandlers from "./handlers/adminUsers.js"
 import * as notificationHandlers from "./handlers/notifications.js"
 import * as orderHandlers from "./handlers/orders.js"
 import * as productHandlers from "./handlers/products.js"
@@ -56,6 +57,10 @@ app.get("/orders", requireAuth, orderHandlers.list)
 app.post("/orders/checkout", requireAuth, orderHandlers.checkout)
 app.get("/orders/:id", requireAuth, orderHandlers.getById)
 app.patch("/orders/:id/status", requireAuth, requirePermission("order.write"), orderHandlers.updateStatus)
+
+app.get("/admin/users", requireAuth, requirePermission("admin"), adminUserHandlers.list)
+app.patch("/admin/users/:id/active", requireAuth, requirePermission("admin"), adminUserHandlers.setActive)
+app.patch("/admin/users/:id/permissions", requireAuth, requirePermission("admin"), adminUserHandlers.setPermissions)
 
 app.get("/notifications", requireAuth, notificationHandlers.list)
 app.patch("/notifications/:id/read", requireAuth, notificationHandlers.markRead)
