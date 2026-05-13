@@ -202,6 +202,9 @@ const Shell = () => {
 export const App = () => (
   <>
     <motion.div variants={fadeUp} initial="hidden" animate="visible">
+      <p className="aurelia-demo-banner" role="note">
+        Demo storefront — checkout is simulated. Portfolio project only.
+      </p>
       <Shell />
     </motion.div>
     <ToastContainer

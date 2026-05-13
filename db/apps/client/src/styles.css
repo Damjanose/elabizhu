@@ -194,6 +194,17 @@ h4,
   }
 }
 
+.aurelia-demo-banner {
+  margin: 0;
+  padding: 0.45rem 1rem;
+  text-align: center;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: var(--color-on-primary-container);
+  background: var(--color-primary-fixed);
+  border-bottom: 1px solid var(--color-outline-variant);
+}
+
 .aurelia-topbar {
   background: rgba(255, 248, 243, 0.95);
   backdrop-filter: blur(8px);

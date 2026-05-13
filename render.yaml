@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: jewellery-api
+    runtime: node
+    plan: free
+    buildCommand: pnpm install && pnpm --filter @jewellery/api build
+    startCommand: pnpm --filter @jewellery/api start
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true

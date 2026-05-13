@@ -1,6 +1,6 @@
 # QA checklist — jewellery e-commerce monorepo
 
-Run with Docker Postgres (`docker compose up -d`), `.env` in `apps/api/`, then `pnpm --filter @jewellery/api db:migrate` and `db:seed`, then `pnpm dev`.
+Run with Docker Postgres (`docker compose up -d`), `.env` in `db/apps/api/`, then `pnpm --filter @jewellery/api db:migrate` and `db:seed`, then `pnpm dev`.
 
 ## Database & API
 
