@@ -16,10 +16,10 @@ export const AdminShell = () => {
     <div className="aurelia-admin-shell-bleed">
       <div className="aurelia-admin-shell">
         <aside className="aurelia-admin-shell-sidebar">
-          <div className="aurelia-admin-shell-brand">
+          <Link className="aurelia-admin-shell-brand text-decoration-none" to="/" aria-label="Back to Aurelia home">
             <span className="aurelia-admin-shell-logo">AURELIA</span>
             <span className="aurelia-admin-shell-subtitle">Luxury Admin</span>
-          </div>
+          </Link>
 
           <nav className="aurelia-admin-shell-nav" aria-label="Admin navigation">
             <NavLink end to="/admin" className={shellNavClass}>

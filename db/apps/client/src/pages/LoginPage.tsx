@@ -12,6 +12,8 @@ import { extractFieldErrors } from "../utils/form-errors"
 import { sanitizeRedirect } from "../utils/post-auth-redirect"
 import { errorToast, successToast } from "../utils/toast"
 
+// Demo admin (run db:seed): admin@example.com / Admin123!
+
 const LOGIN_VISUAL =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuANIPK2sA_DRxWB_X0cI9oci-WSe6NXAJqBeV5uM-oNM7loqG2k7g7pBlapLwp_wZ0OGa0R5npIpEr_XD2x6SU_bAp-g1C4KGl3UWFPuM8rO2rSEXdTBlWO_NA8AIjlf12oCTHnMehix8fRwglYRDYfBVhKfagn1YN0QkTILB3_eqtipyes0e1P19vkR6oMivth7PNQftjceEEOaZOXTFns8iInHoDjkLH2_WFlWb1Z8DfLkCbBl_DV6jrISOgov80h7lOFKCn4Gw"
 

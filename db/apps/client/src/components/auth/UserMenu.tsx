@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import { FiGrid, FiLogOut, FiPackage, FiUser } from "react-icons/fi"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../../types/auth-context"
+import { NavIconHint } from "../nav/NavIconHint"
 import { loginHrefWithReturn } from "../../utils/post-auth-redirect"
 import { infoToast, toastFromError } from "../../utils/toast"
 
@@ -36,9 +37,11 @@ export const UserMenu = () => {
 
   if (!user) {
     return (
-      <Link className="aurelia-icon-link text-decoration-none" to={signInHref} aria-label="Sign in">
-        <FiUser />
-      </Link>
+      <NavIconHint label="Sign In">
+        <Link className="aurelia-icon-link text-decoration-none" to={signInHref} aria-label="Sign in">
+          <FiUser />
+        </Link>
+      </NavIconHint>
     )
   }
 
@@ -60,16 +63,18 @@ export const UserMenu = () => {
 
   return (
     <div className="aurelia-user-menu" ref={containerRef}>
-      <button
-        type="button"
-        className="aurelia-icon-link aurelia-user-menu-trigger"
-        aria-haspopup="menu"
-        aria-expanded={open}
-        aria-label={`Account menu for ${displayName}`}
-        onClick={() => setOpen((prev) => !prev)}
-      >
-        <FiUser />
-      </button>
+      <NavIconHint label="Account">
+        <button
+          type="button"
+          className="aurelia-icon-link aurelia-user-menu-trigger"
+          aria-haspopup="menu"
+          aria-expanded={open}
+          aria-label={`Account menu for ${displayName}`}
+          onClick={() => setOpen((prev) => !prev)}
+        >
+          <FiUser />
+        </button>
+      </NavIconHint>
 
       {open && (
         <div className="aurelia-user-menu-popover" role="menu" aria-label="Account menu">

@@ -210,6 +210,7 @@ h4,
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--aurelia-surface-border);
   padding: 0.95rem 0;
+  overflow: visible;
 }
 
 .aurelia-brand {
@@ -288,6 +289,71 @@ h4,
 .aurelia-cart-icon svg {
   width: 1rem;
   height: 1rem;
+}
+
+.aurelia-nav-icon-hint {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aurelia-nav-icon-hint-label {
+  position: absolute;
+  top: calc(100% + 0.55rem);
+  left: 50%;
+  z-index: 30;
+  padding: 0.38rem 0.62rem;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.58rem;
+  line-height: 1.2;
+  color: var(--aurelia-text);
+  background: var(--aurelia-surface);
+  border: 1px solid var(--aurelia-surface-border);
+  border-radius: 0.35rem;
+  box-shadow: 0 12px 24px -18px rgba(51, 34, 17, 0.28);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(-4px);
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease,
+    transform 0.2s ease;
+}
+
+.aurelia-nav-icon-hint-label::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background: var(--aurelia-surface);
+  border-left: 1px solid var(--aurelia-surface-border);
+  border-top: 1px solid var(--aurelia-surface-border);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.aurelia-nav-icon-hint:hover .aurelia-nav-icon-hint-label,
+.aurelia-nav-icon-hint:focus-within .aurelia-nav-icon-hint-label {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurelia-nav-icon-hint-label {
+    transition: none;
+    transform: translateX(-50%);
+  }
+
+  .aurelia-nav-icon-hint:hover .aurelia-nav-icon-hint-label,
+  .aurelia-nav-icon-hint:focus-within .aurelia-nav-icon-hint-label {
+    transform: translateX(-50%);
+  }
 }
 
 .aurelia-cart-badge {
@@ -622,6 +688,12 @@ h4,
   display: grid;
   gap: 0.22rem;
   min-width: 0;
+  color: inherit;
+  transition: opacity 0.2s ease;
+}
+
+.aurelia-admin-shell-brand:hover {
+  opacity: 0.82;
 }
 
 .aurelia-admin-shell-logo {
