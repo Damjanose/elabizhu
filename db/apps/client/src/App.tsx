@@ -214,5 +214,6 @@ export const App = () => (
       theme="light"
       toastClassName="aurelia-toast"
     />
+    <Shell />
   </>
 )
