@@ -5,7 +5,6 @@ node_modules
 !.env.development
 dist
 coverage
-pnpm-lock.yaml
 .DS_Store
 .cursor/mcp.json
 design/

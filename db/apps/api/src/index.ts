@@ -19,7 +19,7 @@ import { requireAuth, requirePermission } from "./middleware/auth.js"
 import { attachSocket } from "./socketServer.js"
 
 const app = express()
-const port = Number(process.env.API_PORT ?? 3001)
+const port = Number(process.env.API_PORT ?? process.env.PORT ?? 3001)
 
 app.use(cors())
 app.use(express.json())

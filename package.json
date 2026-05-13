@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "pnpm -r --parallel dev",
     "build": "pnpm -r build",
+    "build:client": "pnpm --filter @jewellery/client build",
+    "vercel-build": "pnpm --filter @jewellery/client build",
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck"
   }
