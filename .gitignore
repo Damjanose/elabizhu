@@ -16,3 +16,4 @@ pnpm-lock.yaml
 .vscode/
 .cursor/
 .pnpm-store/
+doc/
