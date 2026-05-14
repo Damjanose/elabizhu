@@ -45,15 +45,28 @@ export const CartPage = () => {
 
   if (isLoading) {
     return (
-      <section className="aurelia-cart-shell">
+      <section className="aurelia-cart-shell" aria-busy="true" aria-live="polite" aria-label="Loading cart">
         <Stepper activeIndex={0} />
-        <EmptyState
-          variant="card"
-          icon="hourglass_empty"
-          kicker="Loading"
-          title="Retrieving your selection…"
-          copy="One moment while we gather what you’ve set aside."
-        />
+        <div className="aurelia-cart-grid">
+          <div className="aurelia-cart-main">
+            <div className="aurelia-cart-skeleton-title aurelia-shimmer-block" aria-hidden />
+            <div className="aurelia-cart-table" aria-hidden>
+              {[0, 1, 2].map((index) => (
+                <div key={index} className="aurelia-cart-skeleton-row">
+                  <div className="aurelia-cart-skeleton-thumb aurelia-shimmer-block" />
+                  <div>
+                    <div className="aurelia-cart-skeleton-copy aurelia-shimmer-block" />
+                    <div className="aurelia-cart-skeleton-copy aurelia-cart-skeleton-copy--short aurelia-shimmer-block" />
+                  </div>
+                  <div className="aurelia-cart-skeleton-total aurelia-shimmer-block" />
+                </div>
+              ))}
+            </div>
+          </div>
+          <aside className="aurelia-cart-aside" aria-hidden>
+            <div className="aurelia-cart-summary aurelia-cart-skeleton-aside aurelia-shimmer-block" />
+          </aside>
+        </div>
       </section>
     )
   }

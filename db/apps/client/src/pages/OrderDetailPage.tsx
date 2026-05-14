@@ -81,14 +81,21 @@ export const OrderDetailPage = () => {
 
   if (isLoading) {
     return (
-      <section className="aurelia-detail-shell">
-        <EmptyState
-          variant="page"
-          icon="hourglass_empty"
-          kicker="Loading"
-          title="Retrieving your order…"
-          copy="One moment while we pull the latest details from the atelier."
-        />
+      <section className="aurelia-order-detail" aria-busy="true" aria-live="polite" aria-label="Loading order">
+        <div className="aurelia-detail-skeleton-back aurelia-shimmer-block" aria-hidden />
+        <div className="aurelia-detail-skeleton-hero" aria-hidden>
+          <div>
+            <div className="aurelia-detail-skeleton-line aurelia-detail-skeleton-line--short aurelia-shimmer-block" />
+            <div className="aurelia-detail-skeleton-line aurelia-detail-skeleton-line--title aurelia-shimmer-block" />
+            <div className="aurelia-detail-skeleton-line aurelia-detail-skeleton-line--short aurelia-shimmer-block" />
+          </div>
+          <div>
+            <div className="aurelia-detail-skeleton-line aurelia-detail-skeleton-line--short aurelia-shimmer-block" />
+            <div className="aurelia-detail-skeleton-line aurelia-shimmer-block" />
+          </div>
+        </div>
+        <div className="aurelia-detail-skeleton-card aurelia-shimmer-block" aria-hidden />
+        <div className="aurelia-detail-skeleton-card aurelia-shimmer-block" aria-hidden />
       </section>
     )
   }

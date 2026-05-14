@@ -118,8 +118,9 @@ export const HomePage = () => {
             View all
           </MotionLink>
         </motion.div>
-        {fLoad && <div className="alert alert-info py-2">Loading featured…</div>}
-        {!fLoad && featured && featured.length > 0 && (
+        {fLoad ? (
+          <FeaturedProductsSkeleton />
+        ) : featured && featured.length > 0 ? (
           <motion.div
             key={featured
               .slice(0, 4)
@@ -136,7 +137,7 @@ export const HomePage = () => {
               </motion.div>
             ))}
           </motion.div>
-        )}
+        ) : null}
       </section>
 
       <section className="aurelia-feature-block mb-5">
@@ -296,3 +297,21 @@ export const HomePage = () => {
     </motion.div>
   )
 }
+
+const FeaturedProductsSkeleton = () => (
+  <motion.div
+    className="row g-4"
+    aria-busy="true"
+    aria-live="polite"
+    aria-label="Loading featured products"
+    variants={listStagger}
+    initial="hidden"
+    animate="visible"
+  >
+    {[0, 1, 2, 3].map((i) => (
+      <motion.div key={i} className="col-6 col-lg-3" variants={listItem}>
+        <motion.div className="aurelia-product-skeleton" aria-hidden />
+      </motion.div>
+    ))}
+  </motion.div>
+)

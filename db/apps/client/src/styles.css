@@ -4842,6 +4842,256 @@ select.aurelia-select.aurelia-select--compact:hover {
   animation: aurelia-shimmer 1.6s ease-in-out infinite;
 }
 
+.aurelia-shimmer-block {
+  background: linear-gradient(
+    90deg,
+    rgba(245, 237, 228, 0) 0%,
+    var(--aurelia-surface-soft) 50%,
+    rgba(245, 237, 228, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: aurelia-shimmer 1.6s ease-in-out infinite;
+}
+
+.aurelia-pdp-skeleton-thumb {
+  width: 72px;
+  height: 88px;
+  flex-shrink: 0;
+}
+
+.aurelia-pdp-skeleton-main {
+  flex: 1;
+  min-height: clamp(320px, 52vw, 520px);
+}
+
+.aurelia-pdp-skeleton-line {
+  height: 14px;
+  margin-bottom: 16px;
+}
+
+.aurelia-pdp-skeleton-line--kicker {
+  width: 42%;
+  height: 12px;
+}
+
+.aurelia-pdp-skeleton-line--title {
+  width: 88%;
+  height: 40px;
+  margin-bottom: 20px;
+}
+
+.aurelia-pdp-skeleton-line--price {
+  width: 36%;
+  height: 28px;
+}
+
+.aurelia-pdp-skeleton-line--copy {
+  width: 100%;
+  height: 12px;
+}
+
+.aurelia-pdp-skeleton-line--copy-short {
+  width: 72%;
+  margin-bottom: 24px;
+}
+
+.aurelia-pdp-skeleton-line--stock {
+  width: 48%;
+  height: 18px;
+  margin-bottom: 28px;
+}
+
+.aurelia-pdp-skeleton-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.aurelia-pdp-skeleton-line--qty {
+  width: 120px;
+  height: 48px;
+  margin-bottom: 0;
+}
+
+.aurelia-pdp-skeleton-line--cta {
+  flex: 1;
+  height: 48px;
+  margin-bottom: 0;
+}
+
+.aurelia-rec-skeleton-image {
+  aspect-ratio: 4 / 5;
+  width: 100%;
+}
+
+.aurelia-rec-skeleton-caption {
+  height: 14px;
+  width: 72%;
+  margin-top: 16px;
+}
+
+.aurelia-cart-skeleton-title {
+  width: min(280px, 60%);
+  height: 36px;
+  margin-bottom: 24px;
+}
+
+.aurelia-cart-skeleton-row {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) 88px;
+  gap: 20px;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--aurelia-surface-border);
+}
+
+.aurelia-cart-skeleton-thumb {
+  aspect-ratio: 1;
+  width: 96px;
+}
+
+.aurelia-cart-skeleton-copy {
+  height: 14px;
+}
+
+.aurelia-cart-skeleton-copy--short {
+  width: 42%;
+  margin-top: 12px;
+}
+
+.aurelia-cart-skeleton-total {
+  height: 18px;
+  width: 72px;
+  justify-self: end;
+}
+
+.aurelia-cart-skeleton-aside {
+  min-height: 320px;
+}
+
+.aurelia-detail-skeleton-back {
+  width: 148px;
+  height: 18px;
+  margin-bottom: 28px;
+}
+
+.aurelia-detail-skeleton-hero {
+  display: grid;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+@media (min-width: 768px) {
+  .aurelia-detail-skeleton-hero {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.aurelia-detail-skeleton-line {
+  height: 14px;
+  margin-bottom: 14px;
+}
+
+.aurelia-detail-skeleton-line--title {
+  width: min(360px, 80%);
+  height: 40px;
+  margin-bottom: 18px;
+}
+
+.aurelia-detail-skeleton-line--short {
+  width: 52%;
+}
+
+.aurelia-detail-skeleton-card {
+  min-height: 220px;
+  margin-bottom: 24px;
+}
+
+.aurelia-checkout-skeleton-header {
+  width: min(320px, 70%);
+  height: 40px;
+  margin-bottom: 12px;
+}
+
+.aurelia-checkout-skeleton-sub {
+  width: min(420px, 90%);
+  height: 14px;
+  margin-bottom: 28px;
+}
+
+.aurelia-checkout-skeleton-field {
+  height: 56px;
+}
+
+.aurelia-checkout-skeleton-summary {
+  min-height: 320px;
+}
+
+.aurelia-checkout-summary-skeleton-row {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) 72px;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--aurelia-surface-border);
+}
+
+.aurelia-checkout-summary-skeleton-thumb {
+  width: 56px;
+  aspect-ratio: 1;
+}
+
+.aurelia-checkout-summary-skeleton-copy {
+  height: 12px;
+}
+
+.aurelia-checkout-summary-skeleton-copy--short {
+  width: 48%;
+  margin-top: 8px;
+}
+
+.aurelia-checkout-summary-skeleton-total {
+  height: 14px;
+  justify-self: end;
+}
+
+.aurelia-address-skeleton-row {
+  height: 88px;
+  margin-bottom: 12px;
+}
+
+.aurelia-address-skeleton-row:last-child {
+  margin-bottom: 0;
+}
+
+.aurelia-admin-alerts-skeleton-row {
+  height: 56px;
+  margin-bottom: 8px;
+}
+
+.aurelia-admin-alerts-skeleton-row:last-child {
+  margin-bottom: 0;
+}
+
+.aurelia-admin-products-thumb.is-skeleton {
+  width: 48px;
+  height: 48px;
+}
+
+.aurelia-admin-table-skeleton-cell {
+  height: 48px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurelia-shimmer-block,
+  .aurelia-product-skeleton,
+  .aurelia-orders-skeleton-row,
+  .aurelia-notifications-skeleton-row {
+    animation: none;
+    background: var(--aurelia-surface-soft);
+  }
+}
+
 /* ---------- Cart (editorial selection) ---------- */
 .aurelia-cart-shell {
   padding: 1rem 0 4rem;

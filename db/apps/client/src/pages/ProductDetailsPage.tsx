@@ -49,11 +49,7 @@ export const ProductDetailsPage = () => {
   }, [product, categoriesQuery.data])
 
   if (productQuery.isLoading) {
-    return (
-      <section className="aurelia-pdp-shell">
-        <div className="aurelia-pdp-state">Loading product…</div>
-      </section>
-    )
+    return <ProductDetailsSkeleton />
   }
 
   if (productQuery.isError || !product) {
@@ -396,7 +392,7 @@ const RecommendationsRail = ({
       </header>
 
       {isLoading ? (
-        <div className="aurelia-rec-empty">Curating pieces just for you…</div>
+        <RecommendationsRailSkeleton />
       ) : items.length === 0 ? (
         <div className="aurelia-rec-empty">
           We’ll surface companion pieces here once more of the collection is in stock.
@@ -439,3 +435,45 @@ const RecommendationsRail = ({
     </motion.section>
   )
 }
+
+const ProductDetailsSkeleton = () => (
+  <section className="aurelia-pdp-shell" aria-busy="true" aria-live="polite" aria-label="Loading product">
+    <div className="aurelia-pdp-grid">
+      <div className="aurelia-pdp-gallery-col">
+        <div className="aurelia-pdp-gallery">
+          <div className="aurelia-pdp-thumbs" aria-hidden>
+            {[0, 1, 2].map((index) => (
+              <div key={index} className="aurelia-pdp-skeleton-thumb aurelia-shimmer-block" />
+            ))}
+          </div>
+          <div className="aurelia-pdp-skeleton-main aurelia-shimmer-block" aria-hidden />
+        </div>
+      </div>
+
+      <div className="aurelia-pdp-info-col" aria-hidden>
+        <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--kicker aurelia-shimmer-block" />
+        <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--title aurelia-shimmer-block" />
+        <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--price aurelia-shimmer-block" />
+        <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--copy aurelia-shimmer-block" />
+        <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--copy aurelia-shimmer-block" />
+        <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--copy-short aurelia-shimmer-block" />
+        <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--stock aurelia-shimmer-block" />
+        <div className="aurelia-pdp-skeleton-actions">
+          <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--qty aurelia-shimmer-block" />
+          <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--cta aurelia-shimmer-block" />
+        </div>
+      </div>
+    </div>
+  </section>
+)
+
+const RecommendationsRailSkeleton = () => (
+  <div className="aurelia-rec-track" aria-busy="true" aria-live="polite" aria-label="Loading recommendations">
+    {[0, 1, 2, 3].map((index) => (
+      <div key={index} className="aurelia-rec-item" aria-hidden>
+        <div className="aurelia-rec-skeleton-image aurelia-shimmer-block" />
+        <div className="aurelia-rec-skeleton-caption aurelia-shimmer-block" />
+      </div>
+    ))}
+  </div>
+)

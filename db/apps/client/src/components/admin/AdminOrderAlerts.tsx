@@ -81,7 +81,11 @@ export const AdminOrderAlerts = () => {
           </div>
 
           {isLoading ? (
-            <p className="aurelia-admin-order-alerts-empty">Loading…</p>
+            <div className="aurelia-admin-order-alerts-skeleton" aria-busy="true" aria-live="polite">
+              {[0, 1, 2].map((index) => (
+                <div key={index} className="aurelia-admin-alerts-skeleton-row aurelia-shimmer-block" />
+              ))}
+            </div>
           ) : isError ? (
             <p className="aurelia-admin-order-alerts-empty">Could not load orders.</p>
           ) : pendingOrders.length === 0 ? (

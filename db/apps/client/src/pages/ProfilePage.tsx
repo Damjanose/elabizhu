@@ -269,12 +269,11 @@ const AddressBook = ({
   const renderBody = () => {
     if (isLoading) {
       return (
-        <EmptyState
-          variant="inline"
-          icon="hourglass_empty"
-          title="Loading addresses…"
-          copy="One moment while we fetch your saved addresses."
-        />
+        <div className="aurelia-address-skeleton" aria-busy="true" aria-live="polite" aria-label="Loading addresses">
+          {[0, 1].map((index) => (
+            <div key={index} className="aurelia-address-skeleton-row aurelia-shimmer-block" />
+          ))}
+        </div>
       )
     }
     if (isError) {

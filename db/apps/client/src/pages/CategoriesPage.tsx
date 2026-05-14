@@ -36,13 +36,14 @@ export const CategoriesPage = () => {
       </header>
 
       {isLoading && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+        <div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter"
+          aria-busy="true"
+          aria-live="polite"
+          aria-label="Loading categories"
+        >
           {[0, 1, 2].map((i) => (
-            <div
-              key={i}
-              className="aspect-square bg-surface-container animate-pulse"
-              aria-hidden
-            />
+            <div key={i} className="aspect-square aurelia-shimmer-block" aria-hidden />
           ))}
         </div>
       )}

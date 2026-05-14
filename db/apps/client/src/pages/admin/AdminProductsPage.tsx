@@ -146,7 +146,18 @@ export const AdminProductsPage = () => {
               </tr>
             </thead>
             <tbody>
-              {items.map((product) => {
+              {isLoading && items.length === 0
+                ? Array.from({ length: 6 }, (_, index) => (
+                    <tr key={index} aria-hidden>
+                      <td>
+                        <div className="aurelia-admin-products-thumb is-skeleton aurelia-shimmer-block" />
+                      </td>
+                      <td colSpan={6}>
+                        <div className="aurelia-admin-table-skeleton-cell aurelia-shimmer-block" />
+                      </td>
+                    </tr>
+                  ))
+                : items.map((product) => {
                 const thumb = productThumb(product)
                 const lowStock =
                   product.stockQuantity <= product.lowStockThreshold && product.stockQuantity > 0
@@ -253,7 +264,7 @@ export const AdminProductsPage = () => {
             <span>
               {total === 0
                 ? isLoading || isFetching
-                  ? "Loading products..."
+                  ? "Preparing products…"
                   : "Showing 0 products"
                 : `Showing ${startIndex}–${endIndex} of ${total} product${total === 1 ? "" : "s"}`}
             </span>

@@ -280,14 +280,17 @@ export const AdminProductDetailPage = () => {
 
   if (!isCreate && productQuery.isLoading) {
     return (
-      <section className="aurelia-detail-shell">
-        <EmptyState
-          variant="page"
-          icon="hourglass_empty"
-          kicker="Loading"
-          title="Retrieving product details..."
-          copy="One moment while we pull the latest details."
-        />
+      <section className="aurelia-detail-shell" aria-busy="true" aria-live="polite" aria-label="Loading product">
+        <div className="aurelia-detail-skeleton-back aurelia-shimmer-block" aria-hidden />
+        <div className="aurelia-detail-skeleton-hero" aria-hidden>
+          <div>
+            <div className="aurelia-detail-skeleton-line aurelia-detail-skeleton-line--short aurelia-shimmer-block" />
+            <div className="aurelia-detail-skeleton-line aurelia-detail-skeleton-line--title aurelia-shimmer-block" />
+            <div className="aurelia-detail-skeleton-line aurelia-detail-skeleton-line--short aurelia-shimmer-block" />
+          </div>
+        </div>
+        <div className="aurelia-detail-skeleton-card aurelia-shimmer-block" aria-hidden />
+        <div className="aurelia-detail-skeleton-card aurelia-shimmer-block" aria-hidden />
       </section>
     )
   }

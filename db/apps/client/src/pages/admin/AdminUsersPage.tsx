@@ -60,7 +60,25 @@ export const AdminUsersPage = () => {
     setPermissionDraft(selectedUser.permissions)
   }, [selectedUser?.id])
 
-  if (usersQuery.isLoading) return <div className="aurelia-admin-panel p-4">Loading users…</div>
+  if (usersQuery.isLoading) {
+    return (
+      <div className="aurelia-admin-page" aria-busy="true" aria-live="polite" aria-label="Loading users">
+        <div className="aurelia-admin-page-header">
+          <div>
+            <p className="aurelia-admin-kicker mb-2">Identity & Access</p>
+            <h1 className="aurelia-admin-title mb-0">Users</h1>
+          </div>
+        </div>
+        <section className="aurelia-admin-orders-section">
+          <div className="aurelia-orders-skeleton">
+            {[0, 1, 2, 3, 4].map((index) => (
+              <div key={index} className="aurelia-orders-skeleton-row" />
+            ))}
+          </div>
+        </section>
+      </div>
+    )
+  }
 
   if (usersQuery.isError) {
     return (

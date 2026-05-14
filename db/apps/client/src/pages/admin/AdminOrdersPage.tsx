@@ -45,7 +45,25 @@ export const AdminOrdersPage = () => {
   }, [orders, filter])
   const activeOrdersCount = orders.filter((order) => isActiveOrder(order.status)).length
 
-  if (isLoading) return <div className="aurelia-admin-panel p-4">Loading orders…</div>
+  if (isLoading) {
+    return (
+      <div className="aurelia-admin-page" aria-busy="true" aria-live="polite" aria-label="Loading orders">
+        <div className="aurelia-admin-page-header">
+          <div>
+            <p className="aurelia-admin-kicker mb-2">Operations</p>
+            <h1 className="aurelia-admin-title mb-0">Order flow</h1>
+          </div>
+        </div>
+        <section className="aurelia-admin-orders-section">
+          <div className="aurelia-orders-skeleton">
+            {[0, 1, 2, 3, 4].map((index) => (
+              <div key={index} className="aurelia-orders-skeleton-row" />
+            ))}
+          </div>
+        </section>
+      </div>
+    )
+  }
 
   return (
     <div className="aurelia-admin-page">

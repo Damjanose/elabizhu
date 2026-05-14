@@ -190,9 +190,28 @@ export const CheckoutPage = () => {
   const addressesLoading = isAuthed && addressesQuery.isLoading
   if (addressesLoading) {
     return (
-      <motion.section className="aurelia-checkout-shell" variants={fadeUp} initial="hidden" animate="visible">
+      <motion.section
+        className="aurelia-checkout-shell"
+        variants={fadeUp}
+        initial="hidden"
+        animate="visible"
+        aria-busy="true"
+        aria-live="polite"
+        aria-label="Loading checkout"
+      >
         <Stepper activeIndex={1} />
-        <p className="aurelia-checkout-prefill-loading">Loading your saved address…</p>
+        <div className="aurelia-checkout-grid">
+          <div aria-hidden>
+            <div className="aurelia-checkout-skeleton-header aurelia-shimmer-block" />
+            <div className="aurelia-checkout-skeleton-sub aurelia-shimmer-block" />
+            <div className="aurelia-checkout-fields">
+              {[0, 1, 2, 3, 4, 5].map((index) => (
+                <div key={index} className="aurelia-checkout-skeleton-field aurelia-shimmer-block" />
+              ))}
+            </div>
+          </div>
+          <aside className="aurelia-checkout-summary aurelia-checkout-skeleton-summary aurelia-shimmer-block" aria-hidden />
+        </div>
       </motion.section>
     )
   }
@@ -353,7 +372,18 @@ export const CheckoutPage = () => {
                 </motion.li>
               ))}
               {cartLoading && items.length === 0 && (
-                <li className="aurelia-checkout-summary-loading">Loading items…</li>
+                <>
+                  {[0, 1].map((index) => (
+                    <li key={index} className="aurelia-checkout-summary-skeleton-row" aria-hidden>
+                      <div className="aurelia-checkout-summary-skeleton-thumb aurelia-shimmer-block" />
+                      <div>
+                        <div className="aurelia-checkout-summary-skeleton-copy aurelia-shimmer-block" />
+                        <div className="aurelia-checkout-summary-skeleton-copy aurelia-checkout-summary-skeleton-copy--short aurelia-shimmer-block" />
+                      </div>
+                      <div className="aurelia-checkout-summary-skeleton-total aurelia-shimmer-block" />
+                    </li>
+                  ))}
+                </>
               )}
             </motion.ul>
 
