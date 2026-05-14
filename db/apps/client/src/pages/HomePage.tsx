@@ -1,9 +1,10 @@
 import { useFeaturedProductsQuery } from "../hooks/queries/useFeaturedProducts"
+import { useCategories } from "../hooks/useCatalog"
 import { useQueryLoadState } from "../hooks/useQueryLoadState"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { motion } from "motion/react"
-import { useEffect, useRef } from "react"
+import { useEffect, useMemo, useRef } from "react"
 import { MotionLink, linkPressProps } from "../components/motion/MotionLink"
 import { fadeUp, listItem, listStagger, scrollRevealViewport, shouldReduceMotion, transition } from "../lib/motion"
 import { ProductCard } from "../components/product/ProductCard"
@@ -32,8 +33,29 @@ const CATEGORY_TILES = [
 export const HomePage = () => {
   const heroRef = useRef<HTMLElement | null>(null)
   const featuredQuery = useFeaturedProductsQuery()
+  const categoriesQuery = useCategories()
   const featured = featuredQuery.data
   const { showSkeleton: showFeaturedSkeleton } = useQueryLoadState(featuredQuery)
+
+  const categoryRoutes = useMemo(() => {
+    const mapping = new Map<string, string>()
+    categoriesQuery.data?.forEach((category) => {
+      mapping.set(category.name.toLowerCase(), category.id)
+    })
+    return mapping
+  }, [categoriesQuery.data])
+
+  const categoryTiles = useMemo(
+    () =>
+      CATEGORY_TILES.map((tile) => {
+        const categoryId = categoryRoutes.get(tile.label.toLowerCase())
+        return {
+          ...tile,
+          to: categoryId ? `/categories/${categoryId}/products` : tile.to,
+        }
+      }),
+    [categoryRoutes],
+  )
 
   useEffect(() => {
     if (!heroRef.current || shouldReduceMotion()) return
@@ -201,7 +223,7 @@ export const HomePage = () => {
           whileInView="visible"
           viewport={scrollRevealViewport}
         >
-          {CATEGORY_TILES.map((tile, index) => (
+          {categoryTiles.map((tile, index) => (
             <motion.div key={tile.label} variants={listItem}>
             <MotionLink
               key={tile.label}
