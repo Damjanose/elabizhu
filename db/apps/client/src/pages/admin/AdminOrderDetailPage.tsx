@@ -5,6 +5,9 @@ import { Link, useParams } from "react-router-dom"
 import type { OrderStatus } from "@jewellery/types"
 import { OrderTimeline } from "../../components/order/OrderTimeline"
 import { EmptyState } from "../../components/feedback/EmptyState"
+import { useQueryLoadState } from "../../hooks/useQueryLoadState"
+import { queryKeys } from "../../lib/query-keys"
+import { queryTiming } from "../../lib/query-client"
 import { formatDisplayMoney } from "../../lib/display-currency"
 import { fetchOrder, updateOrderStatus } from "../../services/orders"
 import { useAdminDisplayCurrency } from "../../stores/adminDisplayCurrencyStore"
@@ -95,23 +98,26 @@ export const AdminOrderDetailPage = () => {
   const queryClient = useQueryClient()
   const { orderId = "" } = useParams<{ orderId: string }>()
   const [confirmStatus, setConfirmStatus] = useState<OrderStatus | null>(null)
-  const { data, isLoading, isError, error, refetch, isFetching } = useQuery({
-    queryKey: ["order", orderId],
+  const orderQuery = useQuery({
+    queryKey: queryKeys.order(orderId),
     queryFn: () => fetchOrder(orderId),
     enabled: !!orderId,
     retry: false,
+    staleTime: queryTiming.sessionStaleTime,
   })
+  const { data, isError, error, refetch, isFetching } = orderQuery
+  const { showSkeleton } = useQueryLoadState(orderQuery)
   const patch = useMutation({
     mutationFn: (status: OrderStatus) => updateOrderStatus(orderId, status),
     onSuccess: async () => {
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["order", orderId] }),
-        queryClient.invalidateQueries({ queryKey: ["orders"] }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.order(orderId) }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.orders() }),
       ])
     },
   })
 
-  if (isLoading) {
+  if (showSkeleton) {
     return (
       <section className="aurelia-detail-shell" aria-busy="true" aria-live="polite" aria-label="Loading order">
         <div className="aurelia-detail-skeleton-back aurelia-shimmer-block" aria-hidden />

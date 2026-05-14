@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react"
 import type { AuthResponse, LoginInput, RegisterInput, User } from "@jewellery/types"
 import { apiClient } from "../api/client"
+import { clearPrivateQueryCache, invalidateAuthenticatedQueryCache } from "../lib/query-cache"
+import { queryClient } from "../lib/query-client"
 import { useAuthStore } from "../stores/authStore"
 import { useGuestCartStore } from "../stores/guestCartStore"
 
@@ -90,6 +92,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setAccessToken(data.tokens.accessToken)
         setRefreshToken(data.tokens.refreshToken)
         localStorage.setItem(REFRESH_KEY, data.tokens.refreshToken)
+        await invalidateAuthenticatedQueryCache(queryClient)
       },
       register: async (input) => {
         const { data } = await apiClient.post<AuthResponse>("/auth/register", input)
@@ -98,6 +101,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setAccessToken(data.tokens.accessToken)
         setRefreshToken(data.tokens.refreshToken)
         localStorage.setItem(REFRESH_KEY, data.tokens.refreshToken)
+        await invalidateAuthenticatedQueryCache(queryClient)
       },
       logout: async () => {
         if (accessToken) {
@@ -107,6 +111,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setAccessToken(null)
         setRefreshToken(null)
         localStorage.removeItem(REFRESH_KEY)
+        clearPrivateQueryCache(queryClient)
       },
     }),
     [accessToken, refreshToken, user],

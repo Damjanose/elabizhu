@@ -9,6 +9,9 @@ import type {
 } from "@jewellery/types"
 import { Link } from "react-router-dom"
 import { useAuth } from "../types/auth-context"
+import { useQueryLoadState } from "../hooks/useQueryLoadState"
+import { queryKeys } from "../lib/query-keys"
+import { queryTiming } from "../lib/query-client"
 import { fetchNotifications } from "../services/notifications"
 import { fetchOrder, fetchOrders } from "../services/orders"
 import { fetchProduct } from "../services/products"
@@ -52,28 +55,35 @@ export const AccountPage = () => {
   const { user } = useAuth()
 
   const ordersQuery = useQuery({
-    queryKey: ["account", "orders"],
+    queryKey: queryKeys.account.orders(),
     queryFn: fetchOrders,
+    staleTime: queryTiming.sessionStaleTime,
   })
   const notificationsQuery = useQuery({
-    queryKey: ["account", "notifications"],
+    queryKey: queryKeys.account.notifications(),
     queryFn: fetchNotifications,
+    staleTime: queryTiming.sessionStaleTime,
   })
+  const { showSkeleton: showOrdersSkeleton } = useQueryLoadState(ordersQuery)
+  const { showSkeleton: showNotificationsSkeleton } = useQueryLoadState(notificationsQuery)
 
   const activeOrder = useMemo(() => pickActiveOrder(ordersQuery.data), [ordersQuery.data])
 
   const orderQuery = useQuery({
-    queryKey: ["account", "order", activeOrder?.id],
+    queryKey: queryKeys.account.order(activeOrder?.id ?? ""),
     queryFn: () => (activeOrder ? fetchOrder(activeOrder.id) : Promise.reject()),
     enabled: !!activeOrder,
+    staleTime: queryTiming.sessionStaleTime,
   })
 
   const featuredItem = orderQuery.data?.items?.[0]
   const productQuery = useQuery({
-    queryKey: ["account", "product", featuredItem?.productId],
+    queryKey: queryKeys.account.product(featuredItem?.productId ?? ""),
     queryFn: () => (featuredItem ? fetchProduct(featuredItem.productId) : Promise.reject()),
     enabled: !!featuredItem,
+    staleTime: queryTiming.catalogueStaleTime,
   })
+  const { showSkeleton: showOrderDetailSkeleton } = useQueryLoadState(orderQuery)
 
   const displayName = user?.fullName?.trim() || user?.email || "Friend"
   const firstName = displayName.split(" ")[0]
@@ -103,11 +113,11 @@ export const AccountPage = () => {
         <ActiveOrderCard
           order={activeOrder}
           orderDetail={orderQuery.data}
-          loading={ordersQuery.isLoading || (!!activeOrder && orderQuery.isLoading)}
+          loading={showOrdersSkeleton || (!!activeOrder && showOrderDetailSkeleton)}
         />
 
         <NotificationsCard
-          loading={notificationsQuery.isLoading}
+          loading={showNotificationsSkeleton}
           unreadCount={unreadNotifications.length}
           notifications={(notificationsQuery.data ?? []).slice(0, 2)}
         />

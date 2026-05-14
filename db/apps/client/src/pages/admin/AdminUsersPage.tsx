@@ -2,6 +2,9 @@ import { useEffect, useMemo, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import type { AdminUserRow, PermissionName } from "@jewellery/types"
 import { fetchAdminUsers, setUserActive, updateUserPermissions } from "../../services/adminUsers"
+import { useQueryLoadState } from "../../hooks/useQueryLoadState"
+import { queryKeys } from "../../lib/query-keys"
+import { queryTiming } from "../../lib/query-client"
 import { useAdminUsersStore } from "../../stores/adminUsersStore"
 
 const hasAdminPermission = (user: AdminUserRow) => user.permissions.includes("admin")
@@ -15,10 +18,12 @@ const getUserRoleLabel = (user: AdminUserRow) => {
 export const AdminUsersPage = () => {
   const queryClient = useQueryClient()
   const usersQuery = useQuery({
-    queryKey: ["admin-users"],
+    queryKey: queryKeys.admin.users(),
     queryFn: fetchAdminUsers,
     retry: 1,
+    staleTime: queryTiming.sessionStaleTime,
   })
+  const { showSkeleton: usersLoading } = useQueryLoadState(usersQuery)
   const { selectedUserId, search, permissionDraft, setSelectedUserId, setSearch, setPermissionDraft } =
     useAdminUsersStore()
   const [confirmIntent, setConfirmIntent] = useState<null | "deactivate" | "activate">(null)
@@ -60,7 +65,7 @@ export const AdminUsersPage = () => {
     setPermissionDraft(selectedUser.permissions)
   }, [selectedUser?.id])
 
-  if (usersQuery.isLoading) {
+  if (usersLoading) {
     return (
       <div className="aurelia-admin-page" aria-busy="true" aria-live="polite" aria-label="Loading users">
         <div className="aurelia-admin-page-header">

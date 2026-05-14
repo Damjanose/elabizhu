@@ -7,6 +7,9 @@ import { AureliaCustomSelect } from "../../components/forms/AureliaCustomSelect"
 import { EmptyState } from "../../components/feedback/EmptyState"
 import { useCategories } from "../../hooks/useCatalog"
 import { useDebouncedValue } from "../../hooks/useDebouncedValue"
+import { useQueryLoadState } from "../../hooks/useQueryLoadState"
+import { queryKeys } from "../../lib/query-keys"
+import { queryTiming } from "../../lib/query-client"
 import { formatDisplayMoney } from "../../lib/display-currency"
 import { fetchAdminProducts, resolveMediaUrl } from "../../services/admin"
 import { useAdminDisplayCurrency } from "../../stores/adminDisplayCurrencyStore"
@@ -56,11 +59,14 @@ export const AdminProductsPage = () => {
     [debouncedSearch, page, categoryId],
   )
 
-  const { data, isLoading, isFetching } = useQuery({
-    queryKey: ["admin-products", queryParams],
+  const productsQuery = useQuery({
+    queryKey: queryKeys.admin.products(queryParams),
     queryFn: () => fetchAdminProducts(queryParams),
     placeholderData: keepPreviousData,
+    staleTime: queryTiming.sessionStaleTime,
   })
+  const { data, isFetching } = productsQuery
+  const { showSkeleton } = useQueryLoadState(productsQuery)
 
   const items = data?.items ?? []
   const total = data?.total ?? 0
@@ -146,7 +152,7 @@ export const AdminProductsPage = () => {
               </tr>
             </thead>
             <tbody>
-              {isLoading && items.length === 0
+              {showSkeleton && items.length === 0
                 ? Array.from({ length: 6 }, (_, index) => (
                     <tr key={index} aria-hidden>
                       <td>
@@ -233,7 +239,7 @@ export const AdminProductsPage = () => {
             </tbody>
           </table>
 
-          {!isLoading && total === 0 && (
+          {!showSkeleton && total === 0 && (
             <div className="aurelia-admin-products-empty">
               <EmptyState
                 variant="inline"
@@ -263,7 +269,7 @@ export const AdminProductsPage = () => {
           <div className="aurelia-admin-table-foot aurelia-admin-orders-foot">
             <span>
               {total === 0
-                ? isLoading || isFetching
+                ? showSkeleton || isFetching
                   ? "Preparing products…"
                   : "Showing 0 products"
                 : `Showing ${startIndex}–${endIndex} of ${total} product${total === 1 ? "" : "s"}`}

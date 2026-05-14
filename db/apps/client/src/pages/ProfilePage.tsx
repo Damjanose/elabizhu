@@ -6,6 +6,9 @@ import { Formik, Form, useFormikContext, type FormikHelpers } from "formik"
 import * as Yup from "yup"
 import type { Address, AddressInput, User } from "@jewellery/types"
 import { useAuth } from "../types/auth-context"
+import { useQueryLoadState } from "../hooks/useQueryLoadState"
+import { queryKeys } from "../lib/query-keys"
+import { queryTiming } from "../lib/query-client"
 import { EmptyState } from "../components/feedback/EmptyState"
 import { EditorialFormField } from "../components/forms/FormFields"
 import {
@@ -43,10 +46,12 @@ export const ProfilePage = () => {
   const queryClient = useQueryClient()
 
   const addressesQuery = useQuery({
-    queryKey: ["me", "addresses"],
+    queryKey: queryKeys.me.addresses(),
     queryFn: fetchAddresses,
     enabled: !!accessToken,
+    staleTime: queryTiming.sessionStaleTime,
   })
+  const { showSkeleton: addressesLoading } = useQueryLoadState(addressesQuery)
 
   return (
     <section className="aurelia-profile-shell">
@@ -68,11 +73,11 @@ export const ProfilePage = () => {
         <ProfileForm user={user} />
         <AddressBook
           addresses={addressesQuery.data ?? []}
-          isLoading={addressesQuery.isLoading}
+          isLoading={addressesLoading}
           isError={addressesQuery.isError}
           onRefetch={() => void addressesQuery.refetch()}
           onChange={() => {
-            void queryClient.invalidateQueries({ queryKey: ["me", "addresses"] })
+            void queryClient.invalidateQueries({ queryKey: queryKeys.me.addresses() })
           }}
         />
       </div>

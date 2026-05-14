@@ -2,7 +2,10 @@ import { useQuery } from "@tanstack/react-query"
 import { motion } from "motion/react"
 import { ProductCard } from "../product/ProductCard"
 import { EmptyState } from "../feedback/EmptyState"
+import { useQueryLoadState } from "../../hooks/useQueryLoadState"
 import { listItem, listStagger } from "../../lib/motion"
+import { queryKeys } from "../../lib/query-keys"
+import { queryTiming } from "../../lib/query-client"
 import { fetchProducts } from "../../services/products"
 
 type ProductCatalogProps = {
@@ -12,12 +15,15 @@ type ProductCatalogProps = {
 }
 
 export const ProductCatalog = ({ featuredOnly, viewAllHref = "/collections" }: ProductCatalogProps) => {
-  const { data, isLoading, isError, refetch, isFetching } = useQuery({
-    queryKey: ["products", { featuredOnly }],
+  const productsQuery = useQuery({
+    queryKey: queryKeys.products.list({ featuredOnly }),
     queryFn: () => fetchProducts({ featured: featuredOnly || undefined }),
+    staleTime: queryTiming.catalogueStaleTime,
   })
+  const { data, isError, refetch, isFetching } = productsQuery
+  const { showSkeleton } = useQueryLoadState(productsQuery)
 
-  if (isLoading) {
+  if (showSkeleton) {
     return <ProductsSkeleton />
   }
 

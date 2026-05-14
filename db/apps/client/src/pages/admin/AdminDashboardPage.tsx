@@ -2,6 +2,9 @@ import { useQuery } from "@tanstack/react-query"
 import { Link, useNavigate } from "react-router-dom"
 import { getDashboardMetrics } from "../../lib/admin-dashboard-metrics"
 import { formatDisplayMoney } from "../../lib/display-currency"
+import { useQueryLoadState } from "../../hooks/useQueryLoadState"
+import { queryKeys } from "../../lib/query-keys"
+import { queryTiming } from "../../lib/query-client"
 import { fetchOrders } from "../../services/orders"
 import { fetchProducts } from "../../services/products"
 import { useAdminDisplayCurrency } from "../../stores/adminDisplayCurrencyStore"
@@ -23,10 +26,20 @@ const orderLabel = (id: string) => `#AUR-${id.slice(0, 4).toUpperCase()}`
 export const AdminDashboardPage = () => {
   const navigate = useNavigate()
   const displayCurrency = useAdminDisplayCurrency()
-  const ordersQuery = useQuery({ queryKey: ["orders"], queryFn: fetchOrders })
-  const productsQuery = useQuery({ queryKey: ["products", "admin-dashboard"], queryFn: () => fetchProducts() })
+  const ordersQuery = useQuery({
+    queryKey: queryKeys.orders(),
+    queryFn: fetchOrders,
+    staleTime: queryTiming.sessionStaleTime,
+  })
+  const productsQuery = useQuery({
+    queryKey: queryKeys.products.adminDashboard(),
+    queryFn: () => fetchProducts(),
+    staleTime: queryTiming.catalogueStaleTime,
+  })
+  const { showSkeleton: ordersLoading } = useQueryLoadState(ordersQuery)
+  const { showSkeleton: productsLoading } = useQueryLoadState(productsQuery)
 
-  if (ordersQuery.isLoading || productsQuery.isLoading) {
+  if (ordersLoading || productsLoading) {
     return (
       <div className="aurelia-admin-dashboard">
         <header className="aurelia-admin-dashboard-heading">

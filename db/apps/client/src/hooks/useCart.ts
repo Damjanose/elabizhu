@@ -2,9 +2,12 @@ import { useMemo } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import type { CartResponse, Product } from "@jewellery/types"
 import { addToCart, fetchCart, removeCartLine, updateCartLine } from "../services/cart"
+import { queryKeys } from "../lib/query-keys"
+import { queryTiming } from "../lib/query-client"
 import { useCartStore } from "../stores/cartStore"
 import { computeGuestSubtotal, useGuestCartStore } from "../stores/guestCartStore"
 import { useAuth } from "../types/auth-context"
+import { useQueryLoadState } from "./useQueryLoadState"
 
 const EMPTY_CART: CartResponse = { items: [], subtotal: "0.00" }
 
@@ -20,14 +23,16 @@ export const useCart = () => {
   const isAuthed = !!accessToken && !!user
 
   const serverQuery = useQuery({
-    queryKey: ["cart"],
+    queryKey: queryKeys.cart(),
     queryFn: fetchCart,
     enabled: isAuthed,
+    staleTime: queryTiming.sessionStaleTime,
   })
+  const { showSkeleton } = useQueryLoadState(serverQuery)
 
   const invalidateServer = () => {
     touch()
-    void queryClient.invalidateQueries({ queryKey: ["cart"] })
+    void queryClient.invalidateQueries({ queryKey: queryKeys.cart() })
   }
 
   const guestData = useMemo<CartResponse>(
@@ -100,7 +105,8 @@ export const useCart = () => {
 
   return {
     data,
-    isLoading: isAuthed ? serverQuery.isLoading : false,
+    showSkeleton: isAuthed ? showSkeleton : false,
+    isLoading: isAuthed ? showSkeleton : false,
     isFetching: isAuthed ? serverQuery.isFetching : false,
     isError: isAuthed ? serverQuery.isError : false,
     refetch: () => (isAuthed ? serverQuery.refetch() : Promise.resolve()),
