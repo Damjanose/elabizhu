@@ -1,12 +1,12 @@
 import { useMemo, useRef, useState } from "react"
-import { useQuery } from "@tanstack/react-query"
 import type { Product } from "@jewellery/types"
 import { AnimatePresence, motion } from "motion/react"
 import { Link, useLocation, useParams } from "react-router-dom"
+import { useProductQuery, useProductRecommendationsQuery } from "../hooks/queries/useProductQueries"
 import { useCart } from "../hooks/useCart"
 import { useCategories } from "../hooks/useCatalog"
+import { useQueryLoadState } from "../hooks/useQueryLoadState"
 import { fadeIn, fadeUp, listItem, listStagger, scrollRevealViewport, transition } from "../lib/motion"
-import { fetchProduct, fetchProductRecommendations } from "../services/products"
 import { loginHrefWithReturn } from "../utils/post-auth-redirect"
 import { successToast, toastFromError } from "../utils/toast"
 
@@ -26,17 +26,10 @@ export const ProductDetailsPage = () => {
   const signInHref = loginHrefWithReturn(location)
   const { addItem, isUpdating, isGuest } = useCart()
 
-  const productQuery = useQuery({
-    queryKey: ["product", productId],
-    queryFn: () => fetchProduct(productId),
-    enabled: !!productId,
-  })
-
-  const recommendationsQuery = useQuery({
-    queryKey: ["product", productId, "recommendations"],
-    queryFn: () => fetchProductRecommendations(productId, 8),
-    enabled: !!productId,
-  })
+  const productQuery = useProductQuery(productId, !!productId)
+  const recommendationsQuery = useProductRecommendationsQuery(productId, !!productId)
+  const { showSkeleton: showProductSkeleton } = useQueryLoadState(productQuery)
+  const { showSkeleton: showRecommendationsSkeleton } = useQueryLoadState(recommendationsQuery)
 
   const categoriesQuery = useCategories()
 
@@ -48,7 +41,7 @@ export const ProductDetailsPage = () => {
     )
   }, [product, categoriesQuery.data])
 
-  if (productQuery.isLoading) {
+  if (showProductSkeleton) {
     return <ProductDetailsSkeleton />
   }
 
@@ -87,7 +80,7 @@ export const ProductDetailsPage = () => {
       <RecommendationsRail
         title="Recommended for You"
         items={recommendationsQuery.data ?? []}
-        isLoading={recommendationsQuery.isLoading}
+        showSkeleton={showRecommendationsSkeleton}
       />
     </motion.section>
   )
@@ -338,11 +331,11 @@ const Accordion = ({ title, defaultOpen = false, children }: AccordionProps) => 
 const RecommendationsRail = ({
   title,
   items,
-  isLoading,
+  showSkeleton,
 }: {
   title: string
   items: Product[]
-  isLoading: boolean
+  showSkeleton: boolean
 }) => {
   const trackRef = useRef<HTMLDivElement | null>(null)
 
@@ -391,7 +384,7 @@ const RecommendationsRail = ({
         </div>
       </header>
 
-      {isLoading ? (
+      {showSkeleton ? (
         <RecommendationsRailSkeleton />
       ) : items.length === 0 ? (
         <div className="aurelia-rec-empty">

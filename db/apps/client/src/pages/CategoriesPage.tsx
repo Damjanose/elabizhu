@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom"
 import { MotionLink, linkPressProps } from "../components/motion/MotionLink"
 import { useCategories } from "../hooks/useCatalog"
+import { useQueryLoadState } from "../hooks/useQueryLoadState"
 
 const CATEGORY_IMAGES: Record<string, string> = {
   rings:
@@ -23,7 +24,9 @@ const FALLBACK_IMAGE =
 const imageFor = (name: string) => CATEGORY_IMAGES[name.toLowerCase().trim()] ?? FALLBACK_IMAGE
 
 export const CategoriesPage = () => {
-  const { data, isLoading, isError } = useCategories()
+  const categoriesQuery = useCategories()
+  const { data, isError } = categoriesQuery
+  const { showSkeleton } = useQueryLoadState(categoriesQuery)
 
   return (
     <section className="py-12 md:py-20">
@@ -35,7 +38,7 @@ export const CategoriesPage = () => {
         </p>
       </header>
 
-      {isLoading && (
+      {showSkeleton && (
         <div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter"
           aria-busy="true"
@@ -54,11 +57,11 @@ export const CategoriesPage = () => {
         </div>
       )}
 
-      {!isLoading && !isError && data && data.length === 0 && (
+      {!showSkeleton && !isError && data && data.length === 0 && (
         <div className="text-center aurelia-muted py-5">No categories available yet.</div>
       )}
 
-      {!isLoading && !isError && data && data.length > 0 && (
+      {!showSkeleton && !isError && data && data.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
           {data.map((category, index) => (
             <Link

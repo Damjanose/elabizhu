@@ -3,6 +3,9 @@ import { useQuery } from "@tanstack/react-query"
 import type { OrderStatus, OrderSummary } from "@jewellery/types"
 import { Link } from "react-router-dom"
 import { EmptyState } from "../components/feedback/EmptyState"
+import { useQueryLoadState } from "../hooks/useQueryLoadState"
+import { queryKeys } from "../lib/query-keys"
+import { queryTiming } from "../lib/query-client"
 import { fetchOrders } from "../services/orders"
 
 type FilterId = "all" | "active" | "delivered" | "cancelled"
@@ -41,10 +44,13 @@ const formatDate = (iso: string) => {
 const orderRef = (id: string) => `#AUR-${id.slice(0, 6).toUpperCase()}`
 
 export const OrdersPage = () => {
-  const { data, isLoading, isError, refetch, isFetching } = useQuery({
-    queryKey: ["orders"],
+  const ordersQuery = useQuery({
+    queryKey: queryKeys.orders(),
     queryFn: fetchOrders,
+    staleTime: queryTiming.sessionStaleTime,
   })
+  const { data, isError, refetch, isFetching } = ordersQuery
+  const { showSkeleton } = useQueryLoadState(ordersQuery)
   const [filter, setFilter] = useState<FilterId>("all")
 
   const sorted = useMemo(
@@ -96,7 +102,7 @@ export const OrdersPage = () => {
         ))}
       </div>
 
-      {isLoading ? (
+      {showSkeleton ? (
         <OrdersSkeleton />
       ) : isError ? (
         <EmptyState

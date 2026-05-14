@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query"
 import { Link } from "react-router-dom"
 import { fetchNotifications } from "../../services/notifications"
+import { queryKeys } from "../../lib/query-keys"
+import { queryTiming } from "../../lib/query-client"
 import { useAuth } from "../../types/auth-context"
 import { useNotificationStore } from "../../stores/notificationStore"
 
@@ -8,9 +10,10 @@ export const NotificationBell = () => {
   const { user } = useAuth()
   const liveEpoch = useNotificationStore((s) => s.liveEpoch)
   const { data } = useQuery({
-    queryKey: ["notifications", liveEpoch],
+    queryKey: queryKeys.notifications(liveEpoch),
     queryFn: fetchNotifications,
     enabled: !!user,
+    staleTime: queryTiming.sessionStaleTime,
   })
 
   if (!user) return null

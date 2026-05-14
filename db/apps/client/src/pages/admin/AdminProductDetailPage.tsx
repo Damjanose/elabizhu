@@ -11,6 +11,9 @@ import type {
 import { AureliaCustomSelect } from "../../components/forms/AureliaCustomSelect"
 import { EmptyState } from "../../components/feedback/EmptyState"
 import { useCategories } from "../../hooks/useCatalog"
+import { useProductQuery } from "../../hooks/queries/useProductQueries"
+import { useQueryLoadState } from "../../hooks/useQueryLoadState"
+import { queryKeys } from "../../lib/query-keys"
 import {
   createProduct,
   deleteProduct,
@@ -18,7 +21,6 @@ import {
   updateProduct,
   uploadMedia,
 } from "../../services/admin"
-import { fetchProduct } from "../../services/products"
 import { useAdminDisplayCurrency } from "../../stores/adminDisplayCurrencyStore"
 import { errorToast, successToast, toastFromError } from "../../utils/toast"
 
@@ -82,12 +84,8 @@ export const AdminProductDetailPage = () => {
   const isCreate = !productId
 
   const { data: categories } = useCategories()
-  const productQuery = useQuery({
-    queryKey: ["product", productId],
-    queryFn: () => fetchProduct(productId as string),
-    enabled: !isCreate,
-    retry: false,
-  })
+  const productQuery = useProductQuery(productId ?? "", !isCreate, { retry: false })
+  const { showSkeleton: showProductSkeleton } = useQueryLoadState(productQuery)
 
   const [form, setForm] = useState<FormState>(emptyForm)
   const [confirmDelete, setConfirmDelete] = useState(false)
@@ -133,8 +131,8 @@ export const AdminProductDetailPage = () => {
   const create = useMutation({
     mutationFn: (input: CreateProductInput) => createProduct(input),
     onSuccess: async (created) => {
-      await queryClient.invalidateQueries({ queryKey: ["admin-products"] })
-      await queryClient.invalidateQueries({ queryKey: ["products"] })
+      await queryClient.invalidateQueries({ queryKey: queryKeys.admin.products({}) })
+      await queryClient.invalidateQueries({ queryKey: queryKeys.products.all() })
       successToast("Product created")
       navigate(`/admin/products/${created.id}`, { replace: true })
     },
@@ -145,9 +143,9 @@ export const AdminProductDetailPage = () => {
     mutationFn: (input: UpdateProductInput) => updateProduct(productId as string, input),
     onSuccess: async (updated) => {
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["product", productId] }),
-        queryClient.invalidateQueries({ queryKey: ["admin-products"] }),
-        queryClient.invalidateQueries({ queryKey: ["products"] }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.product.detail(productId ?? "") }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.admin.products({}) }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.products.all() }),
       ])
       setForm(productToForm(updated))
       successToast("Product saved")
@@ -158,7 +156,7 @@ export const AdminProductDetailPage = () => {
   const remove = useMutation({
     mutationFn: () => deleteProduct(productId as string),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["admin-products"] })
+      await queryClient.invalidateQueries({ queryKey: queryKeys.admin.products({}) })
       successToast("Product deleted")
       navigate("/admin/products", { replace: true })
     },
@@ -278,7 +276,7 @@ export const AdminProductDetailPage = () => {
 
   const saving = create.isPending || patch.isPending
 
-  if (!isCreate && productQuery.isLoading) {
+  if (!isCreate && showProductSkeleton) {
     return (
       <section className="aurelia-detail-shell" aria-busy="true" aria-live="polite" aria-label="Loading product">
         <div className="aurelia-detail-skeleton-back aurelia-shimmer-block" aria-hidden />

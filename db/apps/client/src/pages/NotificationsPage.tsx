@@ -2,6 +2,9 @@ import { useMemo } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import type { NotificationDto } from "@jewellery/types"
 import { EmptyState } from "../components/feedback/EmptyState"
+import { useQueryLoadState } from "../hooks/useQueryLoadState"
+import { queryKeys } from "../lib/query-keys"
+import { queryTiming } from "../lib/query-client"
 import {
   fetchNotifications,
   markAllNotificationsRead,
@@ -25,21 +28,24 @@ const formatRelative = (iso: string) => {
 
 export const NotificationsPage = () => {
   const queryClient = useQueryClient()
-  const { data, isLoading, isError, refetch, isFetching } = useQuery({
-    queryKey: ["notifications"],
+  const notificationsQuery = useQuery({
+    queryKey: queryKeys.notifications(),
     queryFn: fetchNotifications,
+    staleTime: queryTiming.sessionStaleTime,
   })
+  const { data, isError, refetch, isFetching } = notificationsQuery
+  const { showSkeleton } = useQueryLoadState(notificationsQuery)
 
   const markOne = useMutation({
     mutationFn: markNotificationRead,
-    onSuccess: () => void queryClient.invalidateQueries({ queryKey: ["notifications"] }),
+    onSuccess: () => void queryClient.invalidateQueries({ queryKey: queryKeys.notifications() }),
     onError: (err) => toastFromError(err, "Could not mark notification as read"),
   })
 
   const markAll = useMutation({
     mutationFn: markAllNotificationsRead,
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["notifications"] })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.notifications() })
       successToast("All notifications marked as read")
     },
     onError: (err) => toastFromError(err, "Could not mark all as read"),
@@ -81,7 +87,7 @@ export const NotificationsPage = () => {
         )}
       </header>
 
-      {isLoading ? (
+      {showSkeleton ? (
         <NotificationsSkeleton />
       ) : isError ? (
         <EmptyState

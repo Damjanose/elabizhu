@@ -4,29 +4,35 @@ import { motion } from "motion/react"
 import { useParams } from "react-router-dom"
 import { ProductCard } from "../components/product/ProductCard"
 import { EmptyState } from "../components/feedback/EmptyState"
+import { useQueryLoadState } from "../hooks/useQueryLoadState"
 import { apiClient } from "../api/client"
+import { queryKeys } from "../lib/query-keys"
+import { queryTiming } from "../lib/query-client"
 import { fadeUp, listItem, listStagger, scrollRevealViewport } from "../lib/motion"
 
 export const CategoryProductsPage = () => {
   const { categoryId = "" } = useParams()
 
   const productsQuery = useQuery({
-    queryKey: ["categoryProducts", categoryId],
+    queryKey: queryKeys.category.products(categoryId),
     queryFn: async () => {
       const { data: d } = await apiClient.get<Product[]>(`/categories/${categoryId}/products`)
       return d
     },
     enabled: !!categoryId,
+    staleTime: queryTiming.catalogueStaleTime,
   })
 
   const categoryQuery = useQuery({
-    queryKey: ["category", categoryId],
+    queryKey: queryKeys.category.detail(categoryId),
     queryFn: async () => {
       const { data: d } = await apiClient.get<Category>(`/categories/${categoryId}`)
       return d
     },
     enabled: !!categoryId,
+    staleTime: queryTiming.catalogueStaleTime,
   })
+  const { showSkeleton: showProductsSkeleton } = useQueryLoadState(productsQuery)
 
   const heading = categoryQuery.data?.name ?? "Category products"
 
@@ -42,7 +48,7 @@ export const CategoryProductsPage = () => {
         {heading}
       </motion.h1>
 
-      {productsQuery.isLoading ? (
+      {showProductsSkeleton ? (
         <CategoryProductsSkeleton />
       ) : productsQuery.isError ? (
         <EmptyState

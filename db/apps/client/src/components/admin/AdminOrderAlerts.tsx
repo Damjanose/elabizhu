@@ -3,6 +3,9 @@ import { FiBell } from "react-icons/fi"
 import { Link, useNavigate } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
 import { fetchOrders } from "../../services/orders"
+import { useQueryLoadState } from "../../hooks/useQueryLoadState"
+import { queryKeys } from "../../lib/query-keys"
+import { queryTiming } from "../../lib/query-client"
 
 const orderRef = (id: string) => `#AUR-${id.slice(0, 4).toUpperCase()}`
 
@@ -25,12 +28,15 @@ export const AdminOrderAlerts = () => {
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
 
-  const { data: orders = [], isLoading, isError } = useQuery({
-    queryKey: ["orders"],
+  const ordersQuery = useQuery({
+    queryKey: queryKeys.orders(),
     queryFn: fetchOrders,
     refetchInterval: 60_000,
     refetchOnWindowFocus: true,
+    staleTime: queryTiming.sessionStaleTime,
   })
+  const { data: orders = [], isError } = ordersQuery
+  const { showSkeleton } = useQueryLoadState(ordersQuery)
 
   const pendingOrders = useMemo(() => {
     return orders
@@ -80,7 +86,7 @@ export const AdminOrderAlerts = () => {
             <p className="aurelia-admin-order-alerts-sub">Pending confirmation — same queue as your orders board.</p>
           </div>
 
-          {isLoading ? (
+          {showSkeleton ? (
             <div className="aurelia-admin-order-alerts-skeleton" aria-busy="true" aria-live="polite">
               {[0, 1, 2].map((index) => (
                 <div key={index} className="aurelia-admin-alerts-skeleton-row aurelia-shimmer-block" />

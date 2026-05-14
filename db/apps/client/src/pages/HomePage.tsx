@@ -1,4 +1,5 @@
-import { useQuery } from "@tanstack/react-query"
+import { useFeaturedProductsQuery } from "../hooks/queries/useFeaturedProducts"
+import { useQueryLoadState } from "../hooks/useQueryLoadState"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { motion } from "motion/react"
@@ -6,7 +7,6 @@ import { useEffect, useRef } from "react"
 import { MotionLink, linkPressProps } from "../components/motion/MotionLink"
 import { fadeUp, listItem, listStagger, scrollRevealViewport, shouldReduceMotion, transition } from "../lib/motion"
 import { ProductCard } from "../components/product/ProductCard"
-import { fetchProducts } from "../services/products"
 
 const CATEGORY_TILES = [
   {
@@ -31,10 +31,9 @@ const CATEGORY_TILES = [
 
 export const HomePage = () => {
   const heroRef = useRef<HTMLElement | null>(null)
-  const { data: featured, isLoading: fLoad } = useQuery({
-    queryKey: ["products", "featured"],
-    queryFn: () => fetchProducts({ featured: true }),
-  })
+  const featuredQuery = useFeaturedProductsQuery()
+  const featured = featuredQuery.data
+  const { showSkeleton: showFeaturedSkeleton } = useQueryLoadState(featuredQuery)
 
   useEffect(() => {
     if (!heroRef.current || shouldReduceMotion()) return
@@ -118,7 +117,7 @@ export const HomePage = () => {
             View all
           </MotionLink>
         </motion.div>
-        {fLoad ? (
+        {showFeaturedSkeleton ? (
           <FeaturedProductsSkeleton />
         ) : featured && featured.length > 0 ? (
           <motion.div

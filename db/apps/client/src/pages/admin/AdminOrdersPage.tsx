@@ -3,6 +3,9 @@ import { useQuery } from "@tanstack/react-query"
 import type { OrderStatus } from "@jewellery/types"
 import { Link, useNavigate } from "react-router-dom"
 import { formatDisplayMoney } from "../../lib/display-currency"
+import { useQueryLoadState } from "../../hooks/useQueryLoadState"
+import { queryKeys } from "../../lib/query-keys"
+import { queryTiming } from "../../lib/query-client"
 import { fetchOrders } from "../../services/orders"
 import { useAdminDisplayCurrency } from "../../stores/adminDisplayCurrencyStore"
 
@@ -26,7 +29,13 @@ const orderLabel = (id: string) => `#AUR-${id.slice(0, 4).toUpperCase()}`
 export const AdminOrdersPage = () => {
   const navigate = useNavigate()
   const displayCurrency = useAdminDisplayCurrency()
-  const { data, isLoading } = useQuery({ queryKey: ["orders"], queryFn: fetchOrders })
+  const ordersQuery = useQuery({
+    queryKey: queryKeys.orders(),
+    queryFn: fetchOrders,
+    staleTime: queryTiming.sessionStaleTime,
+  })
+  const { data } = ordersQuery
+  const { showSkeleton } = useQueryLoadState(ordersQuery)
   const [filter, setFilter] = useState<FilterId>("active")
 
   const orders = data ?? []
@@ -45,7 +54,7 @@ export const AdminOrdersPage = () => {
   }, [orders, filter])
   const activeOrdersCount = orders.filter((order) => isActiveOrder(order.status)).length
 
-  if (isLoading) {
+  if (showSkeleton) {
     return (
       <div className="aurelia-admin-page" aria-busy="true" aria-live="polite" aria-label="Loading orders">
         <div className="aurelia-admin-page-header">

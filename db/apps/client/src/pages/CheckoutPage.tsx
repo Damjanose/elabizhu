@@ -12,6 +12,9 @@ import { checkout } from "../services/orders"
 import { fetchAddresses } from "../services/profile"
 import { useOrderStore } from "../stores/orderStore"
 import { useCart } from "../hooks/useCart"
+import { useQueryLoadState } from "../hooks/useQueryLoadState"
+import { queryKeys } from "../lib/query-keys"
+import { queryTiming } from "../lib/query-client"
 import { useAuth } from "../types/auth-context"
 import { EmptyState } from "../components/feedback/EmptyState"
 import { EditorialFormField } from "../components/forms/FormFields"
@@ -98,10 +101,12 @@ export const CheckoutPage = () => {
   const { user } = useAuth()
   const isAuthed = !!user
   const addressesQuery = useQuery({
-    queryKey: ["me", "addresses"],
+    queryKey: queryKeys.me.addresses(),
     queryFn: fetchAddresses,
     enabled: isAuthed,
+    staleTime: queryTiming.sessionStaleTime,
   })
+  const { showSkeleton: showAddressesSkeleton } = useQueryLoadState(addressesQuery)
   const { data: cart, isLoading: cartLoading, isFetching: cartFetching } = useCart()
   const [formError, setFormError] = useState<string | null>(null)
 
@@ -136,8 +141,8 @@ export const CheckoutPage = () => {
     mutationFn: checkout,
     onSuccess: (order) => {
       setLast(order.id)
-      void queryClient.invalidateQueries({ queryKey: ["cart"] })
-      void queryClient.invalidateQueries({ queryKey: ["orders"] })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.cart() })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.orders() })
       successToast(`Order placed · #AUR-${order.id.slice(0, 6).toUpperCase()}`)
       navigate(`/orders/${order.id}`)
     },
@@ -187,8 +192,7 @@ export const CheckoutPage = () => {
     )
   }
 
-  const addressesLoading = isAuthed && addressesQuery.isLoading
-  if (addressesLoading) {
+  if (isAuthed && showAddressesSkeleton) {
     return (
       <motion.section
         className="aurelia-checkout-shell"
