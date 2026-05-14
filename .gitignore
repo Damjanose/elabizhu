@@ -9,3 +9,10 @@ coverage
 .cursor/mcp.json
 design/
 db/apps/api/uploads/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+.idea/
+.vscode/
+.cursor/
+.pnpm-store/
