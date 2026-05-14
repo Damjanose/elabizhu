@@ -1,20 +1,54 @@
-# Jewellery e-commerce (full stack)
+# Jewellery E-Commerce Platform
 
-Monorepo: **React (Vite) client**, **Express + TypeScript API**, **PostgreSQL**, and **Socket.IO** for order and notification hints.
+A full-stack e-commerce application for a luxury jewellery shop, built as a portfolio project to showcase modern web development practices.
 
-## Live demo
+## About the Project
 
+This is a complete e-commerce platform featuring a **public storefront** where customers can browse jewellery collections, manage their cart, and complete purchases. The platform includes a **real-time admin dashboard** for managing products and orders with live notifications. Customers can track order status changes in real-time, and admins can update orders while seeing customer notifications update instantly via WebSocket connections.
+
+**Note:** Checkout and payments are simulated. This is a portfolio demo, not a production shop.
+
+## Live Demo
+
+- https://jewellery-ecommerce-app-frontend.vercel.app/
 - **Storefront:** _Add your Cloudflare Pages URL after deploy_
 - **Source:** _Add your GitHub repository URL_
 
-Checkout and payments are **simulated**. This is a portfolio demo, not a production shop.
+## Technology Stack
 
-## Stack
+### Frontend
+- **React 19** – UI library with latest features
+- **Vite** – Fast build tool and dev server
+- **React Router v7** – Client-side routing
+- **TanStack React Query** – Server state management
+- **Zustand** – Lightweight client state management
+- **Tailwind CSS** – Utility-first styling
+- **Socket.IO Client** – Real-time updates
+- **Formik + Yup** – Form validation
+- **Recharts** – Data visualization for dashboards
+- **GSAP & Motion** – Animations
 
-- **Client:** React 19, Vite, React Router, TanStack Query, Zustand, Tailwind CSS
-- **API:** Express, TypeScript, Socket.IO, JWT auth, Kysely + `pg`
-- **Database:** PostgreSQL (migrations and seed in `db/migrations/`)
-- **Tooling:** pnpm workspace (`db/apps/client`, `db/apps/api`, `packages/types`)
+### Backend
+- **Express.js** – Lightweight Node.js web framework
+- **TypeScript** – Type-safe development
+- **Socket.IO** – Real-time bidirectional communication
+- **JWT Authentication** – Secure user sessions
+- **Kysely** – Type-safe SQL query builder
+- **PostgreSQL Driver (`pg`)** – Database connectivity
+- **bcryptjs** – Password hashing
+- **Multer** – File upload handling
+- **Zod** – Runtime schema validation
+
+### Database
+- **PostgreSQL** – Relational database with migrations and seed data
+
+### DevOps & Tooling
+- **pnpm workspace** – Monorepo package management
+  - `db/apps/client` – React frontend
+  - `db/apps/api` – Express backend
+  - `packages/types` – Shared TypeScript types
+- **Docker** – Containerization for local development
+- **TypeScript** – End-to-end type safety
 
 ## Try the demo
 
@@ -104,7 +138,7 @@ Recommended split stack:
 |--------|-----------|
 | Database | [Neon](https://neon.tech) |
 | API + Socket.IO | [Render](https://render.com) Web Service ([`render.yaml`](render.yaml)) |
-| Frontend | [Cloudflare Pages](https://pages.cloudflare.com) |
+| Frontend | [Vercel](https://vercel.com) |
 
 ### Neon
 
@@ -136,20 +170,21 @@ pnpm --filter @jewellery/api db:seed
 
 Re-run **seed** before interviews or when demo data looks stale.
 
-### Cloudflare Pages (client)
+### Vercel (client)
 
 | Setting | Value |
 |---------|--------|
+| Framework | Vite |
 | Build command | `pnpm install && pnpm --filter @jewellery/client build` |
-| Build output directory | `db/apps/client/dist` |
+| Output directory | `db/apps/client/dist` |
 | Node version | `20` |
 
-Build environment variables (required):
+Environment variables (required):
 
 - `VITE_API_URL=https://<your-render-api-host>`
 - `VITE_SOCKET_URL=https://<your-render-api-host>`
 
-Enable **Single-page application** fallback, or rely on [`db/apps/client/public/_redirects`](db/apps/client/public/_redirects) (`/* /index.html 200`).
+Vercel automatically handles SPA fallback routing for Vite projects.
 
 Rebuild the client whenever the API URL changes.
 
