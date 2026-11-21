@@ -2063,8 +2063,26 @@ select.aurelia-select.aurelia-select--compact:hover {
   align-items: center;
   gap: 0.45rem;
   border: 1px solid #efe7de;
-  padding: 0.45rem;
+  padding: 0.6rem 0.7rem;
   font-size: 0.74rem;
+}
+
+.aurelia-admin-users-permission-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.aurelia-admin-users-permission-text strong {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #2b2418;
+}
+
+.aurelia-admin-users-permission-text small {
+  font-size: 0.7rem;
+  color: #6b6050;
+  line-height: 1.3;
 }
 
 .aurelia-admin-users-permission-actions {

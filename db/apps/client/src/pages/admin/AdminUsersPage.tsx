@@ -42,6 +42,16 @@ export const AdminUsersPage = () => {
   })
 
   const users = usersQuery.data?.users ?? []
+  const permissionLabel = (permission: string) => {
+    const key = `admin.users.perm.${permission}.label`
+    const label = t(key)
+    return label === key ? permission : label
+  }
+  const permissionDesc = (permission: string) => {
+    const key = `admin.users.perm.${permission}.desc`
+    const desc = t(key)
+    return desc === key ? "" : desc
+  }
   const availablePermissions = usersQuery.data?.availablePermissions ?? []
 
   const filteredUsers = useMemo(() => {
@@ -224,7 +234,10 @@ export const AdminUsersPage = () => {
                         checked={permissionDraft.includes(permission)}
                         onChange={() => togglePermission(permission)}
                       />
-                      <span>{permission}</span>
+                      <span className="aurelia-admin-users-permission-text">
+                        <strong>{permissionLabel(permission)}</strong>
+                        <small>{permissionDesc(permission)}</small>
+                      </span>
                     </label>
                   ))}
                 </div>
