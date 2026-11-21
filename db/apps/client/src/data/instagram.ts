@@ -16,4 +16,11 @@ export type InstagramPost = {
  * Photos shown in the home page "Follow us on Instagram" grid.
  * Save images from the profile into public/instagram/ and list them here.
  */
-export const instagramPosts: InstagramPost[] = []
+export const instagramPosts: InstagramPost[] = [
+  { image: "/instagram/post-1.jpg", alt: "Gold herringbone necklace" },
+  { image: "/instagram/post-2.jpg", alt: "Twisted gold hoop earrings" },
+  { image: "/instagram/post-3.jpg", alt: "Chunky gold chain bracelet" },
+  { image: "/instagram/post-4.jpg", alt: "Gold rings in a jewellery box" },
+  { image: "/instagram/post-5.jpg", alt: "Gold jewellery on a mirrored tray" },
+  { image: "/instagram/post-6.jpg", alt: "Gold pendant necklace" },
+]
