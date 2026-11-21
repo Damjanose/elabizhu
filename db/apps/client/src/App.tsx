@@ -1,6 +1,7 @@
 import { motion } from "motion/react"
 import { Link, NavLink, Route, Routes, useLocation } from "react-router-dom"
-import { FiLayout, FiSearch, FiShoppingBag } from "react-icons/fi"
+import { FiInstagram, FiLayout, FiSearch, FiShoppingBag } from "react-icons/fi"
+import { INSTAGRAM_URL } from "./data/instagram"
 import { Slide, ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { ErrorBoundary } from "./components/feedback/ErrorBoundary"
@@ -76,6 +77,17 @@ const Shell = () => {
             </Link>
 
             <div className="aurelia-nav-right">
+              <NavIconHint label="Instagram">
+                <a
+                  className="aurelia-icon-link text-decoration-none"
+                  href={INSTAGRAM_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="ElaBizhu on Instagram"
+                >
+                  <FiInstagram />
+                </a>
+              </NavIconHint>
               <NavIconHint label="Search">
                 <Link className="aurelia-icon-link text-decoration-none" to="/collections" aria-label="Search">
                   <FiSearch />

@@ -8,6 +8,8 @@ import { useEffect, useMemo, useRef } from "react"
 import { MotionLink, linkPressProps } from "../components/motion/MotionLink"
 import { fadeUp, listItem, listStagger, scrollRevealViewport, shouldReduceMotion, transition } from "../lib/motion"
 import { ProductCard } from "../components/product/ProductCard"
+import { FiInstagram } from "react-icons/fi"
+import { INSTAGRAM_HANDLE, INSTAGRAM_URL, instagramPosts } from "../data/instagram"
 
 const CATEGORY_TILES = [
   {
@@ -287,6 +289,54 @@ export const HomePage = () => {
             </motion.div>
           ))}
         </motion.div>
+      </section>
+
+      <section className="py-16 md:py-24 text-center">
+        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={scrollRevealViewport}>
+          <h2 className="font-display-xl text-headline-lg font-normal mb-3">Follow @{INSTAGRAM_HANDLE}</h2>
+          <p className="aurelia-muted mb-4">New pieces, behind-the-scenes moments and styling ideas on Instagram.</p>
+        </motion.div>
+        {instagramPosts.length > 0 && (
+          <motion.div
+            className="grid grid-cols-2 md:grid-cols-4 gap-gutter mb-5"
+            variants={listStagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={scrollRevealViewport}
+          >
+            {instagramPosts.map((post) => (
+              <motion.a
+                key={post.image}
+                variants={listItem}
+                href={post.href ?? INSTAGRAM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative block aspect-square overflow-hidden bg-surface-dim"
+              >
+                <motion.img
+                  src={post.image}
+                  alt={post.alt}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                  whileHover={{ scale: 1.06 }}
+                  transition={transition.slow}
+                />
+              </motion.a>
+            ))}
+          </motion.div>
+        )}
+        <motion.a
+          href={INSTAGRAM_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="aurelia-btn aurelia-btn-primary d-inline-flex align-items-center gap-2 text-decoration-none"
+          whileHover={{ scale: 1.03, y: -1 }}
+          whileTap={{ scale: 0.97 }}
+          transition={transition.quick}
+        >
+          <FiInstagram aria-hidden /> Follow on Instagram
+        </motion.a>
       </section>
 
       <section className="aurelia-newsletter text-center">
