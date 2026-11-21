@@ -3592,21 +3592,18 @@ select.aurelia-select.aurelia-select--compact:hover {
   text-decoration: none;
 }
 
-.aurelia-pdp-signin {
+.aurelia-pdp-add.aurelia-pdp-order {
+  flex: 0 0 auto;
+  width: 100%;
+  border-radius: 999px;
+  text-decoration: none;
+}
+
+.aurelia-pdp-order-hint {
   font-family: "Jost", system-ui, sans-serif;
   font-size: 0.85rem;
   color: var(--aurelia-text-muted);
   margin: 0;
-}
-
-.aurelia-pdp-signin a {
-  color: var(--aurelia-primary);
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.aurelia-pdp-signin a:hover {
-  text-decoration: underline;
 }
 
 .aurelia-pdp-accordion {

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { FiGrid, FiLogOut, FiPackage, FiUser } from "react-icons/fi"
+import { FiGrid, FiLogOut, FiUser } from "react-icons/fi"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../../types/auth-context"
 import { NavIconHint } from "../nav/NavIconHint"
@@ -94,25 +94,6 @@ export const UserMenu = () => {
               <span>{t("shell.account.adminDashboard")}</span>
             </Link>
           )}
-          <Link
-            to="/account"
-            role="menuitem"
-            className="aurelia-user-menu-item"
-            onClick={() => setOpen(false)}
-          >
-            <FiUser aria-hidden="true" />
-            <span>{t("shell.account.myAccount")}</span>
-          </Link>
-          <Link
-            to="/orders"
-            role="menuitem"
-            className="aurelia-user-menu-item"
-            onClick={() => setOpen(false)}
-          >
-            <FiPackage aria-hidden="true" />
-            <span>{t("shell.account.orders")}</span>
-          </Link>
-
           <div className="aurelia-user-menu-divider" aria-hidden />
 
           <button

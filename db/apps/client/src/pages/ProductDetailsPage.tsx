@@ -1,16 +1,13 @@
 import { useMemo, useRef, useState } from "react"
 import type { Product } from "@jewellery/types"
 import { AnimatePresence, motion } from "motion/react"
-import { Link, useLocation, useParams } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import { useProductQuery, useProductRecommendationsQuery } from "../hooks/queries/useProductQueries"
-import { useCart } from "../hooks/useCart"
 import { useCategories } from "../hooks/useCatalog"
 import { useQueryLoadState } from "../hooks/useQueryLoadState"
-import { INSTAGRAM_URL } from "../data/instagram"
+import { INSTAGRAM_DM_URL } from "../data/instagram"
 import { useI18n } from "../i18n"
 import { fadeIn, fadeUp, listItem, listStagger, scrollRevealViewport, transition } from "../lib/motion"
-import { loginHrefWithReturn } from "../utils/post-auth-redirect"
-import { successToast, toastFromError } from "../utils/toast"
 
 const PLACEHOLDER_IMAGE = "https://placehold.co/800x1000?text=ElaBizhu"
 
@@ -24,9 +21,6 @@ const formatPrice = (value: string | number) =>
 
 export const ProductDetailsPage = () => {
   const { productId = "" } = useParams()
-  const location = useLocation()
-  const signInHref = loginHrefWithReturn(location)
-  const { addItem, isUpdating, isGuest } = useCart()
   const { t } = useI18n()
 
   const productQuery = useProductQuery(productId, !!productId)
@@ -63,22 +57,7 @@ export const ProductDetailsPage = () => {
       <ProductHero
         product={product}
         categoryName={categoryName}
-        signInHref={signInHref}
         canBuy={product.stockQuantity > 0}
-        isUpdating={isUpdating}
-        isGuest={isGuest}
-        onAdd={async (quantity) => {
-          try {
-            await addItem({ product, quantity })
-            successToast(
-              quantity > 1
-                ? t("catalog.pdp.addedMany", { count: quantity, name: product.name })
-                : t("catalog.pdp.addedOne", { name: product.name }),
-            )
-          } catch (err) {
-            toastFromError(err, t("catalog.pdp.addFailed"))
-          }
-        }}
       />
       <RecommendationsRail
         title={t("catalog.pdp.recommended")}
@@ -92,20 +71,13 @@ export const ProductDetailsPage = () => {
 type HeroProps = {
   product: Product
   categoryName: string | null
-  signInHref: string
   canBuy: boolean
-  isGuest: boolean
-  isUpdating: boolean
-  onAdd: (quantity: number) => void
 }
 
-const ProductHero = ({ product, categoryName, signInHref, canBuy, isGuest, isUpdating, onAdd }: HeroProps) => {
+const ProductHero = ({ product, categoryName, canBuy }: HeroProps) => {
   const { t } = useI18n()
   const images = product.images.length > 0 ? product.images : []
   const [activeIndex, setActiveIndex] = useState(0)
-  const [quantity, setQuantity] = useState(1)
-  const [justAdded, setJustAdded] = useState(false)
-  const maxQty = Math.max(1, product.stockQuantity || 1)
   const activeImage = images[activeIndex]?.url ?? PLACEHOLDER_IMAGE
 
   const stockState = product.stockQuantity <= 0
@@ -115,13 +87,6 @@ const ProductHero = ({ product, categoryName, signInHref, canBuy, isGuest, isUpd
       : { label: t("catalog.pdp.inStock"), tone: "in-stock" as const }
 
   const collectionLabel = t("catalog.pdp.collection", { name: (categoryName ?? "ElaBizhu").toUpperCase() })
-
-  const handleAdd = () => {
-    if (!canBuy || isUpdating) return
-    onAdd(Math.min(quantity, maxQty))
-    setJustAdded(true)
-    window.setTimeout(() => setJustAdded(false), 2200)
-  }
 
   return (
     <div className="aurelia-pdp-grid">
@@ -184,64 +149,24 @@ const ProductHero = ({ product, categoryName, signInHref, canBuy, isGuest, isUpd
         </div>
 
         <div className="aurelia-pdp-actions">
-          <div className="aurelia-pdp-action-row">
-            <div className="aurelia-pdp-qty" role="group" aria-label={t("catalog.pdp.quantity")}>
-              <motion.button
-                type="button"
-                aria-label={t("catalog.pdp.decrease")}
-                disabled={quantity <= 1}
-                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                whileTap={quantity <= 1 ? undefined : { scale: 0.9 }}
-                transition={transition.quick}
+          {canBuy ? (
+            <>
+              <a
+                className="aurelia-pdp-add aurelia-pdp-order"
+                href={INSTAGRAM_DM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                <span className="material-symbols-outlined" aria-hidden>remove</span>
-              </motion.button>
-              <span className="aurelia-pdp-qty-value" aria-live="polite">{quantity}</span>
-              <motion.button
-                type="button"
-                aria-label={t("catalog.pdp.increase")}
-                disabled={quantity >= maxQty}
-                onClick={() => setQuantity((q) => Math.min(maxQty, q + 1))}
-                whileTap={quantity >= maxQty ? undefined : { scale: 0.9 }}
-                transition={transition.quick}
-              >
-                <span className="material-symbols-outlined" aria-hidden>add</span>
-              </motion.button>
-            </div>
-            <motion.button
-              type="button"
-              className="aurelia-pdp-add"
-              disabled={!canBuy || isUpdating}
-              onClick={handleAdd}
-              whileHover={!canBuy || isUpdating ? undefined : { scale: 1.02, y: -1 }}
-              whileTap={!canBuy || isUpdating ? undefined : { scale: 0.97 }}
-              transition={transition.quick}
-            >
-              {!canBuy
-                ? t("catalog.pdp.soldOut")
-                : isUpdating
-                  ? t("catalog.pdp.adding")
-                  : justAdded
-                    ? t("catalog.pdp.added")
-                    : t("catalog.pdp.addToCart")}
-            </motion.button>
-          </div>
-          <a
-            className="btn btn-outline-dark rounded-pill"
-            href={INSTAGRAM_URL}
-            target="_blank"
-            rel="noopener"
-          >
-            {t("catalog.pdp.orderInstagram")}
-          </a>
-          <a className="aurelia-pdp-secondary" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
-            {t("catalog.pdp.viewing")}
-          </a>
-          {isGuest && (
-            <p className="aurelia-pdp-signin">
-              {t("catalog.pdp.guestLead")}{" "}
-              <Link to={signInHref}>{t("catalog.pdp.signIn")}</Link> {t("catalog.pdp.guestTail")}
-            </p>
+                {t("catalog.pdp.orderInstagram")}
+              </a>
+              <p className="aurelia-pdp-order-hint">
+                {t("catalog.pdp.orderHint", { name: product.name })}
+              </p>
+            </>
+          ) : (
+            <button type="button" className="aurelia-pdp-add aurelia-pdp-order" disabled>
+              {t("catalog.pdp.soldOut")}
+            </button>
           )}
         </div>
 

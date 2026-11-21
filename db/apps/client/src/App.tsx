@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import { motion } from "motion/react"
-import { Link, NavLink, Route, Routes, useLocation } from "react-router-dom"
+import { Link, Navigate, NavLink, Route, Routes, useLocation } from "react-router-dom"
 import { FaTiktok } from "react-icons/fa"
 import { FiInstagram, FiLayout, FiSearch } from "react-icons/fi"
 import { INSTAGRAM_URL, TIKTOK_URL } from "./data/instagram"
@@ -11,36 +11,25 @@ import { ErrorBoundary } from "./components/feedback/ErrorBoundary"
 import { AdminRoute } from "./components/AdminRoute"
 import { AdminShell } from "./components/admin/AdminShell"
 import { GuestRoute } from "./components/GuestRoute"
-import { ProtectedRoute } from "./components/ProtectedRoute"
 import { UserMenu } from "./components/auth/UserMenu"
 import { LanguageToggle } from "./components/nav/LanguageToggle"
 import { MobileTabBar } from "./components/nav/MobileTabBar"
 import { NavIconHint } from "./components/nav/NavIconHint"
 import { useI18n } from "./i18n"
 import { useSocketLifecycle } from "./hooks/useSocketLifecycle"
-import { AccountPage } from "./pages/AccountPage"
 import { AdminDashboardPage } from "./pages/admin/AdminDashboardPage"
 import { AdminOrderDetailPage } from "./pages/admin/AdminOrderDetailPage"
 import { AdminOrdersPage } from "./pages/admin/AdminOrdersPage"
 import { AdminProductDetailPage } from "./pages/admin/AdminProductDetailPage"
 import { AdminProductsPage } from "./pages/admin/AdminProductsPage"
 import { AdminUsersPage } from "./pages/admin/AdminUsersPage"
-import { CartPage } from "./pages/CartPage"
-import { CheckoutPage } from "./pages/CheckoutPage"
 import { CategoriesPage } from "./pages/CategoriesPage"
 import { CategoryProductsPage } from "./pages/CategoryProductsPage"
-import { CollectionsPage } from "./pages/CollectionsPage"
-import { JournalPage } from "./pages/JournalPage"
-import { JournalPostPage } from "./pages/JournalPostPage"
 import { HomePage } from "./pages/HomePage"
 import { LoginPage } from "./pages/LoginPage"
 import { NotFoundPage } from "./pages/NotFoundPage"
-import { NotificationsPage } from "./pages/NotificationsPage"
-import { OrderDetailPage } from "./pages/OrderDetailPage"
-import { OrdersPage } from "./pages/OrdersPage"
 import { ProductDetailsPage } from "./pages/ProductDetailsPage"
 import { ProductsPage } from "./pages/ProductsPage"
-import { ProfilePage } from "./pages/ProfilePage"
 import { fadeUp } from "./lib/motion"
 import { useAuth } from "./types/auth-context"
 import { ADMIN_LOGIN_PATH } from "./utils/post-auth-redirect"
@@ -75,12 +64,6 @@ const Shell = () => {
                 </NavLink>
                 <NavLink className={navLinkClass} to="/categories">
                   {t("shell.nav.categories")}
-                </NavLink>
-                <NavLink className={navLinkClass} to="/collections">
-                  {t("shell.nav.collections")}
-                </NavLink>
-                <NavLink className={navLinkClass} to="/journal">
-                  {t("shell.nav.journal")}
                 </NavLink>
               </div>
               <LanguageToggle />
@@ -117,7 +100,7 @@ const Shell = () => {
                 </NavIconHint>
               </span>
               <NavIconHint label={t("shell.search.label")}>
-                <Link className="aurelia-icon-link text-decoration-none" to="/collections" aria-label={t("shell.search.label")}>
+                <Link className="aurelia-icon-link text-decoration-none" to="/products" aria-label={t("shell.search.label")}>
                   <FiSearch />
                 </Link>
               </NavIconHint>
@@ -147,63 +130,16 @@ const Shell = () => {
               </GuestRoute>
             }
           />
-          <Route path="/collections" element={<CollectionsPage />} />
-          <Route path="/journal" element={<JournalPage />} />
-          <Route path="/journal/:slug" element={<JournalPostPage />} />
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/categories/:categoryId/products" element={<CategoryProductsPage />} />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/products/:productId" element={<ProductDetailsPage />} />
 
-          <Route path="/cart" element={<CartPage />} />
-          <Route
-            path="/checkout"
-            element={
-              <ProtectedRoute>
-                <CheckoutPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/account"
-            element={
-              <ProtectedRoute>
-                <AccountPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/account/edit"
-            element={
-              <ProtectedRoute>
-                <ProfilePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/orders"
-            element={
-              <ProtectedRoute>
-                <OrdersPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/orders/:orderId"
-            element={
-              <ProtectedRoute>
-                <OrderDetailPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/notifications"
-            element={
-              <ProtectedRoute>
-                <NotificationsPage />
-              </ProtectedRoute>
-            }
-          />
+          {/* Retired customer pages: the store is public-only, ordering happens on Instagram. */}
+          <Route path="/collections" element={<Navigate to="/products" replace />} />
+          {["/journal", "/journal/:slug", "/cart", "/checkout", "/account", "/account/edit", "/orders", "/orders/:orderId", "/notifications"].map((p) => (
+            <Route key={p} path={p} element={<Navigate to="/" replace />} />
+          ))}
 
           <Route
             path="/admin"

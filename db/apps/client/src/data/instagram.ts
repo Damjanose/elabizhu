@@ -1,5 +1,6 @@
 export const INSTAGRAM_HANDLE = "elabizhu"
 export const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}/`
+export const INSTAGRAM_DM_URL = `https://ig.me/m/${INSTAGRAM_HANDLE}`
 
 export const TIKTOK_URL = "https://www.tiktok.com/@elabizhu"
 
