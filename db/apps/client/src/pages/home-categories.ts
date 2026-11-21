@@ -4,8 +4,8 @@ export const HOME_CATEGORIES: { key: HomeCategoryKey; aliases: string[] }[] = [
   { key: "rings", aliases: ["rings", "unaza"] },
   { key: "bracelets", aliases: ["bracelets", "byzylyke", "byzylyk"] },
   { key: "earrings", aliases: ["earrings", "vathe"] },
-  { key: "necklaces", aliases: ["necklaces", "gjerdane"] },
-  { key: "watches", aliases: ["watches", "ore"] },
+  { key: "necklaces", aliases: ["necklaces", "gjerdane", "varese"] },
+  { key: "watches", aliases: ["watches", "ore", "ora"] },
 ]
 
 /** Lowercases and strips diacritics so "Vathë" matches "vathe". */
