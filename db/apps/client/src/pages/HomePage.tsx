@@ -14,6 +14,7 @@ import { BadgePill } from "../components/product/BadgePill"
 import { fadeUp, listItem, listStagger, scrollRevealViewport, shouldReduceMotion, transition } from "../lib/motion"
 import { deriveDisplayBadge } from "../utils/productBadges"
 import { INSTAGRAM_HANDLE, INSTAGRAM_URL, TIKTOK_URL, instagramPosts } from "../data/instagram"
+import { useCategoryCovers } from "../hooks/useCategoryCovers"
 import { HOME_CATEGORIES, matchHomeCategory } from "./home-categories"
 import "../styles/home.css"
 
@@ -40,6 +41,7 @@ export const HomePage = () => {
   const reduceMotion = useMemo(() => shouldReduceMotion(), [])
   const featuredQuery = useFeaturedProductsQuery()
   const categoriesQuery = useCategories()
+  const covers = useCategoryCovers()
   const featured = featuredQuery.data
   const { showSkeleton: showFeaturedSkeleton } = useQueryLoadState(featuredQuery)
 
@@ -50,9 +52,13 @@ export const HomePage = () => {
     const list = categoriesQuery.data ?? []
     return HOME_CATEGORIES.map(({ key }) => {
       const match = matchHomeCategory(key, list)
-      return { key, to: match ? `/categories/${match.id}/products` : "/categories" }
+      return {
+        key,
+        to: match ? `/categories/${match.id}/products` : "/categories",
+        cover: match ? covers.get(match.id) : undefined,
+      }
     })
-  }, [categoriesQuery.data])
+  }, [categoriesQuery.data, covers])
 
   const watchesTo = categoryTiles.find((tile) => tile.key === "watches")?.to ?? "/categories"
 
@@ -191,7 +197,8 @@ export const HomePage = () => {
         <motion.ul className="eb-home-cat-grid" variants={listStagger} initial={reduceMotion ? false : "hidden"} whileInView="visible" viewport={scrollRevealViewport}>
           {categoryTiles.map((tile) => (
             <motion.li key={tile.key} variants={listItem} className="eb-home-cat-item">
-              <Link to={tile.to} className="eb-home-cat eb-home-shimmer">
+              <Link to={tile.to} className={`eb-home-cat eb-home-shimmer${tile.cover ? " eb-home-cat--photo" : ""}`}>
+                {tile.cover && <img className="eb-home-cat-img" src={tile.cover} alt="" loading="lazy" decoding="async" />}
                 <span className="eb-home-cat-name">{t(`home.categories.name.${tile.key}`)}</span>
                 <span className="eb-home-cat-cta">
                   {t("home.categories.view")} <span aria-hidden>→</span>

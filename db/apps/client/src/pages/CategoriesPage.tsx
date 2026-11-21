@@ -2,6 +2,7 @@ import { motion } from "motion/react"
 import { Link } from "react-router-dom"
 import { MotionLink, linkPressProps } from "../components/motion/MotionLink"
 import { useCategories } from "../hooks/useCatalog"
+import { useCategoryCovers } from "../hooks/useCategoryCovers"
 import { useQueryLoadState } from "../hooks/useQueryLoadState"
 import { useI18n } from "../i18n"
 import { listItem, listStagger, shouldReduceMotion } from "../lib/motion"
@@ -12,6 +13,7 @@ const SKELETON_TILES = [0, 1, 2, 3]
 export const CategoriesPage = () => {
   const { t } = useI18n()
   const categoriesQuery = useCategories()
+  const covers = useCategoryCovers()
   const { data, isError } = categoriesQuery
   const { showSkeleton } = useQueryLoadState(categoriesQuery)
   const reduce = shouldReduceMotion()
@@ -64,7 +66,11 @@ export const CategoriesPage = () => {
                 className="eb-cat-tile"
                 aria-label={t("catalog.categories.browse", { name: category.name })}
               >
-                <span className="eb-cat-tile-media eb-cat-shimmer" aria-hidden />
+                {covers.get(category.id) ? (
+                  <img className="eb-cat-tile-media eb-cat-tile-photo" src={covers.get(category.id)} alt="" loading="lazy" decoding="async" />
+                ) : (
+                  <span className="eb-cat-tile-media eb-cat-shimmer" aria-hidden />
+                )}
                 <span className="eb-cat-tile-text">
                   <span className="eb-cat-tile-name">{category.name}</span>
                   <span className="eb-cat-tile-cta">{t("catalog.categories.view")}</span>
