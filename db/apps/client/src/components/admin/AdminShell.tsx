@@ -4,7 +4,6 @@ import { useAuth } from "../../types/auth-context"
 import { AdminCurrencySelect } from "./AdminCurrencySelect"
 import { AdminOrderAlerts } from "./AdminOrderAlerts"
 import { AdminShellUserMenu } from "./AdminShellUserMenu"
-import { LanguageToggle } from "../nav/LanguageToggle"
 import { useI18n } from "../../i18n"
 
 const shellNavClass = ({ isActive }: { isActive: boolean }) =>
@@ -65,7 +64,6 @@ export const AdminShell = () => {
             </label>
             <div className="aurelia-admin-shell-topbar-right">
               <AdminCurrencySelect />
-              <LanguageToggle />
               <AdminOrderAlerts />
               <Link
                 to="/admin/orders"

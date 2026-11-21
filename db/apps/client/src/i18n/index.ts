@@ -16,15 +16,12 @@ const dictionaries: Record<Lang, Messages> = {
   en: Object.assign({}, ...sets.map((s) => s.en)),
 }
 
-const readInitial = (): Lang => {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY)
-    if (saved === "sq" || saved === "en") return saved
-  } catch {
-    /* ignore */
-  }
-  return "sq" // Albanian is the default
-}
+/**
+ * The site is Albanian-only for now and there is no language picker in the UI.
+ * English strings are kept in the message files so a picker can be re-enabled
+ * later by restoring the saved choice here and rendering a toggle.
+ */
+const readInitial = (): Lang => "sq"
 
 type LangState = { lang: Lang; setLang: (lang: Lang) => void }
 

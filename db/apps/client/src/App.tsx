@@ -12,7 +12,6 @@ import { AdminRoute } from "./components/AdminRoute"
 import { AdminShell } from "./components/admin/AdminShell"
 import { GuestRoute } from "./components/GuestRoute"
 import { UserMenu } from "./components/auth/UserMenu"
-import { LanguageToggle } from "./components/nav/LanguageToggle"
 import { MobileTabBar } from "./components/nav/MobileTabBar"
 import { NavIconHint } from "./components/nav/NavIconHint"
 import { useI18n } from "./i18n"
@@ -66,7 +65,6 @@ const Shell = () => {
                   {t("shell.nav.categories")}
                 </NavLink>
               </div>
-              <LanguageToggle />
             </div>
 
             <Link className="aurelia-brand text-decoration-none text-center" to="/">
