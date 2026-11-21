@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
+import { INSTAGRAM_URL } from "../data/instagram"
 import { isAxiosError } from "axios"
 import { Link, useParams } from "react-router-dom"
 import type { OrderStatus } from "@jewellery/types"
@@ -303,9 +304,9 @@ export const OrderDetailPage = () => {
             </p>
             <a
               className="aurelia-order-detail-concierge-link"
-              href={`mailto:concierge@aurelia.atelier?subject=${encodeURIComponent(
-                t("account.detail.enquirySubject", { ref: orderRef(data.id) }),
-              )}`}
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <span>{t("account.detail.contactConcierge")}</span>
               <span className="material-symbols-outlined" aria-hidden>arrow_forward</span>

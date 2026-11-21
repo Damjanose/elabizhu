@@ -234,8 +234,8 @@ export const accountMessages: MessageSet = {
     "account.detail.paymentNotRecorded": "Nuk është regjistruar",
     "account.detail.paymentSecure": "Regjistruar me siguri në momentin e porosisë.",
     "account.detail.conciergeTitle": "Shërbimi personal",
-    "account.detail.conciergeCopy": "Atelieri ynë është në dispozicion për pyetje, rregullime ose pyetje për dërgesën e kësaj porosie.",
-    "account.detail.contactConcierge": "Kontaktoni shërbimin personal",
+    "account.detail.conciergeCopy": "Na shkruani në Instagram për çdo pyetje rreth kësaj porosie.",
+    "account.detail.contactConcierge": "Na shkruani në Instagram",
     "account.detail.enquirySubject": "Pyetje për porosinë {ref}",
 
     // Notifications
@@ -299,7 +299,7 @@ export const accountMessages: MessageSet = {
     "account.profile.title": "Profili dhe adresat",
     "account.profile.sub": "Përditësoni detajet tuaja të kontaktit dhe menaxhoni adresat ku ju dërgojmë. Adresa juaj e parazgjedhur përdoret gjatë blerjes.",
     "account.profile.personalTitle": "Të dhënat personale",
-    "account.profile.emailHelp": "Kontaktoni shërbimin personal për të ndryshuar email-in tuaj.",
+    "account.profile.emailHelp": "Na shkruani në Instagram për të ndryshuar email-in tuaj.",
     "account.profile.updated": "Profili u përditësua",
     "account.profile.saveError": "Profili nuk mund të ruhet",
     "account.profile.save": "Ruaj ndryshimet",
@@ -562,8 +562,8 @@ export const accountMessages: MessageSet = {
     "account.detail.paymentNotRecorded": "Not recorded",
     "account.detail.paymentSecure": "Securely captured at the time of order.",
     "account.detail.conciergeTitle": "Concierge",
-    "account.detail.conciergeCopy": "Our atelier is available for questions, alterations, or shipping enquiries about this order.",
-    "account.detail.contactConcierge": "Contact Concierge",
+    "account.detail.conciergeCopy": "Message us on Instagram with any question about this order.",
+    "account.detail.contactConcierge": "Message us on Instagram",
     "account.detail.enquirySubject": "Enquiry about order {ref}",
 
     // Notifications
@@ -627,7 +627,7 @@ export const accountMessages: MessageSet = {
     "account.profile.title": "Profile & Addresses",
     "account.profile.sub": "Update your contact details and manage the addresses we deliver to. Your default address is used during checkout.",
     "account.profile.personalTitle": "Personal Details",
-    "account.profile.emailHelp": "Contact concierge to change your email.",
+    "account.profile.emailHelp": "Message us on Instagram to change your email.",
     "account.profile.updated": "Profile updated",
     "account.profile.saveError": "Could not save profile",
     "account.profile.save": "Save Changes",

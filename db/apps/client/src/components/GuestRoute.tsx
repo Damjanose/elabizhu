@@ -5,7 +5,7 @@ import { sanitizeRedirect } from "../utils/post-auth-redirect"
 
 export const GuestRoute = ({
   children,
-  redirectTo = "/account",
+  redirectTo = "/admin",
 }: {
   children: React.ReactNode
   redirectTo?: string

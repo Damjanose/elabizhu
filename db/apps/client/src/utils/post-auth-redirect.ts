@@ -9,11 +9,14 @@ export const sanitizeRedirect = (raw: string | null | undefined): string | null 
   return raw
 }
 
-/** `/login` URL that returns the user to the current internal route after sign-in. */
+/** Hidden admin sign-in path. Not linked anywhere in the public UI. */
+export const ADMIN_LOGIN_PATH = "/studio"
+
+/** Login URL that returns the user to the current internal route after sign-in. */
 export const loginHrefWithReturn = (loc: { pathname: string; search: string; hash: string }): string => {
-  if (loc.pathname === "/login" || loc.pathname === "/register") {
+  if (loc.pathname === ADMIN_LOGIN_PATH) {
     return `${loc.pathname}${loc.search}`
   }
   const target = `${loc.pathname}${loc.search}${loc.hash}` || "/"
-  return `/login?redirect=${encodeURIComponent(target)}`
+  return `${ADMIN_LOGIN_PATH}?redirect=${encodeURIComponent(target)}`
 }

@@ -12,9 +12,8 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!user) {
-    const target = `${location.pathname}${location.search}${location.hash}`
-    const redirect = encodeURIComponent(target || "/")
-    return <Navigate to={`/login?redirect=${redirect}`} replace />
+    // Customers never sign in; send anonymous visitors to the public site.
+    return <Navigate to="/" replace />
   }
 
   return <>{children}</>

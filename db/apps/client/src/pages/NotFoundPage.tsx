@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom"
+import { INSTAGRAM_HANDLE, INSTAGRAM_URL } from "../data/instagram"
 import { useI18n } from "../i18n"
 
 export const NotFoundPage = () => {
@@ -25,7 +26,7 @@ export const NotFoundPage = () => {
       <span className="aurelia-error-rule" aria-hidden />
       <p className="aurelia-error-meta">
         {t("catalog.support.assist")}{" "}
-        <a href="mailto:atelier@aurelia.com">atelier@aurelia.com</a>
+        <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">@{INSTAGRAM_HANDLE}</a>
       </p>
     </section>
   )

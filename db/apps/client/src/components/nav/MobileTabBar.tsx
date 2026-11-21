@@ -1,6 +1,7 @@
-import { FiGrid, FiHome, FiShoppingBag, FiUser } from "react-icons/fi"
+import { FaTiktok } from "react-icons/fa"
+import { FiGrid, FiHome, FiInstagram, FiShoppingBag } from "react-icons/fi"
 import { NavLink } from "react-router-dom"
-import { useCart } from "../../hooks/useCart"
+import { INSTAGRAM_URL, TIKTOK_URL } from "../../data/instagram"
 import { useI18n } from "../../i18n"
 
 const tabClass = ({ isActive }: { isActive: boolean }) =>
@@ -9,7 +10,6 @@ const tabClass = ({ isActive }: { isActive: boolean }) =>
 /** Fixed bottom navigation for small screens. Hidden on desktop via CSS. */
 export const MobileTabBar = () => {
   const { t } = useI18n()
-  const { itemCount } = useCart()
 
   return (
     <nav className="aurelia-tab-bar" aria-label={t("shell.tab.ariaLabel")}>
@@ -21,23 +21,18 @@ export const MobileTabBar = () => {
         <FiGrid aria-hidden="true" />
         <span>{t("shell.tab.categories")}</span>
       </NavLink>
-      <NavLink
-        to="/cart"
-        className={tabClass}
-        aria-label={itemCount > 0 ? t("shell.cart.labelWithCount", { count: itemCount }) : t("shell.cart.label")}
-      >
-        <span className="aurelia-tab-bar-icon">
-          <FiShoppingBag aria-hidden="true" />
-          {itemCount > 0 && (
-            <span className="aurelia-cart-badge">{itemCount > 99 ? "99+" : itemCount}</span>
-          )}
-        </span>
-        <span>{t("shell.tab.cart")}</span>
+      <NavLink to="/products" className={tabClass}>
+        <FiShoppingBag aria-hidden="true" />
+        <span>{t("shell.tab.shop")}</span>
       </NavLink>
-      <NavLink to="/account" className={tabClass}>
-        <FiUser aria-hidden="true" />
-        <span>{t("shell.tab.account")}</span>
-      </NavLink>
+      <a className="aurelia-tab-bar-link" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
+        <FiInstagram aria-hidden="true" />
+        <span>{t("shell.tab.instagram")}</span>
+      </a>
+      <a className="aurelia-tab-bar-link" href={TIKTOK_URL} target="_blank" rel="noopener noreferrer">
+        <FaTiktok aria-hidden="true" />
+        <span>TikTok</span>
+      </a>
     </nav>
   )
 }

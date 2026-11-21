@@ -94,7 +94,7 @@ export const catalogMessages: MessageSet = {
     "catalog.errorPage.copy":
       "Një gabim i papritur ndërpreu punën tonë. Ekipi ynë është njoftuar—ju lutemi rifreskoni faqen, ose kthehuni në kryefaqe dhe provoni përsëri pas pak.",
 
-    "catalog.support.assist": "Keni nevojë për ndihmë? Na kontaktoni te konsulenti ynë në",
+    "catalog.support.assist": "Keni nevojë për ndihmë? Na shkruani në Instagram",
 
     "catalog.journal.kicker": "Jurnali",
     "catalog.journal.title": "Histori nga Atelier-i",
@@ -246,7 +246,7 @@ export const catalogMessages: MessageSet = {
     "catalog.errorPage.copy":
       "An unexpected error interrupted our craft. Our team has been notified — please refresh, or return home and try again in a moment.",
 
-    "catalog.support.assist": "Need assistance? Reach our concierge at",
+    "catalog.support.assist": "Need help? Message us on Instagram",
 
     "catalog.journal.kicker": "Journal",
     "catalog.journal.title": "Stories from the Atelier",

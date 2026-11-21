@@ -1,8 +1,9 @@
 import { useEffect } from "react"
 import { motion } from "motion/react"
 import { Link, NavLink, Route, Routes, useLocation } from "react-router-dom"
-import { FiInstagram, FiLayout, FiSearch, FiShoppingBag } from "react-icons/fi"
-import { INSTAGRAM_URL } from "./data/instagram"
+import { FaTiktok } from "react-icons/fa"
+import { FiInstagram, FiLayout, FiSearch } from "react-icons/fi"
+import { INSTAGRAM_URL, TIKTOK_URL } from "./data/instagram"
 import { Slide, ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import "./styles/shell.css"
@@ -16,7 +17,6 @@ import { LanguageToggle } from "./components/nav/LanguageToggle"
 import { MobileTabBar } from "./components/nav/MobileTabBar"
 import { NavIconHint } from "./components/nav/NavIconHint"
 import { useI18n } from "./i18n"
-import { useCart } from "./hooks/useCart"
 import { useSocketLifecycle } from "./hooks/useSocketLifecycle"
 import { AccountPage } from "./pages/AccountPage"
 import { AdminDashboardPage } from "./pages/admin/AdminDashboardPage"
@@ -41,9 +41,9 @@ import { OrdersPage } from "./pages/OrdersPage"
 import { ProductDetailsPage } from "./pages/ProductDetailsPage"
 import { ProductsPage } from "./pages/ProductsPage"
 import { ProfilePage } from "./pages/ProfilePage"
-import { RegisterPage } from "./pages/RegisterPage"
 import { fadeUp } from "./lib/motion"
 import { useAuth } from "./types/auth-context"
+import { ADMIN_LOGIN_PATH } from "./utils/post-auth-redirect"
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `aurelia-nav-link${isActive ? " aurelia-nav-link-active" : ""}`
@@ -51,7 +51,6 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
 const Shell = () => {
   useSocketLifecycle()
   const { user } = useAuth()
-  const { itemCount } = useCart()
   const { t, lang } = useI18n()
   const location = useLocation()
   const isAdminView = location.pathname.startsWith("/admin")
@@ -105,6 +104,17 @@ const Shell = () => {
                     <FiInstagram />
                   </a>
                 </NavIconHint>
+                <NavIconHint label={t("shell.tiktok.hint")}>
+                  <a
+                    className="aurelia-icon-link text-decoration-none"
+                    href={TIKTOK_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={t("shell.tiktok.label")}
+                  >
+                    <FaTiktok />
+                  </a>
+                </NavIconHint>
               </span>
               <NavIconHint label={t("shell.search.label")}>
                 <Link className="aurelia-icon-link text-decoration-none" to="/collections" aria-label={t("shell.search.label")}>
@@ -114,22 +124,6 @@ const Shell = () => {
               <span className="aurelia-desktop-only">
                 <UserMenu />
               </span>
-              <NavIconHint label={t("shell.cart.label")}>
-                <Link
-                  className="aurelia-cart-icon text-decoration-none"
-                  to="/cart"
-                  aria-label={
-                    itemCount > 0
-                      ? t("shell.cart.labelWithCount", { count: itemCount })
-                      : t("shell.cart.label")
-                  }
-                >
-                  <FiShoppingBag />
-                  {itemCount > 0 && (
-                    <span className="aurelia-cart-badge">{itemCount > 99 ? "99+" : itemCount}</span>
-                  )}
-                </Link>
-              </NavIconHint>
               {canAccessAdmin && (
                 <NavIconHint label={t("shell.admin.hint")}>
                   <Link className="aurelia-icon-link text-decoration-none" to="/admin" aria-label={t("shell.admin.label")}>
@@ -146,18 +140,10 @@ const Shell = () => {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route
-            path="/login"
+            path={ADMIN_LOGIN_PATH}
             element={
               <GuestRoute>
                 <LoginPage />
-              </GuestRoute>
-            }
-          />
-          <Route
-            path="/register"
-            element={
-              <GuestRoute>
-                <RegisterPage />
               </GuestRoute>
             }
           />

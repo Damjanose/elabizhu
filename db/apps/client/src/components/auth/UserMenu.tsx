@@ -38,13 +38,8 @@ export const UserMenu = () => {
   }, [open])
 
   if (!user) {
-    return (
-      <NavIconHint label={t("shell.signIn.label")}>
-        <Link className="aurelia-icon-link text-decoration-none" to={signInHref} aria-label={t("shell.signIn.label")}>
-          <FiUser />
-        </Link>
-      </NavIconHint>
-    )
+    // Sign-in is admin-only and hidden: guests get no account icon.
+    return null
   }
 
   const onLogout = async () => {

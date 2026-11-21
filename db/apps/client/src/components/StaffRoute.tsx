@@ -5,7 +5,7 @@ export const StaffRoute = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth()
 
   if (!user) {
-    return <Navigate to="/login" replace />
+    return <Navigate to="/" replace />
   }
 
   const ok =

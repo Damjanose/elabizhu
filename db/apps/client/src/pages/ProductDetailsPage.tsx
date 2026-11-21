@@ -123,11 +123,6 @@ const ProductHero = ({ product, categoryName, signInHref, canBuy, isGuest, isUpd
     window.setTimeout(() => setJustAdded(false), 2200)
   }
 
-  const viewingMailto =
-    `mailto:atelier@aurelia.com` +
-    `?subject=${encodeURIComponent(t("catalog.pdp.viewingSubject", { name: product.name }))}` +
-    `&body=${encodeURIComponent(t("catalog.pdp.viewingBody", { name: product.name }))}`
-
   return (
     <div className="aurelia-pdp-grid">
       <div className="aurelia-pdp-gallery-col">
@@ -239,7 +234,7 @@ const ProductHero = ({ product, categoryName, signInHref, canBuy, isGuest, isUpd
           >
             {t("catalog.pdp.orderInstagram")}
           </a>
-          <a className="aurelia-pdp-secondary" href={viewingMailto}>
+          <a className="aurelia-pdp-secondary" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
             {t("catalog.pdp.viewing")}
           </a>
           {isGuest && (

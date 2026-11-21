@@ -138,18 +138,6 @@ export const LoginPage = () => {
                 {isSubmitting ? t("account.login.submitting") : t("account.login.submit")}
               </motion.button>
 
-              <p className="aurelia-auth-footnote">
-                {t("account.login.newHere")}
-                <Link
-                  to={
-                    redirectTo !== "/categories"
-                      ? `/register?redirect=${encodeURIComponent(redirectTo)}`
-                      : "/register"
-                  }
-                >
-                  {t("account.login.createAccount")}
-                </Link>
-              </p>
             </Form>
           )
         }}

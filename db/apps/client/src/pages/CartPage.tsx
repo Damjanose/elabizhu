@@ -116,7 +116,7 @@ export const CartPage = () => {
   const estimatedTax = subtotalNumber * TAX_RATE
   const total = subtotalNumber + estimatedTax
 
-  const checkoutTo = isGuest ? `/login?redirect=${encodeURIComponent("/checkout")}` : "/checkout"
+  const checkoutTo = "/checkout"
   const checkoutLabel = isGuest ? t("account.cart.checkoutGuest") : t("account.cart.checkout")
 
   return (
