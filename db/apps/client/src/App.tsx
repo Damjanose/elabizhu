@@ -72,7 +72,7 @@ const Shell = () => {
             </div>
 
             <Link className="aurelia-brand text-decoration-none text-center" to="/">
-              AURELIA
+              ELABIZHU
             </Link>
 
             <div className="aurelia-nav-right">

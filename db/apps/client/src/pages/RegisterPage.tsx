@@ -61,7 +61,7 @@ export const RegisterPage = () => {
         email: values.email.trim(),
         password: values.password,
       })
-      successToast(`Welcome to Aurelia, ${values.firstName.trim()}`)
+      successToast(`Welcome to ElaBizhu, ${values.firstName.trim()}`)
       navigate(redirectTo, { replace: true })
     } catch (err) {
       const { fieldErrors: rawErrors, formError: nextFormError } = extractFieldErrors(err)
@@ -162,7 +162,7 @@ export const RegisterPage = () => {
                     checked={values.joinCircle}
                     onChange={(e) => void setFieldValue("joinCircle", e.target.checked)}
                   />
-                  <span>Join the Aurelia Circle for exclusive collections and journal entries.</span>
+                  <span>Join the ElaBizhu Circle for exclusive collections and journal entries.</span>
                 </label>
               </div>
 

@@ -20,7 +20,7 @@ export const journalPosts: JournalPost[] = [
       "https://lh3.googleusercontent.com/aida-public/AB6AXuANIPK2sA_DRxWB_X0cI9oci-WSe6NXAJqBeV5uM-oNM7loqG2k7g7pBlapLwp_wZ0OGa0R5npIpEr_XD2x6SU_bAp-g1C4KGl3UWFPuM8rO2rSEXdTBlWO_NA8AIjlf12oCTHnMehix8fRwglYRDYfBVhKfagn1YN0QkTILB3_eqtipyes0e1P19vkR6oMivth7PNQftjceEEOaZOXTFns8iInHoDjkLH2_WFlWb1Z8DfLkCbBl_DV6jrISOgov80h7lOFKCn4Gw",
     readMinutes: 6,
     body: [
-      "At Aurelia, we treat each piece as a small world—balance of weight and air, darkness and fire. Our setters work under daylight-calibrated lamps so every diamond meets the eye with the same quiet brilliance you’ll see in our Mayfair salon.",
+      "At ElaBizhu, we treat each piece as a small world—balance of weight and air, darkness and fire. Our setters work under daylight-calibrated lamps so every diamond meets the eye with the same quiet brilliance you’ll see in our Mayfair salon.",
       "The Celestial line began as sketches on vellum: constellations reduced to arcs of gold. What you wear today is the distillation of twelve months of refinement—nothing left but what must remain.",
       "We invite you to book a private viewing when you’re ready to see the stones move for yourself.",
     ],

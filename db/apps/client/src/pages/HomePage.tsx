@@ -296,7 +296,7 @@ export const HomePage = () => {
           whileInView="visible"
           viewport={scrollRevealViewport}
         >
-          <h2 className="aurelia-admin-title mb-2">Join the Aurelia Circle</h2>
+          <h2 className="aurelia-admin-title mb-2">Join the ElaBizhu Circle</h2>
           <p className="aurelia-muted mb-3">
             Be the first to explore our weekly curations, exclusive bespoke opportunities and private events.
           </p>

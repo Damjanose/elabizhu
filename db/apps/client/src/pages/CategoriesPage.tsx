@@ -31,7 +31,7 @@ export const CategoriesPage = () => {
   return (
     <section className="py-12 md:py-20">
       <header className="text-center max-w-2xl mx-auto mb-12 md:mb-16">
-        <span className="aurelia-admin-kicker mb-3 d-inline-block">Aurelia Atelier</span>
+        <span className="aurelia-admin-kicker mb-3 d-inline-block">ElaBizhu Atelier</span>
         <h1 className="font-display-xl text-headline-lg font-normal mb-4 mt-2">Shop by Category</h1>
         <p className="aurelia-muted mb-0">
           Pick a category to explore pieces crafted with intention by our master artisans.

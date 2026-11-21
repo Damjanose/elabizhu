@@ -10,7 +10,7 @@ import { fadeIn, fadeUp, listItem, listStagger, scrollRevealViewport, transition
 import { loginHrefWithReturn } from "../utils/post-auth-redirect"
 import { successToast, toastFromError } from "../utils/toast"
 
-const PLACEHOLDER_IMAGE = "https://placehold.co/800x1000?text=Aurelia"
+const PLACEHOLDER_IMAGE = "https://placehold.co/800x1000?text=ElaBizhu"
 
 const formatPrice = (value: string | number) =>
   new Intl.NumberFormat("en-GB", {
@@ -110,7 +110,7 @@ const ProductHero = ({ product, categoryName, signInHref, canBuy, isGuest, isUpd
       ? { label: "Low stock — only a few remain", tone: "low-stock" as const }
       : { label: "In stock & ready to ship", tone: "in-stock" as const }
 
-  const collectionLabel = (categoryName ?? "Aurelia").toUpperCase() + " COLLECTION"
+  const collectionLabel = (categoryName ?? "ElaBizhu").toUpperCase() + " COLLECTION"
 
   const handleAdd = () => {
     if (!canBuy || isUpdating) return
@@ -123,7 +123,7 @@ const ProductHero = ({ product, categoryName, signInHref, canBuy, isGuest, isUpd
     `mailto:atelier@aurelia.com` +
     `?subject=${encodeURIComponent(`Private viewing — ${product.name}`)}` +
     `&body=${encodeURIComponent(
-      `Hello Aurelia atelier,\n\nI’d like to book a private viewing for the “${product.name}”. Could you share availability over the next two weeks?\n\nThank you.`,
+      `Hello ElaBizhu atelier,\n\nI’d like to book a private viewing for the “${product.name}”. Could you share availability over the next two weeks?\n\nThank you.`,
     )}`
 
   return (

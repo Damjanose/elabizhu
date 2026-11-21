@@ -107,7 +107,7 @@ export const AccountPage = () => {
         <ProfileCard
           name={user?.fullName?.trim() || displayName}
           email={user?.email ?? ""}
-          tier={user && user.permissions.includes("admin") ? "Atelier Director" : "Aurelia Circle"}
+          tier={user && user.permissions.includes("admin") ? "Atelier Director" : "ElaBizhu Circle"}
         />
 
         <ActiveOrderCard
@@ -339,7 +339,7 @@ const ItemDetailCard = ({
         )}
       </div>
       <div className="aurelia-item-detail-meta">
-        <span className="aurelia-item-detail-kicker">From the Aurelia Atelier</span>
+        <span className="aurelia-item-detail-kicker">From the ElaBizhu Atelier</span>
         <h3 className="aurelia-item-detail-title">{productName}</h3>
         <p className="aurelia-item-detail-copy">{description}</p>
         <dl className="aurelia-item-detail-stats">

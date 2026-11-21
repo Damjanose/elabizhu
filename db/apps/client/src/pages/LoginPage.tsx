@@ -47,7 +47,7 @@ export const LoginPage = () => {
     setFormError(null)
     try {
       await login({ email: values.email.trim(), password: values.password })
-      successToast("Welcome back to Aurelia")
+      successToast("Welcome back to ElaBizhu")
       navigate(redirectTo, { replace: true })
     } catch (err) {
       const { fieldErrors, formError: nextFormError } = extractFieldErrors(err)
@@ -65,7 +65,7 @@ export const LoginPage = () => {
   return (
     <AuthShell
       imageUrl={LOGIN_VISUAL}
-      imageAlt="Model wearing layered Aurelia gold jewellery in soft afternoon light"
+      imageAlt="Model wearing layered ElaBizhu gold jewellery in soft afternoon light"
       overlayHeadline="Welcome Back."
       overlaySubcopy="Continue your journey through curated craftsmanship and quietly luxurious pieces."
     >
@@ -137,7 +137,7 @@ export const LoginPage = () => {
               </motion.button>
 
               <p className="aurelia-auth-footnote">
-                New to Aurelia?
+                New to ElaBizhu?
                 <Link
                   to={
                     redirectTo !== "/categories"

@@ -16,8 +16,8 @@ export const AdminShell = () => {
     <div className="aurelia-admin-shell-bleed">
       <div className="aurelia-admin-shell">
         <aside className="aurelia-admin-shell-sidebar">
-          <Link className="aurelia-admin-shell-brand text-decoration-none" to="/" aria-label="Back to Aurelia home">
-            <span className="aurelia-admin-shell-logo">AURELIA</span>
+          <Link className="aurelia-admin-shell-brand text-decoration-none" to="/" aria-label="Back to ElaBizhu home">
+            <span className="aurelia-admin-shell-logo">ELABIZHU</span>
             <span className="aurelia-admin-shell-subtitle">Luxury Admin</span>
           </Link>
 

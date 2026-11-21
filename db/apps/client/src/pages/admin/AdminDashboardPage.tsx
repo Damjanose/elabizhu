@@ -222,7 +222,7 @@ export const AdminDashboardPage = () => {
       </section>
 
       <footer className="aurelia-admin-dashboard-foot">
-        <p className="mb-0">© 2024 Aurelia Luxury Jewellery Limited. All rights reserved.</p>
+        <p className="mb-0">© 2024 ElaBizhu Luxury Jewellery Limited. All rights reserved.</p>
         <div>
           <a href="#">Terms of Service</a>
           <a href="#">Privacy Protocol</a>
