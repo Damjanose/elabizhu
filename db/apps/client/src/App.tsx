@@ -88,7 +88,8 @@ const Shell = () => {
             </div>
 
             <Link className="aurelia-brand text-decoration-none text-center" to="/">
-              ELABIZHU
+              <img className="eb-brand-logo" src="/logo.jpg" alt="" width={36} height={36} />
+              <span>ELABIZHU</span>
             </Link>
 
             <div className="aurelia-nav-right">
