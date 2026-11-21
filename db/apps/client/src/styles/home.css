@@ -541,7 +541,9 @@
 
 .eb-home-men-img {
   display: block;
+  width: 100%;
   aspect-ratio: 4 / 3;
+  object-fit: cover;
   border-radius: 16px;
 }
 

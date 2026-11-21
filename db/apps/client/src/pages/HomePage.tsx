@@ -46,7 +46,10 @@ export const HomePage = () => {
   const { showSkeleton: showFeaturedSkeleton } = useQueryLoadState(featuredQuery)
 
   const products = useMemo(() => (featured ?? []).slice(0, 8), [featured])
-  const heroImage = useMemo(() => featured?.find((p) => p.images[0])?.images[0]?.url, [featured])
+  const heroImage = useMemo(
+    () => featured?.find((p) => p.images[0])?.images[0]?.url ?? "/images/hero.jpg",
+    [featured],
+  )
 
   const categoryTiles = useMemo(() => {
     const list = categoriesQuery.data ?? []
@@ -289,9 +292,13 @@ export const HomePage = () => {
       <section className="eb-home-section eb-home-men" aria-labelledby="eb-home-men-title">
         <motion.div className="eb-home-men-media" {...reveal}>
           <Link to={watchesTo} className="eb-home-men-link" aria-label={t("home.men.cta")}>
-            <span className="eb-home-shimmer eb-home-men-img" aria-hidden>
-              <span className="eb-home-placeholder-label">{t("home.hero.placeholder")}</span>
-            </span>
+            <img
+              className="eb-home-men-img"
+              src="/images/men-watch.jpg"
+              alt=""
+              loading="lazy"
+              decoding="async"
+            />
           </Link>
         </motion.div>
         <motion.div className="eb-home-men-text" {...reveal}>
