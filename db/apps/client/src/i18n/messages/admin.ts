@@ -64,7 +64,7 @@ export const adminMessages: MessageSet = {
     "admin.dashboard.surplus": "Tepricë",
     "admin.dashboard.criticalStock": "Stok kritik",
     "admin.dashboard.adjustAllocation": "Rregullo alokimin",
-    "admin.dashboard.copyright": "© 2024 ElaBizhu Luxury Jewellery Limited. Të gjitha të drejtat e rezervuara.",
+    "admin.dashboard.copyright": "© 2024 elabizhu. Të gjitha të drejtat e rezervuara.",
     "admin.dashboard.terms": "Kushtet e shërbimit",
     "admin.dashboard.privacy": "Politika e privatësisë",
 
@@ -351,7 +351,7 @@ export const adminMessages: MessageSet = {
     "admin.dashboard.surplus": "Surplus",
     "admin.dashboard.criticalStock": "Critical stock",
     "admin.dashboard.adjustAllocation": "Adjust allocation",
-    "admin.dashboard.copyright": "© 2024 ElaBizhu Luxury Jewellery Limited. All rights reserved.",
+    "admin.dashboard.copyright": "© 2024 elabizhu. All rights reserved.",
     "admin.dashboard.terms": "Terms of Service",
     "admin.dashboard.privacy": "Privacy Protocol",
 

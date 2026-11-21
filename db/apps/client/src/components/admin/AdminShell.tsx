@@ -19,7 +19,7 @@ export const AdminShell = () => {
       <div className="aurelia-admin-shell">
         <aside className="aurelia-admin-shell-sidebar">
           <Link className="aurelia-admin-shell-brand text-decoration-none" to="/" aria-label={t("shell.admin.brandAria")}>
-            <span className="aurelia-admin-shell-logo">ELABIZHU</span>
+            <span className="aurelia-admin-shell-logo">elabizhu</span>
             <span className="aurelia-admin-shell-subtitle">{t("shell.admin.subtitle")}</span>
           </Link>
 

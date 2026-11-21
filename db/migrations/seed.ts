@@ -53,7 +53,7 @@ const seed = async () => {
       ON CONFLICT (user_id)
       DO UPDATE SET full_name = EXCLUDED.full_name, updated_at = NOW()
       `,
-      [userId, "Jewellery Admin"],
+      [userId, "elabizhu"],
     )
 
     await client.query(
