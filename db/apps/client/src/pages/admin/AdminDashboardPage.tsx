@@ -37,7 +37,7 @@ export const AdminDashboardPage = () => {
   const productsQuery = useQuery({
     queryKey: queryKeys.products.adminDashboard(),
     queryFn: () => fetchProducts(),
-    staleTime: queryTiming.catalogueStaleTime,
+    staleTime: queryTiming.sessionStaleTime,
   })
   const { showSkeleton: ordersLoading } = useQueryLoadState(ordersQuery)
   const { showSkeleton: productsLoading } = useQueryLoadState(productsQuery)
