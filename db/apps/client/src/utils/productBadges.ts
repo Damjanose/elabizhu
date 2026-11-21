@@ -1,16 +1,24 @@
 import type { Product, UrgencyBadge } from "@jewellery/types"
+import { tNow, type TFunction } from "../i18n"
 
-export const badgeLabel = (b: UrgencyBadge): string => {
+/** Translation key for a badge, or null when no badge should show. */
+export const badgeKey = (b: UrgencyBadge): string | null => {
   switch (b) {
     case "new":
-      return "New"
+      return "catalog.badge.new"
     case "low_stock":
-      return "Selling fast"
+      return "catalog.badge.lowStock"
     case "sold_out":
-      return "Sold out"
+      return "catalog.badge.soldOut"
     default:
-      return ""
+      return null
   }
+}
+
+/** Translated badge label. Defaults to the current language when no translator is passed. */
+export const badgeLabel = (b: UrgencyBadge, t: TFunction = tNow): string => {
+  const key = badgeKey(b)
+  return key ? t(key) : ""
 }
 
 /** Derives the badge to show on the card from stock + server urgency flag. */

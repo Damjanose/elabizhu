@@ -15,31 +15,38 @@ import { queryTiming } from "../lib/query-client"
 import { fetchNotifications } from "../services/notifications"
 import { fetchOrder, fetchOrders } from "../services/orders"
 import { fetchProduct } from "../services/products"
+import { useI18n, type Lang } from "../i18n"
 
-const STATUS_DISPLAY: Record<OrderStatus, { label: string; description: string }> = {
-  pending: { label: "Pending", description: "Order received and verified" },
-  confirmed: { label: "Confirmed", description: "Final quality inspection passed" },
-  shipped: { label: "Shipped", description: "Package in transit" },
-  delivered: { label: "Delivered", description: "Package arrived at your door" },
-  cancelled: { label: "Cancelled", description: "Order cancelled" },
+const STATUS_DISPLAY: Record<OrderStatus, { labelKey: string; descriptionKey: string }> = {
+  pending: { labelKey: "account.status.pending", descriptionKey: "account.statusDesc.pending" },
+  confirmed: { labelKey: "account.status.confirmed", descriptionKey: "account.statusDesc.confirmed" },
+  shipped: { labelKey: "account.status.shipped", descriptionKey: "account.statusDesc.shipped" },
+  delivered: { labelKey: "account.status.delivered", descriptionKey: "account.statusDesc.delivered" },
+  cancelled: { labelKey: "account.status.cancelled", descriptionKey: "account.statusDesc.cancelled" },
 }
 
-const formatCurrency = (value: string) => {
+const localeFor = (lang: Lang) => (lang === "sq" ? "sq-AL" : undefined)
+
+const formatCurrency = (value: string, lang: Lang) => {
   const n = Number(value)
   if (Number.isNaN(n)) return value
-  return n.toLocaleString(undefined, { style: "currency", currency: "EUR" })
+  return n.toLocaleString(localeFor(lang), { style: "currency", currency: "EUR" })
 }
 
-const formatDate = (iso: string, opts: Intl.DateTimeFormatOptions = { day: "numeric", month: "short", year: "numeric" }) => {
+const formatDate = (
+  iso: string,
+  lang: Lang,
+  opts: Intl.DateTimeFormatOptions = { day: "numeric", month: "short", year: "numeric" },
+) => {
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return iso
-  return d.toLocaleDateString(undefined, opts)
+  return d.toLocaleDateString(localeFor(lang), opts)
 }
 
-const formatDateTime = (iso: string) => {
+const formatDateTime = (iso: string, lang: Lang) => {
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return iso
-  return `${formatDate(iso)}, ${d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}`
+  return `${formatDate(iso, lang)}, ${d.toLocaleTimeString(localeFor(lang), { hour: "2-digit", minute: "2-digit" })}`
 }
 
 const pickActiveOrder = (orders: OrderSummary[] | undefined) => {
@@ -52,6 +59,7 @@ const pickActiveOrder = (orders: OrderSummary[] | undefined) => {
 }
 
 export const AccountPage = () => {
+  const { t } = useI18n()
   const { user } = useAuth()
 
   const ordersQuery = useQuery({
@@ -85,7 +93,7 @@ export const AccountPage = () => {
   })
   const { showSkeleton: showOrderDetailSkeleton } = useQueryLoadState(orderQuery)
 
-  const displayName = user?.fullName?.trim() || user?.email || "Friend"
+  const displayName = user?.fullName?.trim() || user?.email || t("account.overview.friend")
   const firstName = displayName.split(" ")[0]
 
   const unreadNotifications = useMemo(
@@ -96,18 +104,16 @@ export const AccountPage = () => {
   return (
     <section className="aurelia-account">
       <header className="aurelia-account-hero">
-        <span className="aurelia-admin-kicker d-block mb-3">Personal Atelier</span>
-        <h1 className="aurelia-account-hero-title">Welcome back, {firstName}</h1>
-        <p className="aurelia-account-hero-copy">
-          Manage your bespoke orders, profile settings, and curated preferences from your private dashboard.
-        </p>
+        <span className="aurelia-admin-kicker d-block mb-3">{t("account.common.personalAtelier")}</span>
+        <h1 className="aurelia-account-hero-title">{t("account.overview.heroTitle", { name: firstName })}</h1>
+        <p className="aurelia-account-hero-copy">{t("account.overview.heroCopy")}</p>
       </header>
 
       <div className="aurelia-bento">
         <ProfileCard
           name={user?.fullName?.trim() || displayName}
           email={user?.email ?? ""}
-          tier={user && user.permissions.includes("admin") ? "Atelier Director" : "Aurelia Circle"}
+          tier={user && user.permissions.includes("admin") ? t("account.overview.tierDirector") : t("account.overview.tierCircle")}
         />
 
         <ActiveOrderCard
@@ -150,21 +156,24 @@ const ProfileCard = ({
   name: string
   email: string
   tier: string
-}) => (
-  <article className="aurelia-bento-card aurelia-bento-card--profile">
-    <div className="aurelia-bento-card-head">
-      <span className="material-symbols-outlined aurelia-bento-icon">account_circle</span>
-      <Link to="/account/edit" className="aurelia-bento-action">EDIT</Link>
-    </div>
-    <div className="aurelia-bento-card-body">
-      <h3 className="aurelia-bento-headline">{name}</h3>
-      <p className="aurelia-bento-meta">{email}</p>
-    </div>
-    <div className="aurelia-bento-card-foot">
-      <span className="aurelia-tier-pill">{tier.toUpperCase()}</span>
-    </div>
-  </article>
-)
+}) => {
+  const { t } = useI18n()
+  return (
+    <article className="aurelia-bento-card aurelia-bento-card--profile">
+      <div className="aurelia-bento-card-head">
+        <span className="material-symbols-outlined aurelia-bento-icon">account_circle</span>
+        <Link to="/account/edit" className="aurelia-bento-action">{t("account.overview.edit")}</Link>
+      </div>
+      <div className="aurelia-bento-card-body">
+        <h3 className="aurelia-bento-headline">{name}</h3>
+        <p className="aurelia-bento-meta">{email}</p>
+      </div>
+      <div className="aurelia-bento-card-foot">
+        <span className="aurelia-tier-pill">{tier.toUpperCase()}</span>
+      </div>
+    </article>
+  )
+}
 
 const ActiveOrderCard = ({
   order,
@@ -175,6 +184,7 @@ const ActiveOrderCard = ({
   orderDetail: OrderDetail | undefined
   loading: boolean
 }) => {
+  const { t, lang } = useI18n()
   if (loading) {
     return <article className="aurelia-bento-card aurelia-bento-card--order is-loading" aria-busy="true" />
   }
@@ -186,26 +196,26 @@ const ActiveOrderCard = ({
           <span className="material-symbols-outlined aurelia-bento-icon aurelia-bento-icon--inverse">
             auto_stories
           </span>
-          <span className="aurelia-bento-action aurelia-bento-action--inverse">NEW HERE</span>
+          <span className="aurelia-bento-action aurelia-bento-action--inverse">{t("account.overview.newHere")}</span>
         </div>
         <div className="aurelia-bento-card-body">
-          <h3 className="aurelia-bento-headline aurelia-bento-headline--inverse">Begin your collection</h3>
+          <h3 className="aurelia-bento-headline aurelia-bento-headline--inverse">{t("account.overview.beginTitle")}</h3>
           <p className="aurelia-bento-meta aurelia-bento-meta--inverse">
-            You haven't placed an order yet. Discover our latest curations.
+            {t("account.overview.beginCopy")}
           </p>
         </div>
         <div className="aurelia-bento-card-foot">
           <Link to="/products" className="aurelia-bento-button">
-            EXPLORE COLLECTIONS
+            {t("account.overview.exploreUpper")}
           </Link>
         </div>
       </article>
     )
   }
 
-  const itemName = orderDetail?.items?.[0]?.productName ?? "Curated piece"
+  const itemName = orderDetail?.items?.[0]?.productName ?? t("account.overview.curatedPiece")
   const orderId = `#AUR-${order.id.slice(0, 6).toUpperCase()}`
-  const eta = formatDate(order.updatedAt)
+  const eta = formatDate(order.updatedAt, lang)
   const isActive = order.status !== "delivered" && order.status !== "cancelled"
 
   return (
@@ -215,19 +225,19 @@ const ActiveOrderCard = ({
           auto_stories
         </span>
         <span className="aurelia-bento-action aurelia-bento-action--inverse">
-          {isActive ? "ACTIVE ORDER" : "RECENT ORDER"}
+          {isActive ? t("account.overview.activeOrder") : t("account.overview.recentOrder")}
         </span>
       </div>
       <div className="aurelia-bento-card-body">
-        <h3 className="aurelia-bento-headline aurelia-bento-headline--inverse">Order {orderId}</h3>
+        <h3 className="aurelia-bento-headline aurelia-bento-headline--inverse">{t("account.overview.orderTitle", { ref: orderId })}</h3>
         <p className="aurelia-bento-meta aurelia-bento-meta--inverse">{itemName}</p>
         <p className="aurelia-bento-meta aurelia-bento-meta--inverse aurelia-bento-meta--spaced">
-          {isActive ? `Estimated Delivery: ${eta}` : `Completed: ${eta}`}
+          {isActive ? t("account.overview.estimatedDelivery", { date: eta }) : t("account.overview.completed", { date: eta })}
         </p>
       </div>
       <div className="aurelia-bento-card-foot">
         <Link to="/orders" className="aurelia-bento-button">
-          VIEW FULL HISTORY
+          {t("account.overview.viewHistory")}
         </Link>
       </div>
     </article>
@@ -243,6 +253,7 @@ const NotificationsCard = ({
   unreadCount: number
   loading: boolean
 }) => {
+  const { t } = useI18n()
   if (loading) {
     return <article className="aurelia-bento-card aurelia-bento-card--notifications is-loading" aria-busy="true" />
   }
@@ -255,13 +266,13 @@ const NotificationsCard = ({
           {unreadCount > 0 && <span aria-hidden className="aurelia-bento-icon-dot" />}
         </span>
         <span className="aurelia-bento-action">
-          {unreadCount > 0 ? `${unreadCount} NEW` : "ALL READ"}
+          {unreadCount > 0 ? t("account.overview.newCount", { count: unreadCount }) : t("account.overview.allRead")}
         </span>
       </div>
 
       <div className="aurelia-bento-notifications">
         {notifications.length === 0 ? (
-          <p className="aurelia-bento-meta">You're all caught up.</p>
+          <p className="aurelia-bento-meta">{t("account.overview.allCaughtUpCopy")}</p>
         ) : (
           notifications.map((n) => (
             <div key={n.id} className="aurelia-bento-notification">
@@ -277,6 +288,7 @@ const NotificationsCard = ({
 }
 
 const TimelineCard = ({ order }: { order: OrderDetail }) => {
+  const { t, lang } = useI18n()
   const events = useMemo(
     () =>
       [...order.timeline].sort(
@@ -287,9 +299,9 @@ const TimelineCard = ({ order }: { order: OrderDetail }) => {
 
   return (
     <aside className="aurelia-timeline-card">
-      <h2 className="aurelia-timeline-title">Tracking Status</h2>
+      <h2 className="aurelia-timeline-title">{t("account.overview.trackingStatus")}</h2>
       {events.length === 0 ? (
-        <p className="aurelia-muted">No tracking events yet.</p>
+        <p className="aurelia-muted">{t("account.overview.noEvents")}</p>
       ) : (
         <ol className="aurelia-timeline-list">
           {events.map((event, index) => {
@@ -302,9 +314,9 @@ const TimelineCard = ({ order }: { order: OrderDetail }) => {
               >
                 <span className="aurelia-timeline-dot" aria-hidden />
                 <div className="aurelia-timeline-step-body">
-                  <span className="aurelia-timeline-label">{display.label.toUpperCase()}</span>
-                  <p className="aurelia-timeline-text">{event.note ?? display.description}</p>
-                  <span className="aurelia-timeline-meta">{formatDateTime(event.createdAt)}</span>
+                  <span className="aurelia-timeline-label">{t(display.labelKey).toUpperCase()}</span>
+                  <p className="aurelia-timeline-text">{event.note ?? t(display.descriptionKey)}</p>
+                  <span className="aurelia-timeline-meta">{formatDateTime(event.createdAt, lang)}</span>
                 </div>
               </li>
             )
@@ -324,10 +336,9 @@ const ItemDetailCard = ({
   unitPrice: string
   product: Product | undefined
 }) => {
+  const { t, lang } = useI18n()
   const image = product?.images?.[0]?.url
-  const description =
-    product?.description ??
-    "Each piece is hand-selected and finished by our master artisans, designed to be passed through generations."
+  const description = product?.description ?? t("account.overview.defaultDescription")
 
   return (
     <article className="aurelia-item-detail">
@@ -339,19 +350,19 @@ const ItemDetailCard = ({
         )}
       </div>
       <div className="aurelia-item-detail-meta">
-        <span className="aurelia-item-detail-kicker">From the Aurelia Atelier</span>
+        <span className="aurelia-item-detail-kicker">{t("account.overview.fromAtelier")}</span>
         <h3 className="aurelia-item-detail-title">{productName}</h3>
         <p className="aurelia-item-detail-copy">{description}</p>
         <dl className="aurelia-item-detail-stats">
           <div>
-            <dt>Price</dt>
-            <dd>{formatCurrency(unitPrice)}</dd>
+            <dt>{t("account.overview.price")}</dt>
+            <dd>{formatCurrency(unitPrice, lang)}</dd>
           </div>
           {product?.stockQuantity !== undefined && (
             <div>
-              <dt>Availability</dt>
+              <dt>{t("account.overview.availability")}</dt>
               <dd>
-                {product.stockQuantity > 0 ? `${product.stockQuantity} in atelier` : "Bespoke order"}
+                {product.stockQuantity > 0 ? t("account.overview.inAtelier", { count: product.stockQuantity }) : t("account.overview.bespokeOrder")}
               </dd>
             </div>
           )}
@@ -362,6 +373,7 @@ const ItemDetailCard = ({
 }
 
 const DeliveryAlertCard = ({ total }: { total: string }) => {
+  const { t } = useI18n()
   const requiresSignature = Number(total) >= 1000
 
   if (!requiresSignature) {
@@ -372,13 +384,12 @@ const DeliveryAlertCard = ({ total }: { total: string }) => {
     <aside className="aurelia-account-alert" role="status">
       <span className="material-symbols-outlined aurelia-account-alert-icon">info</span>
       <div>
-        <h4 className="aurelia-account-alert-title">Signature Required on Delivery</h4>
+        <h4 className="aurelia-account-alert-title">{t("account.overview.signatureTitle")}</h4>
         <p className="aurelia-account-alert-copy">
-          Due to the high value of your purchase, an adult signature is mandatory. If you are not
-          available, please contact our concierge to schedule a secure pickup.
+          {t("account.overview.signatureCopy")}
         </p>
         <Link to="/notifications" className="aurelia-account-alert-link">
-          MANAGE DELIVERY PREFERENCES
+          {t("account.overview.manageDelivery")}
         </Link>
       </div>
     </aside>

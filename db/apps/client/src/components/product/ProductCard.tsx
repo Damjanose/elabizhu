@@ -1,48 +1,54 @@
 import { motion } from "motion/react"
 import { Link } from "react-router-dom"
 import type { Product } from "@jewellery/types"
+import { useI18n } from "../../i18n"
 import { deriveDisplayBadge } from "../../utils/productBadges"
 import { transition } from "../../lib/motion"
 import { BadgePill } from "./BadgePill"
 
 export const ProductCard = ({ product, eagerImage = false }: { product: Product; eagerImage?: boolean }) => {
+  const { t } = useI18n()
   const badge = deriveDisplayBadge(product)
-  const thumb = product.images[0]?.url ?? "https://placehold.co/400x400?text=Jewellery"
+  const thumb = product.images[0]?.url
+  const detailsPath = `/products/${product.id}`
   return (
-    <motion.div
-      className="aurelia-product-card h-100"
-      whileHover={{ y: -4 }}
+    <motion.article
+      className="eb-home-product"
+      whileHover={{ y: -3 }}
       whileTap={{ scale: 0.99 }}
       transition={transition.base}
     >
-      <Link
-        to={`/products/${product.id}`}
-        className="ratio ratio-1x1 text-decoration-none overflow-hidden rounded-0"
-      >
-        <motion.img
-          src={thumb}
-          alt=""
-          className="object-fit-cover w-100 h-100 aurelia-product-image"
-          loading={eagerImage ? "eager" : "lazy"}
-          decoding="async"
-          fetchPriority={eagerImage ? "high" : "auto"}
-          whileHover={{ scale: 1.06 }}
-          transition={transition.slow}
-        />
+      <Link to={detailsPath} className="eb-home-media eb-home-product-media">
+        {thumb ? (
+          <motion.img
+            src={thumb}
+            alt={product.name}
+            className="eb-home-product-img"
+            loading={eagerImage ? "eager" : "lazy"}
+            decoding="async"
+            fetchPriority={eagerImage ? "high" : "auto"}
+            whileHover={{ scale: 1.04 }}
+            transition={transition.slow}
+          />
+        ) : (
+          <span className="eb-home-shimmer eb-home-product-img" aria-hidden>
+            <span className="eb-home-placeholder-label">{t("home.product.placeholder")}</span>
+          </span>
+        )}
       </Link>
-      <div className="pt-3 d-flex flex-column">
-        <div className="d-flex justify-content-between align-items-start gap-2 mb-2">
-          <Link to={`/products/${product.id}`} className="aurelia-product-name text-decoration-none">
-            {product.name}
-          </Link>
-          {badge && <BadgePill badge={badge} />}
-        </div>
-        <p className="aurelia-muted small flex-grow-1 text-truncate">{product.description ?? ""}</p>
-        <div className="d-flex justify-content-between align-items-center mt-2">
-          <span className="aurelia-product-price">${Number(product.price).toFixed(2)}</span>
-          {product.featured && <span className="aurelia-featured-badge">Featured</span>}
-        </div>
+      <div className="eb-home-product-meta">
+        {(badge || product.featured) && (
+          <div className="eb-home-product-tags">
+            {badge && <BadgePill badge={badge} />}
+            {product.featured && <span className="eb-home-tag">{t("home.featured.tag")}</span>}
+          </div>
+        )}
+        <Link to={detailsPath} className="eb-home-product-name">
+          {product.name}
+        </Link>
+        {product.description && <p className="eb-home-product-desc">{product.description}</p>}
+        <span className="eb-home-product-price">{`$${Number(product.price).toFixed(2)}`}</span>
       </div>
-    </motion.div>
+    </motion.article>
   )
 }

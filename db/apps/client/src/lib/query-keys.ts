@@ -43,6 +43,7 @@ const PERSISTED_QUERY_ROOTS = new Set([
 
 export const isPersistedQueryKey = (queryKey: readonly unknown[]) => {
   const root = queryKey[0]
+  if (queryKey[1] === "admin-dashboard") return false
   return typeof root === "string" && PERSISTED_QUERY_ROOTS.has(root)
 }
 

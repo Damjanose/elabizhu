@@ -1,0 +1,170 @@
+/* Storefront shell: language toggle, desktop nav links, mobile bottom tab bar.
+   Breakpoint: 992px (desktop) / 991px and below (mobile). */
+
+.aurelia-lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 0.7rem;
+  border: 1px solid #cdb98e;
+  border-radius: 999px;
+  background: transparent;
+  color: #2a2118;
+  font-family: "Jost", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.aurelia-lang-toggle:hover {
+  border-color: #7a5c24;
+  color: #7a5c24;
+}
+
+.aurelia-lang-toggle:focus-visible,
+.aurelia-tab-bar-link:focus-visible,
+.aurelia-topbar a:focus-visible,
+.aurelia-topbar button:focus-visible {
+  outline: 2px solid #7a5c24;
+  outline-offset: 2px;
+}
+
+.aurelia-nav-links {
+  display: none;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.aurelia-desktop-only {
+  display: none;
+}
+
+.aurelia-topbar .aurelia-icon-link,
+.aurelia-topbar .aurelia-cart-icon,
+.aurelia-topbar .aurelia-user-menu-trigger {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.aurelia-tab-bar {
+  display: none;
+}
+
+@media (min-width: 992px) {
+  .aurelia-nav-links {
+    display: inline-flex;
+  }
+
+  .aurelia-desktop-only {
+    display: inline-flex;
+  }
+}
+
+@media (max-width: 991px) {
+  .aurelia-app-shell--with-tab-bar {
+    padding-bottom: calc(84px + env(safe-area-inset-bottom));
+  }
+
+  .aurelia-topbar {
+    padding: 0.4rem 0;
+  }
+
+  .aurelia-topbar .aurelia-nav-grid {
+    min-height: 52px;
+  }
+
+  .aurelia-nav-left,
+  .aurelia-nav-right {
+    gap: 0.25rem;
+  }
+
+  .aurelia-nav-right {
+    justify-content: flex-end;
+  }
+
+  .aurelia-tab-bar {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1040;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    padding: 0.3rem 0.5rem calc(0.3rem + env(safe-area-inset-bottom));
+    background: rgba(246, 240, 230, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid #dccdaa;
+  }
+
+  .aurelia-tab-bar-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-height: 44px;
+    color: #5c4d3c;
+    font-family: "Jost", sans-serif;
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .aurelia-tab-bar-link svg {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  .aurelia-tab-bar-link.is-active {
+    color: #7a5c24;
+  }
+
+  .aurelia-tab-bar-icon {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .aurelia-tab-bar .aurelia-cart-badge {
+    top: -6px;
+    right: -10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurelia-lang-toggle,
+  .aurelia-tab-bar-link {
+    transition: none;
+  }
+}
+
+/* Brand logo next to the wordmark */
+.aurelia-brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.eb-brand-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #dccdaa;
+}
+
+@media (max-width: 380px) {
+  .eb-brand-logo {
+    display: none;
+  }
+}

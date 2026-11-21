@@ -1,19 +1,21 @@
 import { motion } from "motion/react"
 import { Link } from "react-router-dom"
 import { MotionLink, linkPressProps } from "../components/motion/MotionLink"
-import { journalPosts } from "../data/journalPosts"
+import { getJournalPosts } from "../data/journalPosts"
+import { useI18n } from "../i18n"
 import { fadeUp, listItem, listStagger, scrollRevealViewport } from "../lib/motion"
 
 export const JournalPage = () => {
-  const [featured, ...rest] = journalPosts
+  const { t, lang } = useI18n()
+  const [featured, ...rest] = getJournalPosts(lang)
 
   return (
     <motion.section className="py-12 md:py-20" variants={fadeUp} initial="hidden" animate="visible">
       <header className="text-center max-w-2xl mx-auto mb-12 md:mb-16">
-        <span className="aurelia-admin-kicker mb-3 d-inline-block">Journal</span>
-        <h1 className="font-display-xl text-headline-lg font-normal mb-4 mt-2">Stories from the Atelier</h1>
+        <span className="aurelia-admin-kicker mb-3 d-inline-block">{t("catalog.journal.kicker")}</span>
+        <h1 className="font-display-xl text-headline-lg font-normal mb-4 mt-2">{t("catalog.journal.title")}</h1>
         <p className="aurelia-muted mb-0">
-          Craft, responsibility, and the quiet art of wearing something that will outlive trends.
+          {t("catalog.journal.copy")}
         </p>
       </header>
 
@@ -40,7 +42,7 @@ export const JournalPage = () => {
           />
           <div className="relative z-10 flex flex-col justify-end min-h-[min(52vh,420px)] px-6 py-10 md:px-12 md:py-14">
             <span className="text-[11px] uppercase tracking-[0.32em] mb-3" style={{ color: "rgba(255,248,243,0.72)" }}>
-              Featured · {featured.readMinutes} min read
+              {t("catalog.journal.featuredMeta", { min: featured.readMinutes })}
             </span>
             <h2
               className="m-0 font-normal text-[clamp(1.75rem,4vw,2.75rem)] leading-tight tracking-wide max-w-2xl"
@@ -79,7 +81,7 @@ export const JournalPage = () => {
                 />
               </div>
               <span className="aurelia-admin-kicker d-block mb-2" style={{ fontSize: "0.65rem" }}>
-                {post.kicker} · {post.readMinutes} min
+                {post.kicker} · {t("catalog.journal.minOnly", { min: post.readMinutes })}
               </span>
               <h3 className="aurelia-admin-title h5 mb-2">{post.title}</h3>
               <p className="aurelia-muted small mb-0">{post.excerpt}</p>

@@ -1,21 +1,23 @@
 import { motion } from "motion/react"
 import { useParams } from "react-router-dom"
 import { getJournalPostBySlug } from "../data/journalPosts"
+import { useI18n } from "../i18n"
 import { fadeUp, scrollRevealViewport } from "../lib/motion"
 import { MotionLink, linkPressProps } from "../components/motion/MotionLink"
 
 export const JournalPostPage = () => {
   const { slug = "" } = useParams()
-  const post = getJournalPostBySlug(slug)
+  const { t, lang } = useI18n()
+  const post = getJournalPostBySlug(slug, lang)
 
   if (!post) {
     return (
       <motion.section className="py-12 md:py-20 text-center" variants={fadeUp} initial="hidden" animate="visible">
-        <span className="aurelia-admin-kicker mb-3 d-inline-block">Journal</span>
-        <h1 className="font-display-xl text-headline-lg font-normal mb-3">This story could not be found</h1>
-        <p className="aurelia-muted mb-4">The article may have moved or the link is incorrect.</p>
+        <span className="aurelia-admin-kicker mb-3 d-inline-block">{t("catalog.journal.kicker")}</span>
+        <h1 className="font-display-xl text-headline-lg font-normal mb-3">{t("catalog.journal.notFoundTitle")}</h1>
+        <p className="aurelia-muted mb-4">{t("catalog.journal.notFoundCopy")}</p>
         <MotionLink to="/journal" className="aurelia-btn aurelia-btn-primary text-decoration-none" {...linkPressProps}>
-          Back to Journal
+          {t("catalog.journal.backToJournal")}
         </MotionLink>
       </motion.section>
     )
@@ -26,7 +28,7 @@ export const JournalPostPage = () => {
       <header className="max-w-3xl mx-auto text-center mb-10 md:mb-12">
         <span className="aurelia-admin-kicker mb-3 d-inline-block">{post.kicker}</span>
         <h1 className="font-display-xl text-headline-lg font-normal mb-4 mt-2">{post.title}</h1>
-        <p className="aurelia-muted small mb-0">{post.readMinutes} min read</p>
+        <p className="aurelia-muted small mb-0">{t("catalog.journal.minRead", { min: post.readMinutes })}</p>
       </header>
 
       <div className="max-w-4xl mx-auto mb-10 md:mb-12 overflow-hidden">
@@ -49,7 +51,7 @@ export const JournalPostPage = () => {
 
       <div className="text-center mt-12">
         <MotionLink to="/journal" className="aurelia-nav-link text-decoration-none" {...linkPressProps}>
-          ← All journal stories
+          {t("catalog.journal.allStories")}
         </MotionLink>
       </div>
     </motion.article>

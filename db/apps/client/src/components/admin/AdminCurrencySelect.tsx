@@ -1,9 +1,11 @@
 import { useMemo } from "react"
 import { AureliaCustomSelect } from "../forms/AureliaCustomSelect"
-import { DISPLAY_CURRENCIES, DISPLAY_CURRENCY_LABEL, isDisplayCurrencyCode } from "../../lib/display-currency"
+import { DISPLAY_CURRENCIES, isDisplayCurrencyCode } from "../../lib/display-currency"
 import { useAdminDisplayCurrency, useAdminDisplayCurrencyStore } from "../../stores/adminDisplayCurrencyStore"
+import { useI18n } from "../../i18n"
 
 export const AdminCurrencySelect = () => {
+  const { t } = useI18n()
   const currency = useAdminDisplayCurrency()
   const setCurrency = useAdminDisplayCurrencyStore((s) => s.setCurrency)
 
@@ -11,14 +13,14 @@ export const AdminCurrencySelect = () => {
     () =>
       DISPLAY_CURRENCIES.map((code) => ({
         value: code,
-        label: `${code} — ${DISPLAY_CURRENCY_LABEL[code]}`,
+        label: `${code} — ${t(`admin.currency.${code}`)}`,
       })),
-    [],
+    [t],
   )
 
   return (
     <label className="aurelia-select-wrap aurelia-select-wrap--topbar" htmlFor="admin-display-currency">
-      <span className="visually-hidden">Display amounts in</span>
+      <span className="visually-hidden">{t("admin.currency.displayIn")}</span>
       <AureliaCustomSelect
         id="admin-display-currency"
         value={currency}

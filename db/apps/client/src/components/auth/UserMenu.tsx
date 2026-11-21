@@ -1,13 +1,15 @@
 import { useEffect, useRef, useState } from "react"
-import { FiGrid, FiLogOut, FiPackage, FiUser } from "react-icons/fi"
+import { FiGrid, FiLogOut, FiUser } from "react-icons/fi"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useAuth } from "../../types/auth-context"
 import { NavIconHint } from "../nav/NavIconHint"
 import { loginHrefWithReturn } from "../../utils/post-auth-redirect"
 import { infoToast, toastFromError } from "../../utils/toast"
+import { useI18n } from "../../i18n"
 
 export const UserMenu = () => {
   const { user, logout } = useAuth()
+  const { t } = useI18n()
   const navigate = useNavigate()
   const location = useLocation()
   const signInHref = loginHrefWithReturn(location)
@@ -36,13 +38,8 @@ export const UserMenu = () => {
   }, [open])
 
   if (!user) {
-    return (
-      <NavIconHint label="Sign In">
-        <Link className="aurelia-icon-link text-decoration-none" to={signInHref} aria-label="Sign in">
-          <FiUser />
-        </Link>
-      </NavIconHint>
-    )
+    // Sign-in is admin-only and hidden: guests get no account icon.
+    return null
   }
 
   const onLogout = async () => {
@@ -50,10 +47,10 @@ export const UserMenu = () => {
     try {
       await logout()
       setOpen(false)
-      infoToast("You have been signed out")
+      infoToast(t("shell.account.signedOutToast"))
       navigate("/")
     } catch (err) {
-      toastFromError(err, "Could not sign you out")
+      toastFromError(err, t("shell.account.signOutError"))
     } finally {
       setSigningOut(false)
     }
@@ -63,13 +60,13 @@ export const UserMenu = () => {
 
   return (
     <div className="aurelia-user-menu" ref={containerRef}>
-      <NavIconHint label="Account">
+      <NavIconHint label={t("shell.account.hint")}>
         <button
           type="button"
           className="aurelia-icon-link aurelia-user-menu-trigger"
           aria-haspopup="menu"
           aria-expanded={open}
-          aria-label={`Account menu for ${displayName}`}
+          aria-label={t("shell.account.menuAria", { name: displayName })}
           onClick={() => setOpen((prev) => !prev)}
         >
           <FiUser />
@@ -77,9 +74,9 @@ export const UserMenu = () => {
       </NavIconHint>
 
       {open && (
-        <div className="aurelia-user-menu-popover" role="menu" aria-label="Account menu">
+        <div className="aurelia-user-menu-popover" role="menu" aria-label={t("shell.account.menuLabel")}>
           <div className="aurelia-user-menu-header">
-            <span className="aurelia-user-menu-kicker">Signed In</span>
+            <span className="aurelia-user-menu-kicker">{t("shell.account.signedIn")}</span>
             <span className="aurelia-user-menu-name">{displayName}</span>
             <span className="aurelia-user-menu-email">{user.email}</span>
           </div>
@@ -94,28 +91,9 @@ export const UserMenu = () => {
               onClick={() => setOpen(false)}
             >
               <FiGrid aria-hidden="true" />
-              <span>Admin Dashboard</span>
+              <span>{t("shell.account.adminDashboard")}</span>
             </Link>
           )}
-          <Link
-            to="/account"
-            role="menuitem"
-            className="aurelia-user-menu-item"
-            onClick={() => setOpen(false)}
-          >
-            <FiUser aria-hidden="true" />
-            <span>My Account</span>
-          </Link>
-          <Link
-            to="/orders"
-            role="menuitem"
-            className="aurelia-user-menu-item"
-            onClick={() => setOpen(false)}
-          >
-            <FiPackage aria-hidden="true" />
-            <span>Orders</span>
-          </Link>
-
           <div className="aurelia-user-menu-divider" aria-hidden />
 
           <button
@@ -126,7 +104,7 @@ export const UserMenu = () => {
             disabled={signingOut}
           >
             <FiLogOut aria-hidden="true" />
-            <span>{signingOut ? "Signing Out…" : "Sign Out"}</span>
+            <span>{signingOut ? t("shell.account.signingOut") : t("shell.account.signOut")}</span>
           </button>
         </div>
       )}

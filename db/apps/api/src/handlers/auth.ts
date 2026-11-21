@@ -18,6 +18,10 @@ const refreshSchema = z.object({
 })
 
 export const register = async (req: Request, res: Response) => {
+  // Customers do not have accounts; registration is closed unless explicitly enabled.
+  if (process.env.ALLOW_REGISTRATION !== "true") {
+    return res.status(403).json({ message: "Registration is closed" })
+  }
   try {
     const input = registerSchema.parse(req.body)
     const data = await authService.register(input, {

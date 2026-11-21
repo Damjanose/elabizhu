@@ -18,9 +18,8 @@ export const AdminRoute = ({ children, requiredPermissions = ["admin"] }: AdminR
   }
 
   if (!user) {
-    const target = `${location.pathname}${location.search}${location.hash}`
-    const redirect = encodeURIComponent(target || "/")
-    return <Navigate to={`/login?redirect=${redirect}`} replace />
+    // Customers never sign in; send anonymous visitors to the public site.
+    return <Navigate to="/" replace />
   }
 
   const hasAccess = requiredPermissions.some((permission) => user.permissions.includes(permission))

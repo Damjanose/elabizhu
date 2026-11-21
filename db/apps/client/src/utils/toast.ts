@@ -1,5 +1,6 @@
 import { isAxiosError } from "axios"
 import { toast, type ToastOptions } from "react-toastify"
+import { tNow } from "../i18n"
 
 const baseOptions: ToastOptions = {
   position: "top-right",
@@ -27,7 +28,7 @@ export const warningToast = (message: string, options?: ToastOptions) =>
  * Error instances, plain strings) and surfaces it as an error toast.
  * Returns the resolved message so callers can also forward it elsewhere.
  */
-export const toastFromError = (error: unknown, fallback = "Something went wrong"): string => {
+export const toastFromError = (error: unknown, fallback = tNow("account.error.generic")): string => {
   let message = fallback
 
   if (isAxiosError(error)) {

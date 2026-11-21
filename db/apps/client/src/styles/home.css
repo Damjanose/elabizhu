@@ -1,0 +1,836 @@
+/* Home page: mobile-first, scales up to a centred ~1200px layout at 992px and up. */
+
+:root {
+  --eb-home-ivory: #f6f0e6;
+  --eb-home-ink: #2a2118;
+  --eb-home-gold: #8a6a2f;
+  --eb-home-champagne: #cdb98e;
+  --eb-home-champagne-soft: #dccdaa;
+  --eb-home-band: #2a2118;
+  --eb-home-band-text: #f1e3c4;
+  --eb-home-band-accent: #c9a65e;
+  --eb-home-muted-ink: #5b4d3c;
+  --eb-home-serif: "Cormorant Garamond", Georgia, serif;
+  --eb-home-sans: "Jost", system-ui, sans-serif;
+}
+
+.eb-home {
+  background: var(--eb-home-ivory);
+  color: var(--eb-home-ink);
+  font-family: var(--eb-home-sans);
+  min-height: 100%;
+  padding-bottom: 104px;
+  overflow-x: hidden;
+}
+
+.eb-home *,
+.eb-home *::before,
+.eb-home *::after {
+  box-sizing: border-box;
+}
+
+:where(.eb-home) a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.eb-home h1,
+.eb-home h2,
+.eb-home h3 {
+  font-family: var(--eb-home-serif);
+  font-weight: 500;
+  color: var(--eb-home-ink);
+  margin: 0;
+  line-height: 1.05;
+}
+
+.eb-home p {
+  margin: 0;
+}
+
+.eb-home ul,
+.eb-home ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.eb-home :focus-visible {
+  outline: 2px solid var(--eb-home-gold);
+  outline-offset: 3px;
+}
+
+/* Marquee bar ------------------------------------------------------------ */
+
+.eb-home-marquee {
+  overflow: hidden;
+  background: var(--eb-home-band);
+  color: var(--eb-home-band-text);
+  height: 36px;
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.eb-home-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: eb-home-marquee 30s linear infinite;
+  will-change: transform;
+}
+
+.eb-home-marquee-group {
+  display: flex;
+  flex-shrink: 0;
+  gap: 48px;
+  padding-right: 48px;
+  white-space: nowrap;
+}
+
+@keyframes eb-home-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* Hero ------------------------------------------------------------------- */
+
+.eb-home-hero {
+  display: grid;
+  grid-template-areas:
+    "text"
+    "media"
+    "body";
+  gap: 20px;
+  padding: 28px 16px 36px;
+  text-align: center;
+  justify-items: center;
+}
+
+.eb-home-kicker {
+  display: inline-block;
+  font-size: 12px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--eb-home-gold);
+}
+
+.eb-home-hero-text {
+  grid-area: text;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.eb-home-hero-title {
+  font-size: clamp(46px, 13vw, 76px);
+  line-height: 0.98;
+}
+
+.eb-home-hero-title em,
+.eb-home-men-text em {
+  font-style: italic;
+  color: var(--eb-home-gold);
+}
+
+.eb-home-hero-media {
+  grid-area: media;
+  position: relative;
+  width: min(100%, 360px);
+  height: 440px;
+  border-radius: 220px 220px 12px 12px;
+  overflow: hidden;
+  background: var(--eb-home-champagne-soft);
+}
+
+.eb-home-hero-img {
+  position: absolute;
+  top: -8%;
+  left: 0;
+  width: 100%;
+  height: 116%;
+  object-fit: cover;
+  will-change: transform;
+}
+
+.eb-home-hero-body {
+  grid-area: body;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 460px;
+}
+
+.eb-home-hero-copy {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--eb-home-muted-ink);
+}
+
+.eb-home-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* Pills & links ---------------------------------------------------------- */
+
+.eb-home-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 24px;
+  border-radius: 999px;
+  border: 1px solid var(--eb-home-ink);
+  background: var(--eb-home-ink);
+  color: var(--eb-home-ivory);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.eb-home-pill--outline {
+  background: transparent;
+  color: var(--eb-home-ink);
+}
+
+.eb-home-pill--sm {
+  min-height: 44px;
+  padding: 0 18px;
+  font-size: 13px;
+  align-self: flex-start;
+}
+
+.eb-home-pill--sticky {
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 10px 28px rgba(42, 33, 24, 0.24);
+}
+
+.eb-home-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  color: var(--eb-home-gold);
+  border-bottom: 1px solid currentColor;
+  white-space: nowrap;
+}
+
+/* Category chips --------------------------------------------------------- */
+
+.eb-home-chips-wrap {
+  padding: 4px 0 8px;
+}
+
+.eb-home-chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 0 16px;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+
+.eb-home-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.eb-home-chip {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 0 20px;
+  border-radius: 999px;
+  border: 1px solid var(--eb-home-champagne);
+  background: #fbf7ef;
+  font-size: 14px;
+  scroll-snap-align: start;
+  white-space: nowrap;
+}
+
+/* Sections --------------------------------------------------------------- */
+
+.eb-home-section {
+  padding: 52px 16px;
+}
+
+.eb-home-section-title {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.eb-home-h2 {
+  font-size: clamp(36px, 10vw, 52px);
+}
+
+.eb-home-muted {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--eb-home-muted-ink);
+}
+
+.eb-home-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.eb-home-head .eb-home-muted {
+  margin-top: 8px;
+}
+
+.eb-home-head--center {
+  justify-content: center;
+  text-align: center;
+}
+
+/* Shimmer placeholder ---------------------------------------------------- */
+
+.eb-home-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #e9dfc9 0%, var(--eb-home-champagne) 50%, var(--eb-home-champagne-soft) 100%);
+}
+
+.eb-home-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.45) 50%, transparent 70%);
+  transform: translate3d(-100%, 0, 0);
+  animation: eb-home-shimmer 2.4s ease-in-out infinite;
+}
+
+@keyframes eb-home-shimmer {
+  to {
+    transform: translate3d(100%, 0, 0);
+  }
+}
+
+.eb-home-placeholder-label {
+  position: absolute;
+  left: 12px;
+  bottom: 10px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: rgba(42, 33, 24, 0.6);
+}
+
+.eb-home-media {
+  position: relative;
+  display: block;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #efe7da;
+}
+
+/* Category tiles --------------------------------------------------------- */
+
+.eb-home-cat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.eb-home-cat-item:last-child {
+  grid-column: 1 / -1;
+}
+
+.eb-home-cat {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+  min-height: 180px;
+  padding: 16px;
+  border-radius: 16px;
+  color: var(--eb-home-ink);
+}
+
+.eb-home-cat-name {
+  font-family: var(--eb-home-serif);
+  font-size: 28px;
+  line-height: 1;
+}
+
+.eb-home-cat-cta {
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: var(--eb-home-gold);
+}
+
+/* Featured row ----------------------------------------------------------- */
+
+.eb-home-row {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  margin: 0 -16px;
+  padding: 4px 16px 12px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.eb-home-row::-webkit-scrollbar {
+  display: none;
+}
+
+.eb-home-row-item {
+  flex: 0 0 68%;
+  max-width: 280px;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.eb-home-product {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.eb-home-product-media {
+  border-radius: 14px;
+}
+
+.eb-home-product-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.55s ease;
+}
+
+.eb-home-product-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1 1 auto;
+  text-align: left;
+}
+
+.eb-home-product-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 24px;
+}
+
+.eb-home-product-name {
+  font-family: var(--eb-home-serif);
+  font-size: 22px;
+  line-height: 1.15;
+  color: var(--eb-home-ink);
+}
+
+.eb-home-product-desc {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--eb-home-muted-ink);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.eb-home-product-price {
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  color: var(--eb-home-gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.eb-home-product-meta .eb-home-pill {
+  margin-top: 4px;
+}
+
+.eb-home-tag,
+.eb-home-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  border: 1px solid var(--eb-home-champagne);
+  background: #fbf7ef;
+  color: #6e5426;
+}
+
+.eb-home-badge--low_stock {
+  border-color: #d9b56b;
+  color: #7a5415;
+}
+
+.eb-home-badge--sold_out {
+  border-color: #cfc6b8;
+  color: #6b6155;
+}
+
+.eb-home-badge--new {
+  border-color: var(--eb-home-gold);
+  color: var(--eb-home-gold);
+}
+
+/* Quote band ------------------------------------------------------------- */
+
+.eb-home-band {
+  position: relative;
+  overflow: hidden;
+  background: var(--eb-home-band);
+  color: var(--eb-home-band-text);
+  padding: 72px 24px;
+  text-align: center;
+}
+
+.eb-home-band-quote {
+  font-family: var(--eb-home-serif);
+  font-style: italic;
+  font-size: clamp(28px, 8vw, 44px);
+  line-height: 1.2;
+  color: var(--eb-home-band-text);
+  max-width: 22ch;
+  margin: 0 auto;
+  will-change: transform;
+}
+
+.eb-home-band-rule {
+  display: block;
+  width: 48px;
+  height: 1px;
+  margin: 22px auto 0;
+  background: var(--eb-home-band-accent);
+}
+
+/* Men's watches block ---------------------------------------------------- */
+
+.eb-home-men {
+  display: grid;
+  gap: 24px;
+}
+
+.eb-home-men-media {
+  display: block;
+}
+
+.eb-home-men-link {
+  display: block;
+}
+
+.eb-home-men-img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+.eb-home-men-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.eb-home-men-text .eb-home-h2 {
+  font-size: clamp(34px, 9vw, 48px);
+}
+
+/* Steps ------------------------------------------------------------------ */
+
+.eb-home-steps {
+  display: grid;
+  gap: 18px;
+}
+
+.eb-home-step {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 22px 0 0;
+  border-top: 1px solid var(--eb-home-champagne);
+}
+
+.eb-home-step-num {
+  font-family: var(--eb-home-serif);
+  font-size: 44px;
+  line-height: 1;
+  color: var(--eb-home-gold);
+}
+
+.eb-home-step-title {
+  font-size: 26px;
+}
+
+/* Instagram gallery ------------------------------------------------------ */
+
+.eb-home-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.eb-home-gallery-item {
+  position: relative;
+  display: block;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #efe7da;
+}
+
+.eb-home-gallery-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.eb-home-follow {
+  display: flex;
+  justify-content: center;
+  margin-top: 28px;
+}
+
+/* Sticky order CTA, sits above the 64px mobile tab bar ------------------- */
+
+.eb-home-sticky {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  z-index: 1020;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.eb-home-sticky .eb-home-pill {
+  pointer-events: auto;
+}
+
+/* Motion: hover effects only where a pointer exists ---------------------- */
+
+@media (hover: hover) {
+  .eb-home-product:hover .eb-home-product-img {
+    transform: scale(1.04);
+  }
+
+  .eb-home-cat:hover .eb-home-cat-cta {
+    text-decoration: underline;
+  }
+
+  .eb-home-gallery-item:hover .eb-home-gallery-img {
+    transform: scale(1.05);
+  }
+
+  .eb-home-gallery-img {
+    transition: transform 0.55s ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eb-home-marquee-track,
+  .eb-home-shimmer::after {
+    animation: none;
+  }
+
+  .eb-home-shimmer::after {
+    display: none;
+  }
+}
+
+/* Tablet and up ---------------------------------------------------------- */
+
+@media (min-width: 768px) {
+  .eb-home-section {
+    padding: 80px 32px;
+  }
+
+  .eb-home-cat-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .eb-home-cat-item:last-child {
+    grid-column: auto;
+  }
+
+  .eb-home-cat {
+    min-height: 260px;
+  }
+
+  .eb-home-row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    overflow: visible;
+    margin: 0 auto;
+    max-width: 1200px;
+    padding: 0;
+    scroll-snap-type: none;
+  }
+
+  .eb-home-row-item {
+    flex: none;
+    max-width: none;
+  }
+
+  .eb-home-steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 32px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .eb-home-gallery {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 1100px;
+    margin: 0 auto;
+    gap: 14px;
+  }
+
+  .eb-home-band {
+    padding: 112px 32px;
+  }
+
+  .eb-home-chips {
+    justify-content: center;
+    flex-wrap: wrap;
+    overflow: visible;
+  }
+
+  .eb-home-hero {
+    padding: 48px 32px 56px;
+  }
+
+  .eb-home-hero-media {
+    height: 480px;
+    width: min(100%, 380px);
+  }
+}
+
+/* Desktop: two-column hero and men's block ------------------------------- */
+
+@media (min-width: 992px) {
+  .eb-home {
+    padding-bottom: 40px;
+  }
+
+  .eb-home-hero {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "text media"
+      "body media";
+    align-items: center;
+    justify-items: start;
+    gap: 24px 64px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 72px 32px 80px;
+    text-align: left;
+  }
+
+  .eb-home-hero-text,
+  .eb-home-hero-body {
+    align-items: flex-start;
+  }
+
+  .eb-home-hero-text {
+    align-self: end;
+  }
+
+  .eb-home-hero-body {
+    align-self: start;
+    align-items: flex-start;
+  }
+
+  .eb-home-hero-media {
+    justify-self: end;
+    height: 560px;
+    width: min(100%, 460px);
+  }
+
+  .eb-home-hero-title {
+    font-size: 84px;
+  }
+
+  .eb-home-actions {
+    justify-content: flex-start;
+  }
+
+  .eb-home-men {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 64px;
+    padding: 80px 32px;
+  }
+
+  .eb-home-men-img {
+    aspect-ratio: 4 / 5;
+  }
+
+  .eb-home-sticky {
+    left: auto;
+    right: 24px;
+    bottom: 24px;
+    justify-content: flex-end;
+  }
+
+  .eb-home-sticky .eb-home-pill--sticky {
+    width: auto;
+  }
+}
+
+/* Category tile with an automatic cover photo (first product of the category) */
+.eb-home-cat--photo {
+  overflow: hidden;
+  color: #fff8f0;
+  isolation: isolate;
+}
+
+.eb-home-cat-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+}
+
+.eb-home-cat--photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(to top, rgba(42, 33, 24, 0.72) 0%, rgba(42, 33, 24, 0) 60%);
+}
+
+.eb-home-cat--photo .eb-home-cat-cta {
+  color: #f1e3c4;
+}

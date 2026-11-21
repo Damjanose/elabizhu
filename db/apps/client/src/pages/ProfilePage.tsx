@@ -20,6 +20,7 @@ import {
   updateProfile,
 } from "../services/profile"
 import { errorToast, successToast, toastFromError } from "../utils/toast"
+import { useI18n, type TFunction } from "../i18n"
 
 const EMPTY_ADDRESS: AddressInput = {
   label: "Home",
@@ -42,6 +43,7 @@ const extractMessage = (error: unknown, fallback: string) => {
 }
 
 export const ProfilePage = () => {
+  const { t } = useI18n()
   const { user, accessToken } = useAuth()
   const queryClient = useQueryClient()
 
@@ -57,16 +59,13 @@ export const ProfilePage = () => {
     <section className="aurelia-profile-shell">
       <Link to="/account" className="aurelia-profile-back">
         <span className="material-symbols-outlined" aria-hidden>chevron_left</span>
-        <span>Back to Account</span>
+        <span>{t("account.common.backToAccount")}</span>
       </Link>
 
       <header className="aurelia-profile-hero">
         <span className="aurelia-profile-kicker">Personal Atelier</span>
-        <h1 className="aurelia-profile-title">Profile & Addresses</h1>
-        <p className="aurelia-profile-sub">
-          Update your contact details and manage the addresses we deliver to. Your default address
-          is used during checkout.
-        </p>
+        <h1 className="aurelia-profile-title">{t("account.profile.title")}</h1>
+        <p className="aurelia-profile-sub">{t("account.profile.sub")}</p>
       </header>
 
       <div className="aurelia-profile-grid">
@@ -92,15 +91,18 @@ type ProfileValues = {
   phone: string
 }
 
-const profileSchema = Yup.object({
-  fullName: Yup.string().trim().required("Full name is required"),
-  phone: Yup.string()
-    .trim()
-    .matches(/^[+0-9\s().-]*$/u, "Phone may only contain digits and + ( ) - .")
-    .max(40, "Phone is too long"),
-})
+const makeProfileSchema = (t: TFunction) =>
+  Yup.object({
+    fullName: Yup.string().trim().required(t("account.validation.fullNameRequired")),
+    phone: Yup.string()
+      .trim()
+      .matches(/^[+0-9\s().-]*$/u, t("account.validation.phoneChars"))
+      .max(40, t("account.validation.phoneTooLong")),
+  })
 
 const ProfileForm = ({ user }: { user: User | null }) => {
+  const { t } = useI18n()
+  const profileSchema = makeProfileSchema(t)
   const queryClient = useQueryClient()
   const [success, setSuccess] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
@@ -119,7 +121,7 @@ const ProfileForm = ({ user }: { user: User | null }) => {
       setSuccess(true)
       queryClient.setQueryData(["auth", "me"], next)
       window.setTimeout(() => setSuccess(false), 2500)
-      successToast("Profile updated")
+      successToast(t("account.profile.updated"))
     },
   })
 
@@ -132,7 +134,7 @@ const ProfileForm = ({ user }: { user: User | null }) => {
         phone: values.phone.trim() || null,
       })
     } catch (err) {
-      const message = extractMessage(err, "Could not save profile")
+      const message = extractMessage(err, t("account.profile.saveError"))
       setFormError(message)
       errorToast(message)
     } finally {
@@ -143,7 +145,7 @@ const ProfileForm = ({ user }: { user: User | null }) => {
   return (
     <article className="aurelia-profile-card">
       <header className="aurelia-profile-card-head">
-        <h2 className="aurelia-profile-card-title">Personal Details</h2>
+        <h2 className="aurelia-profile-card-title">{t("account.profile.personalTitle")}</h2>
         <span className="material-symbols-outlined aurelia-profile-card-icon" aria-hidden>
           person
         </span>
@@ -165,7 +167,7 @@ const ProfileForm = ({ user }: { user: User | null }) => {
               <div className="aurelia-profile-fields">
                 <EditorialFormField
                   name="fullName"
-                  label="Full Name"
+                  label={t("account.field.fullName")}
                   placeholder="Jane Doe"
                   autoComplete="name"
                   colSpan={2}
@@ -174,7 +176,7 @@ const ProfileForm = ({ user }: { user: User | null }) => {
                 <DisabledEmailField email={user?.email ?? ""} />
                 <EditorialFormField
                   name="phone"
-                  label="Phone"
+                  label={t("account.field.phone")}
                   type="tel"
                   autoComplete="tel"
                   placeholder="+44 20 1234 5678"
@@ -185,8 +187,7 @@ const ProfileForm = ({ user }: { user: User | null }) => {
                 <div className="aurelia-profile-error" role="alert">
                   <span className="material-symbols-outlined" aria-hidden>error</span>
                   <span>
-                    {formError ??
-                      "Please fix the highlighted fields and try again."}
+                    {formError ?? t("account.validation.fixFields")}
                   </span>
                 </div>
               )}
@@ -195,7 +196,7 @@ const ProfileForm = ({ user }: { user: User | null }) => {
                 {success && (
                   <span className="aurelia-profile-success" role="status">
                     <span className="material-symbols-outlined" aria-hidden>check_circle</span>
-                    Profile updated
+                    {t("account.profile.updated")}
                   </span>
                 )}
                 <SubmitOnceFullyTouched isSubmitting={isSubmitting} />
@@ -208,30 +209,26 @@ const ProfileForm = ({ user }: { user: User | null }) => {
   )
 }
 
-const DisabledEmailField = ({ email }: { email: string }) => (
-  <div className="aurelia-checkout-field aurelia-checkout-field--span-1 is-disabled">
-    <label className="aurelia-checkout-label">Email</label>
-    <input
-      className="aurelia-checkout-input"
-      type="email"
-      value={email}
-      readOnly
-      disabled
-      aria-label="Email (read-only)"
-    />
-    <p className="aurelia-form-field-help">Contact concierge to change your email.</p>
-  </div>
-)
+const DisabledEmailField = ({ email }: { email: string }) => {
+  const { t } = useI18n()
+  return (
+    <div className="aurelia-checkout-field aurelia-checkout-field--span-1 is-disabled">
+      <label className="aurelia-checkout-label">{t("account.field.email")}</label>
+      <input
+        className="aurelia-checkout-input"
+        type="email"
+        value={email}
+        readOnly
+        disabled
+        aria-label={t("account.profile.emailReadOnlyAria")}
+      />
+      <p className="aurelia-form-field-help">{t("account.profile.emailHelp")}</p>
+    </div>
+  )
+}
 
-const SubmitOnceFullyTouched = ({
-  isSubmitting,
-  label = "Save Changes",
-  busyLabel = "Saving…",
-}: {
-  isSubmitting: boolean
-  label?: string
-  busyLabel?: string
-}) => {
+const SubmitOnceFullyTouched = ({ isSubmitting }: { isSubmitting: boolean }) => {
+  const { t } = useI18n()
   const { values, setTouched, validateForm } = useFormikContext<Record<string, unknown>>()
   return (
     <button
@@ -247,7 +244,7 @@ const SubmitOnceFullyTouched = ({
         void validateForm()
       }}
     >
-      {isSubmitting ? busyLabel : label}
+      {isSubmitting ? t("account.common.saving") : t("account.profile.save")}
     </button>
   )
 }
@@ -267,6 +264,11 @@ const AddressBook = ({
   onRefetch: () => void
   onChange: () => void
 }) => {
+  const { t, lang } = useI18n()
+  const emptyAddress = useMemo<AddressInput>(
+    () => ({ ...EMPTY_ADDRESS, label: t("account.placeholder.home") }),
+    [lang],
+  )
   const [editing, setEditing] = useState<{ mode: "create" } | { mode: "edit"; address: Address } | null>(null)
 
   const closeForm = () => setEditing(null)
@@ -274,7 +276,7 @@ const AddressBook = ({
   const renderBody = () => {
     if (isLoading) {
       return (
-        <div className="aurelia-address-skeleton" aria-busy="true" aria-live="polite" aria-label="Loading addresses">
+        <div className="aurelia-address-skeleton" aria-busy="true" aria-live="polite" aria-label={t("account.profile.loadingAddresses")}>
           {[0, 1].map((index) => (
             <div key={index} className="aurelia-address-skeleton-row aurelia-shimmer-block" />
           ))}
@@ -287,9 +289,9 @@ const AddressBook = ({
           variant="inline"
           icon="error"
           tone="danger"
-          title="Could not load addresses"
-          copy="Please try again."
-          cta={{ label: "Try Again", onClick: onRefetch }}
+          title={t("account.profile.addressesError")}
+          copy={t("account.common.tryAgainCopy")}
+          cta={{ label: t("account.common.tryAgain"), onClick: onRefetch }}
         />
       )
     }
@@ -298,10 +300,10 @@ const AddressBook = ({
         <EmptyState
           variant="inline"
           icon="location_on"
-          kicker="Empty"
-          title="No addresses yet"
-          copy="Add your first delivery address so we can reach you."
-          cta={{ label: "Add Address", onClick: () => setEditing({ mode: "create" }) }}
+          kicker={t("account.profile.emptyKicker")}
+          title={t("account.profile.emptyTitle")}
+          copy={t("account.profile.emptyCopy")}
+          cta={{ label: t("account.profile.addAddress"), onClick: () => setEditing({ mode: "create" }) }}
         />
       )
     }
@@ -322,14 +324,14 @@ const AddressBook = ({
   return (
     <article className="aurelia-profile-card aurelia-profile-card--addresses">
       <header className="aurelia-profile-card-head">
-        <h2 className="aurelia-profile-card-title">Address Book</h2>
+        <h2 className="aurelia-profile-card-title">{t("account.profile.addressBookTitle")}</h2>
         <button
           type="button"
           className="aurelia-profile-add"
           onClick={() => setEditing({ mode: "create" })}
         >
           <span className="material-symbols-outlined" aria-hidden>add</span>
-          <span>Add Address</span>
+          <span>{t("account.profile.addAddress")}</span>
         </button>
       </header>
 
@@ -338,7 +340,7 @@ const AddressBook = ({
       {editing && (
         <AddressDialog
           mode={editing.mode}
-          initial={editing.mode === "edit" ? editing.address : EMPTY_ADDRESS}
+          initial={editing.mode === "edit" ? editing.address : emptyAddress}
           addressId={editing.mode === "edit" ? editing.address.id : undefined}
           onClose={closeForm}
           onSaved={() => {
@@ -360,25 +362,26 @@ const AddressItem = ({
   onEdit: () => void
   onChange: () => void
 }) => {
+  const { t } = useI18n()
   const setDefault = useMutation({
     mutationFn: () => setDefaultAddress(address.id),
     onSuccess: () => {
       onChange()
-      successToast(`“${address.label}” set as default`)
+      successToast(t("account.profile.defaultSet", { label: address.label }))
     },
-    onError: (err) => toastFromError(err, "Could not set default address"),
+    onError: (err) => toastFromError(err, t("account.profile.defaultError")),
   })
   const remove = useMutation({
     mutationFn: () => deleteAddress(address.id),
     onSuccess: () => {
       onChange()
-      successToast(`“${address.label}” removed`)
+      successToast(t("account.profile.removed", { label: address.label }))
     },
-    onError: (err) => toastFromError(err, "Could not remove address"),
+    onError: (err) => toastFromError(err, t("account.profile.removeError")),
   })
 
   const onRemove = () => {
-    if (window.confirm(`Remove “${address.label}” from your saved addresses?`)) {
+    if (window.confirm(t("account.profile.confirmRemove", { label: address.label }))) {
       void remove.mutateAsync()
     }
   }
@@ -389,7 +392,7 @@ const AddressItem = ({
         <div className="aurelia-address-card-label-wrap">
           <span className="aurelia-address-card-label">{address.label}</span>
           {address.isDefault && (
-            <span className="aurelia-address-card-pill">Default</span>
+            <span className="aurelia-address-card-pill">{t("account.profile.defaultPill")}</span>
           )}
         </div>
         <span className="material-symbols-outlined aurelia-address-card-icon" aria-hidden>
@@ -417,11 +420,11 @@ const AddressItem = ({
             onClick={() => void setDefault.mutateAsync()}
             disabled={setDefault.isPending}
           >
-            {setDefault.isPending ? "Setting…" : "Set as Default"}
+            {setDefault.isPending ? t("account.profile.settingDefault") : t("account.profile.setDefault")}
           </button>
         )}
         <button type="button" className="aurelia-address-card-link" onClick={onEdit}>
-          Edit
+          {t("account.profile.edit")}
         </button>
         <button
           type="button"
@@ -429,7 +432,7 @@ const AddressItem = ({
           onClick={onRemove}
           disabled={remove.isPending}
         >
-          {remove.isPending ? "Removing…" : "Remove"}
+          {remove.isPending ? t("account.profile.removingLink") : t("account.profile.removeLink")}
         </button>
       </div>
     </li>
@@ -450,20 +453,21 @@ type AddressFormValues = {
   isDefault: boolean
 }
 
-const addressSchema = Yup.object({
-  label: Yup.string().trim().required("Label is required").max(40, "Label is too long"),
-  recipientName: Yup.string().trim().required("Recipient is required").max(120),
-  line1: Yup.string().trim().required("Address line 1 is required").max(160),
-  line2: Yup.string().trim().max(160),
-  city: Yup.string().trim().required("City is required").max(80),
-  postalCode: Yup.string().trim().required("Postal code is required").max(20),
-  country: Yup.string().trim().required("Country is required").max(80),
-  phone: Yup.string()
-    .trim()
-    .matches(/^[+0-9\s().-]*$/u, "Phone may only contain digits and + ( ) - .")
-    .max(40, "Phone is too long"),
-  isDefault: Yup.boolean(),
-})
+const makeAddressSchema = (t: TFunction) =>
+  Yup.object({
+    label: Yup.string().trim().required(t("account.validation.labelRequired")).max(40, t("account.validation.labelTooLong")),
+    recipientName: Yup.string().trim().required(t("account.validation.recipientRequired")).max(120),
+    line1: Yup.string().trim().required(t("account.validation.line1Required")).max(160),
+    line2: Yup.string().trim().max(160),
+    city: Yup.string().trim().required(t("account.validation.cityRequired")).max(80),
+    postalCode: Yup.string().trim().required(t("account.validation.postalCodeRequired")).max(20),
+    country: Yup.string().trim().required(t("account.validation.countryRequired")).max(80),
+    phone: Yup.string()
+      .trim()
+      .matches(/^[+0-9\s().-]*$/u, t("account.validation.phoneChars"))
+      .max(40, t("account.validation.phoneTooLong")),
+    isDefault: Yup.boolean(),
+  })
 
 const normalizeInitial = (initial: AddressInput | Address): AddressFormValues => ({
   label: initial.label,
@@ -490,6 +494,8 @@ const AddressDialog = ({
   onClose: () => void
   onSaved: () => void
 }) => {
+  const { t } = useI18n()
+  const addressSchema = makeAddressSchema(t)
   const [formError, setFormError] = useState<string | null>(null)
 
   // Close on Escape
@@ -522,8 +528,8 @@ const AddressDialog = ({
     onSuccess: (saved) => {
       successToast(
         mode === "edit"
-          ? `“${saved.label}” updated`
-          : `“${saved.label}” added to your address book`,
+          ? t("account.profile.addressUpdated", { label: saved.label })
+          : t("account.profile.addressAdded", { label: saved.label }),
       )
       onSaved()
     },
@@ -545,7 +551,7 @@ const AddressDialog = ({
     try {
       await save.mutateAsync(payload)
     } catch (err) {
-      const message = extractMessage(err, "Could not save address")
+      const message = extractMessage(err, t("account.profile.addressSaveError"))
       setFormError(message)
       errorToast(message)
     } finally {
@@ -577,15 +583,15 @@ const AddressDialog = ({
             <Form className="aurelia-address-dialog" noValidate>
               <header className="aurelia-address-dialog-head">
                 <div>
-                  <span className="aurelia-profile-kicker">Address Book</span>
+                  <span className="aurelia-profile-kicker">{t("account.profile.addressBookKicker")}</span>
                   <h2 id="aurelia-address-dialog-title" className="aurelia-address-dialog-title">
-                    {mode === "edit" ? "Edit Address" : "Add Address"}
+                    {mode === "edit" ? t("account.profile.editAddress") : t("account.profile.addAddress")}
                   </h2>
                 </div>
                 <button
                   type="button"
                   className="aurelia-address-dialog-close"
-                  aria-label="Close"
+                  aria-label={t("account.common.close")}
                   onClick={onClose}
                 >
                   <span className="material-symbols-outlined" aria-hidden>close</span>
@@ -595,20 +601,20 @@ const AddressDialog = ({
               <div className="aurelia-profile-fields">
                 <EditorialFormField
                   name="label"
-                  label="Label"
-                  placeholder="Home"
+                  label={t("account.field.label")}
+                  placeholder={t("account.placeholder.home")}
                   required
                 />
                 <EditorialFormField
                   name="recipientName"
-                  label="Recipient"
+                  label={t("account.field.recipient")}
                   placeholder="Jane Doe"
                   autoComplete="name"
                   required
                 />
                 <EditorialFormField
                   name="line1"
-                  label="Address Line 1"
+                  label={t("account.field.addressLine1")}
                   colSpan={2}
                   placeholder="123 Mayfair Terrace"
                   autoComplete="address-line1"
@@ -616,35 +622,35 @@ const AddressDialog = ({
                 />
                 <EditorialFormField
                   name="line2"
-                  label="Address Line 2"
+                  label={t("account.field.addressLine2")}
                   colSpan={2}
-                  placeholder="Apartment, suite, etc. (optional)"
+                  placeholder={t("account.placeholder.addressLine2")}
                   autoComplete="address-line2"
                 />
                 <EditorialFormField
                   name="city"
-                  label="City"
-                  placeholder="London"
+                  label={t("account.field.city")}
+                  placeholder={t("account.placeholder.city")}
                   autoComplete="address-level2"
                   required
                 />
                 <EditorialFormField
                   name="postalCode"
-                  label="Postal Code"
-                  placeholder="W1K 7AA"
+                  label={t("account.field.postalCode")}
+                  placeholder={t("account.placeholder.postalCode")}
                   autoComplete="postal-code"
                   required
                 />
                 <EditorialFormField
                   name="country"
-                  label="Country"
+                  label={t("account.field.country")}
                   placeholder="United Kingdom"
                   autoComplete="country-name"
                   required
                 />
                 <EditorialFormField
                   name="phone"
-                  label="Phone"
+                  label={t("account.field.phone")}
                   type="tel"
                   placeholder="+44 20 1234 5678"
                   autoComplete="tel"
@@ -657,15 +663,14 @@ const AddressDialog = ({
                   checked={values.isDefault}
                   onChange={(event) => void setFieldValue("isDefault", event.target.checked)}
                 />
-                <span>Set as default delivery address</span>
+                <span>{t("account.profile.setDefaultDelivery")}</span>
               </label>
 
               {(formError || showInvalidBanner) && (
                 <div className="aurelia-profile-error" role="alert">
                   <span className="material-symbols-outlined" aria-hidden>error</span>
                   <span>
-                    {formError ??
-                      "Please fix the highlighted fields and try again."}
+                    {formError ?? t("account.validation.fixFields")}
                   </span>
                 </div>
               )}
@@ -673,7 +678,7 @@ const AddressDialog = ({
               <div className="aurelia-address-dialog-actions">
                 <button type="button" className="aurelia-checkout-back" onClick={onClose}>
                   <span className="material-symbols-outlined" aria-hidden>chevron_left</span>
-                  <span>Cancel</span>
+                  <span>{t("account.common.cancel")}</span>
                 </button>
                 <button
                   type="submit"
@@ -691,7 +696,7 @@ const AddressDialog = ({
                     void validateForm()
                   }}
                 >
-                  {isSubmitting ? "Saving…" : mode === "edit" ? "Save Address" : "Add Address"}
+                  {isSubmitting ? t("account.common.saving") : mode === "edit" ? t("account.profile.saveAddress") : t("account.profile.addAddress")}
                 </button>
               </div>
             </Form>

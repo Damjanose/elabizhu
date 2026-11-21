@@ -6,25 +6,28 @@ import { fetchOrders } from "../../services/orders"
 import { useQueryLoadState } from "../../hooks/useQueryLoadState"
 import { queryKeys } from "../../lib/query-keys"
 import { queryTiming } from "../../lib/query-client"
+import { useI18n, type TFunction } from "../../i18n"
 
 const orderRef = (id: string) => `#AUR-${id.slice(0, 4).toUpperCase()}`
 
-const formatRelative = (iso: string) => {
+const formatRelative = (t: TFunction, locale: string, iso: string) => {
   const date = new Date(iso)
   if (Number.isNaN(date.getTime())) return ""
   const diffMs = Date.now() - date.getTime()
   const minutes = Math.round(diffMs / 60000)
-  if (minutes < 1) return "Just now"
-  if (minutes < 60) return `${minutes}m ago`
+  if (minutes < 1) return t("admin.alerts.justNow")
+  if (minutes < 60) return t("admin.alerts.minutesAgo", { count: minutes })
   const hours = Math.round(minutes / 60)
-  if (hours < 24) return `${hours}h ago`
+  if (hours < 24) return t("admin.alerts.hoursAgo", { count: hours })
   const days = Math.round(hours / 24)
-  if (days < 7) return `${days}d ago`
-  return date.toLocaleDateString("en-GB", { day: "numeric", month: "short" })
+  if (days < 7) return t("admin.alerts.daysAgo", { count: days })
+  return date.toLocaleDateString(locale, { day: "numeric", month: "short" })
 }
 
 export const AdminOrderAlerts = () => {
   const navigate = useNavigate()
+  const { t, lang } = useI18n()
+  const locale = lang === "sq" ? "sq-AL" : "en-GB"
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
 
@@ -68,10 +71,10 @@ export const AdminOrderAlerts = () => {
       <button
         type="button"
         className="aurelia-admin-shell-icon-btn aurelia-admin-order-alerts-trigger"
-        aria-label={badgeCount > 0 ? `New orders: ${badgeCount} pending` : "New orders"}
+        aria-label={badgeCount > 0 ? t("admin.alerts.triggerPending", { count: badgeCount }) : t("admin.alerts.newOrders")}
         aria-expanded={open}
         aria-haspopup="menu"
-        title="New orders"
+        title={t("admin.alerts.newOrders")}
         onClick={() => setOpen((v) => !v)}
       >
         <FiBell />
@@ -79,11 +82,11 @@ export const AdminOrderAlerts = () => {
       </button>
 
       {open && (
-        <div className="aurelia-admin-order-alerts-panel" role="menu" aria-label="New orders">
+        <div className="aurelia-admin-order-alerts-panel" role="menu" aria-label={t("admin.alerts.newOrders")}>
           <div className="aurelia-admin-order-alerts-head">
-            <span className="aurelia-admin-order-alerts-kicker">Operations</span>
-            <h2 className="aurelia-admin-order-alerts-title">New orders</h2>
-            <p className="aurelia-admin-order-alerts-sub">Pending confirmation — same queue as your orders board.</p>
+            <span className="aurelia-admin-order-alerts-kicker">{t("admin.common.operations")}</span>
+            <h2 className="aurelia-admin-order-alerts-title">{t("admin.alerts.newOrders")}</h2>
+            <p className="aurelia-admin-order-alerts-sub">{t("admin.alerts.subtitle")}</p>
           </div>
 
           {showSkeleton ? (
@@ -93,9 +96,9 @@ export const AdminOrderAlerts = () => {
               ))}
             </div>
           ) : isError ? (
-            <p className="aurelia-admin-order-alerts-empty">Could not load orders.</p>
+            <p className="aurelia-admin-order-alerts-empty">{t("admin.alerts.loadError")}</p>
           ) : pendingOrders.length === 0 ? (
-            <p className="aurelia-admin-order-alerts-empty">No pending orders. You’re caught up.</p>
+            <p className="aurelia-admin-order-alerts-empty">{t("admin.alerts.empty")}</p>
           ) : (
             <ul className="aurelia-admin-order-alerts-list">
               {pendingOrders.slice(0, 8).map((order) => (
@@ -112,7 +115,7 @@ export const AdminOrderAlerts = () => {
                     <span className="aurelia-admin-order-alerts-row-id">{orderRef(order.id)}</span>
                     <span className="aurelia-admin-order-alerts-row-meta">
                       <span className="aurelia-admin-order-alerts-row-amount">{Number(order.total).toFixed(2)}</span>
-                      <span className="aurelia-admin-order-alerts-row-time">{formatRelative(order.createdAt)}</span>
+                      <span className="aurelia-admin-order-alerts-row-time">{formatRelative(t, locale, order.createdAt)}</span>
                     </span>
                   </button>
                 </li>
@@ -122,7 +125,7 @@ export const AdminOrderAlerts = () => {
 
           <div className="aurelia-admin-order-alerts-foot">
             <Link to="/admin/orders" className="aurelia-admin-order-alerts-link" role="menuitem" onClick={() => setOpen(false)}>
-              View all orders
+              {t("admin.alerts.viewAll")}
             </Link>
           </div>
         </div>
