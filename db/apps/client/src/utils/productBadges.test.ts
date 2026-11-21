@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest"
 import type { Product } from "@jewellery/types"
-import { badgeLabel, deriveDisplayBadge } from "./productBadges"
+import { translate } from "../i18n"
+import { badgeKey, badgeLabel, deriveDisplayBadge } from "./productBadges"
+
+const en = (key: string) => translate("en", key)
+const sq = (key: string) => translate("sq", key)
 
 const baseProduct = (over: Partial<Product>): Product => ({
   id: "1",
@@ -22,11 +26,19 @@ const baseProduct = (over: Partial<Product>): Product => ({
 })
 
 describe("productBadges", () => {
-  it("labels urgency values", () => {
-    expect(badgeLabel("new")).toBe("New")
-    expect(badgeLabel("low_stock")).toBe("Selling fast")
-    expect(badgeLabel("sold_out")).toBe("Sold out")
-    expect(badgeLabel("none")).toBe("")
+  it("maps urgency values to translation keys", () => {
+    expect(badgeKey("new")).toBe("catalog.badge.new")
+    expect(badgeKey("low_stock")).toBe("catalog.badge.lowStock")
+    expect(badgeKey("sold_out")).toBe("catalog.badge.soldOut")
+    expect(badgeKey("none")).toBeNull()
+  })
+
+  it("labels urgency values in the requested language", () => {
+    expect(badgeLabel("new", en)).toBe("New")
+    expect(badgeLabel("low_stock", en)).toBe("Selling fast")
+    expect(badgeLabel("sold_out", en)).toBe("Sold out")
+    expect(badgeLabel("new", sq)).toBe("E re")
+    expect(badgeLabel("none", en)).toBe("")
   })
 
   it("prioritizes sold out and low stock from quantities", () => {

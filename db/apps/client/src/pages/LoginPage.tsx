@@ -11,6 +11,7 @@ import { useAuth } from "../types/auth-context"
 import { extractFieldErrors } from "../utils/form-errors"
 import { sanitizeRedirect } from "../utils/post-auth-redirect"
 import { errorToast, successToast } from "../utils/toast"
+import { useI18n, type TFunction } from "../i18n"
 
 // Demo admin (run db:seed): admin@example.com / Admin123!
 
@@ -27,15 +28,18 @@ const initialValues: LoginValues = {
   password: "",
 }
 
-const loginSchema = Yup.object({
-  email: Yup.string()
-    .trim()
-    .required("Email is required")
-    .email("Please enter a valid email address"),
-  password: Yup.string().required("Password is required"),
-})
+const makeLoginSchema = (t: TFunction) =>
+  Yup.object({
+    email: Yup.string()
+      .trim()
+      .required(t("account.validation.emailRequired"))
+      .email(t("account.validation.emailInvalid")),
+    password: Yup.string().required(t("account.validation.passwordRequired")),
+  })
 
 export const LoginPage = () => {
+  const { t } = useI18n()
+  const loginSchema = makeLoginSchema(t)
   const { login } = useAuth()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -47,14 +51,14 @@ export const LoginPage = () => {
     setFormError(null)
     try {
       await login({ email: values.email.trim(), password: values.password })
-      successToast("Welcome back to ElaBizhu")
+      successToast(t("account.login.welcomeToast"))
       navigate(redirectTo, { replace: true })
     } catch (err) {
       const { fieldErrors, formError: nextFormError } = extractFieldErrors(err)
       if (Object.keys(fieldErrors).length > 0) {
         helpers.setErrors(fieldErrors)
       }
-      const message = nextFormError ?? "Invalid credentials"
+      const message = nextFormError ?? t("account.login.invalidCredentials")
       setFormError(message)
       errorToast(message)
     } finally {
@@ -65,14 +69,12 @@ export const LoginPage = () => {
   return (
     <AuthShell
       imageUrl={LOGIN_VISUAL}
-      imageAlt="Model wearing layered ElaBizhu gold jewellery in soft afternoon light"
-      overlayHeadline="Welcome Back."
-      overlaySubcopy="Continue your journey through curated craftsmanship and quietly luxurious pieces."
+      imageAlt={t("account.login.visualAlt")}
+      overlayHeadline={t("account.login.overlayHeadline")}
+      overlaySubcopy={t("account.login.overlaySubcopy")}
     >
-      <h1 className="aurelia-auth-title">Sign In</h1>
-      <p className="aurelia-auth-subtitle">
-        Step back into your private circle of curated collections and bespoke services.
-      </p>
+      <h1 className="aurelia-auth-title">{t("account.login.title")}</h1>
+      <p className="aurelia-auth-subtitle">{t("account.login.subtitle")}</p>
 
       <Formik
         initialValues={initialValues}
@@ -90,7 +92,7 @@ export const LoginPage = () => {
               <div className="aurelia-auth-fields">
                 <AuthFormField
                   name="email"
-                  label="Email Address"
+                  label={t("account.field.emailAddress")}
                   type="email"
                   autoComplete="email"
                   placeholder="you@aurelia.com"
@@ -99,7 +101,7 @@ export const LoginPage = () => {
 
                 <AuthFormField
                   name="password"
-                  label="Password"
+                  label={t("account.field.password")}
                   type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
                   placeholder="••••••••"
@@ -109,7 +111,7 @@ export const LoginPage = () => {
                       type="button"
                       className="aurelia-auth-toggle"
                       onClick={() => setShowPassword((p) => !p)}
-                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      aria-label={showPassword ? t("account.password.hide") : t("account.password.show")}
                       aria-pressed={showPassword}
                     >
                       {showPassword ? <FiEyeOff aria-hidden="true" /> : <FiEye aria-hidden="true" />}
@@ -120,7 +122,7 @@ export const LoginPage = () => {
 
               {(formError || showInvalidBanner) && (
                 <div role="alert" className="aurelia-auth-banner">
-                  {formError ?? "Please fix the highlighted fields and try again."}
+                  {formError ?? t("account.validation.fixFields")}
                 </div>
               )}
 
@@ -133,11 +135,11 @@ export const LoginPage = () => {
                 whileTap={isSubmitting ? undefined : { scale: 0.97 }}
                 transition={transition.quick}
               >
-                {isSubmitting ? "Signing In…" : "Sign In"}
+                {isSubmitting ? t("account.login.submitting") : t("account.login.submit")}
               </motion.button>
 
               <p className="aurelia-auth-footnote">
-                New to ElaBizhu?
+                {t("account.login.newHere")}
                 <Link
                   to={
                     redirectTo !== "/categories"
@@ -145,7 +147,7 @@ export const LoginPage = () => {
                       : "/register"
                   }
                 >
-                  Create an account
+                  {t("account.login.createAccount")}
                 </Link>
               </p>
             </Form>

@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom"
 import { ProductCard } from "../components/product/ProductCard"
 import { EmptyState } from "../components/feedback/EmptyState"
 import { useQueryLoadState } from "../hooks/useQueryLoadState"
+import { useI18n } from "../i18n"
 import { apiClient } from "../api/client"
 import { queryKeys } from "../lib/query-keys"
 import { queryTiming } from "../lib/query-client"
@@ -12,6 +13,7 @@ import { fadeUp, listItem, listStagger, scrollRevealViewport } from "../lib/moti
 
 export const CategoryProductsPage = () => {
   const { categoryId = "" } = useParams()
+  const { t } = useI18n()
 
   const productsQuery = useQuery({
     queryKey: queryKeys.category.products(categoryId),
@@ -34,7 +36,7 @@ export const CategoryProductsPage = () => {
   })
   const { showSkeleton: showProductsSkeleton } = useQueryLoadState(productsQuery)
 
-  const heading = categoryQuery.data?.name ?? "Category products"
+  const heading = categoryQuery.data?.name ?? t("catalog.category.fallbackTitle")
 
   return (
     <motion.div variants={fadeUp} initial="hidden" animate="visible">
@@ -55,24 +57,24 @@ export const CategoryProductsPage = () => {
           variant="card"
           tone="danger"
           icon="error"
-          kicker="Connection Issue"
-          title="We couldn’t load this category"
-          copy="An unexpected issue interrupted our request. Please try again."
+          kicker={t("catalog.error.kicker")}
+          title={t("catalog.error.categoryTitle")}
+          copy={t("catalog.error.copy")}
           cta={{
-            label: productsQuery.isFetching ? "Retrying…" : "Try Again",
+            label: productsQuery.isFetching ? t("catalog.action.retrying") : t("catalog.action.tryAgain"),
             onClick: () => void productsQuery.refetch(),
           }}
-          secondaryCta={{ to: "/categories", label: "Browse All Categories" }}
+          secondaryCta={{ to: "/categories", label: t("catalog.action.browseCategories") }}
         />
       ) : !productsQuery.data || productsQuery.data.length === 0 ? (
         <EmptyState
           variant="card"
           icon="diamond"
-          kicker={(categoryQuery.data?.name ?? "Collection").toUpperCase()}
-          title="No pieces in this category yet"
-          copy="Our artisans are still finishing the latest selection. Explore other collections in the meantime."
-          cta={{ to: "/categories", label: "Browse All Categories" }}
-          secondaryCta={{ to: "/products", label: "View All Products" }}
+          kicker={(categoryQuery.data?.name ?? t("catalog.categories.collection")).toUpperCase()}
+          title={t("catalog.category.emptyTitle")}
+          copy={t("catalog.category.emptyCopy")}
+          cta={{ to: "/categories", label: t("catalog.action.browseCategories") }}
+          secondaryCta={{ to: "/products", label: t("catalog.action.viewAllProducts") }}
         />
       ) : (
         <motion.div className="row g-3" variants={listStagger} initial="hidden" animate="visible">

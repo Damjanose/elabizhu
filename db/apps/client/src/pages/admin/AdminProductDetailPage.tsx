@@ -23,12 +23,13 @@ import {
 } from "../../services/admin"
 import { useAdminDisplayCurrency } from "../../stores/adminDisplayCurrencyStore"
 import { errorToast, successToast, toastFromError } from "../../utils/toast"
+import { useI18n } from "../../i18n"
 
-const URGENCY_OPTIONS: { value: UrgencyBadge; label: string }[] = [
-  { value: "none", label: "None" },
-  { value: "new", label: "New" },
-  { value: "low_stock", label: "Low stock" },
-  { value: "sold_out", label: "Sold out" },
+const URGENCY_OPTIONS: { value: UrgencyBadge; labelKey: string }[] = [
+  { value: "none", labelKey: "admin.productDetail.urgency.none" },
+  { value: "new", labelKey: "admin.productDetail.urgency.new" },
+  { value: "low_stock", labelKey: "admin.productDetail.urgency.lowStock" },
+  { value: "sold_out", labelKey: "admin.productDetail.urgency.soldOut" },
 ]
 
 const IMAGE_ACCEPT = "image/jpeg,image/png,image/webp,image/avif,image/gif"
@@ -77,6 +78,8 @@ const productToForm = (product: Product): FormState => ({
 })
 
 export const AdminProductDetailPage = () => {
+  const { t, lang } = useI18n()
+  const locale = lang === "sq" ? "sq-AL" : "en-GB"
   const displayCurrency = useAdminDisplayCurrency()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -113,15 +116,15 @@ export const AdminProductDetailPage = () => {
 
   const categorySelectOptions = useMemo(
     () => [
-      { value: "", label: "Select category..." },
+      { value: "", label: t("admin.productDetail.selectCategory") },
       ...(categories?.map((c) => ({ value: c.id, label: c.name })) ?? []),
     ],
-    [categories],
+    [categories, t],
   )
 
   const urgencySelectOptions = useMemo(
-    () => URGENCY_OPTIONS.map((o) => ({ value: o.value, label: o.label })),
-    [],
+    () => URGENCY_OPTIONS.map((o) => ({ value: o.value, label: t(o.labelKey) })),
+    [t],
   )
 
   const updateField = <K extends keyof FormState>(key: K, value: FormState[K]) => {
@@ -133,10 +136,10 @@ export const AdminProductDetailPage = () => {
     onSuccess: async (created) => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.admin.products({}) })
       await queryClient.invalidateQueries({ queryKey: queryKeys.products.all() })
-      successToast("Product created")
+      successToast(t("admin.productDetail.created"))
       navigate(`/admin/products/${created.id}`, { replace: true })
     },
-    onError: (error) => toastFromError(error, "Could not create product"),
+    onError: (error) => toastFromError(error, t("admin.productDetail.createFailed")),
   })
 
   const patch = useMutation({
@@ -148,19 +151,19 @@ export const AdminProductDetailPage = () => {
         queryClient.invalidateQueries({ queryKey: queryKeys.products.all() }),
       ])
       setForm(productToForm(updated))
-      successToast("Product saved")
+      successToast(t("admin.productDetail.saved"))
     },
-    onError: (error) => toastFromError(error, "Could not save product"),
+    onError: (error) => toastFromError(error, t("admin.productDetail.saveFailed")),
   })
 
   const remove = useMutation({
     mutationFn: () => deleteProduct(productId as string),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.admin.products({}) })
-      successToast("Product deleted")
+      successToast(t("admin.productDetail.deleted"))
       navigate("/admin/products", { replace: true })
     },
-    onError: (error) => toastFromError(error, "Could not delete product"),
+    onError: (error) => toastFromError(error, t("admin.productDetail.deleteFailed")),
   })
 
   const uploadImages = async (files: FileList | File[]) => {
@@ -172,7 +175,7 @@ export const AdminProductDetailPage = () => {
       for (const file of arr) {
         const result = await uploadMedia(file)
         if (result.kind !== "image") {
-          errorToast(`${file.name} is not an image`)
+          errorToast(t("admin.productDetail.notImage", { name: file.name }))
           continue
         }
         urls.push(result.url)
@@ -181,7 +184,7 @@ export const AdminProductDetailPage = () => {
         setForm((prev) => ({ ...prev, imageUrls: [...prev.imageUrls, ...urls] }))
       }
     } catch (error) {
-      toastFromError(error, "Image upload failed")
+      toastFromError(error, t("admin.productDetail.imageUploadFailed"))
     } finally {
       setImageUploading(false)
       if (imageInputRef.current) imageInputRef.current.value = ""
@@ -193,12 +196,12 @@ export const AdminProductDetailPage = () => {
     try {
       const result = await uploadMedia(file)
       if (result.kind !== "video") {
-        errorToast("File is not a supported video")
+        errorToast(t("admin.productDetail.notVideo"))
         return
       }
       setForm((prev) => ({ ...prev, videoUrl: result.url }))
     } catch (error) {
-      toastFromError(error, "Video upload failed")
+      toastFromError(error, t("admin.productDetail.videoUploadFailed"))
     } finally {
       setVideoUploading(false)
       if (videoInputRef.current) videoInputRef.current.value = ""
@@ -227,15 +230,15 @@ export const AdminProductDetailPage = () => {
 
   const onSave = () => {
     if (!form.categoryId) {
-      errorToast("Pick a category before saving")
+      errorToast(t("admin.productDetail.pickCategory"))
       return
     }
     if (!form.name.trim()) {
-      errorToast("Name is required")
+      errorToast(t("admin.productDetail.nameRequired"))
       return
     }
     if (!form.price.trim()) {
-      errorToast("Price is required")
+      errorToast(t("admin.productDetail.priceRequired"))
       return
     }
 
@@ -278,7 +281,7 @@ export const AdminProductDetailPage = () => {
 
   if (!isCreate && showProductSkeleton) {
     return (
-      <section className="aurelia-detail-shell" aria-busy="true" aria-live="polite" aria-label="Loading product">
+      <section className="aurelia-detail-shell" aria-busy="true" aria-live="polite" aria-label={t("admin.productDetail.loadingAria")}>
         <div className="aurelia-detail-skeleton-back aurelia-shimmer-block" aria-hidden />
         <div className="aurelia-detail-skeleton-hero" aria-hidden>
           <div>
@@ -303,10 +306,10 @@ export const AdminProductDetailPage = () => {
           <EmptyState
             variant="page"
             icon="search_off"
-            kicker="Product Not Found"
-            title="We couldn't locate this product"
-            copy="The reference may be incorrect or the product no longer exists."
-            cta={{ to: "/admin/products", label: "Back to Products" }}
+            kicker={t("admin.productDetail.notFoundKicker")}
+            title={t("admin.productDetail.notFoundTitle")}
+            copy={t("admin.productDetail.notFoundCopy")}
+            cta={{ to: "/admin/products", label: t("admin.productDetail.backToProducts") }}
           />
         </section>
       )
@@ -317,14 +320,14 @@ export const AdminProductDetailPage = () => {
           variant="page"
           icon="error"
           tone="danger"
-          kicker="Something Went Wrong"
-          title="Could not load this product"
-          copy="An unexpected error interrupted our request. Please try again."
+          kicker={t("admin.orderDetail.errorKicker")}
+          title={t("admin.productDetail.errorTitle")}
+          copy={t("admin.orderDetail.errorCopy")}
           cta={{
-            label: productQuery.isFetching ? "Retrying..." : "Try Again",
+            label: productQuery.isFetching ? t("admin.common.retrying") : t("admin.common.tryAgain"),
             onClick: () => void productQuery.refetch(),
           }}
-          secondaryCta={{ to: "/admin/products", label: "Back to Products" }}
+          secondaryCta={{ to: "/admin/products", label: t("admin.productDetail.backToProducts") }}
         />
       </section>
     )
@@ -336,21 +339,23 @@ export const AdminProductDetailPage = () => {
         <span className="material-symbols-outlined" aria-hidden>
           chevron_left
         </span>
-        <span>Back to Products</span>
+        <span>{t("admin.productDetail.backToProducts")}</span>
       </Link>
 
       <header className="aurelia-order-detail-hero">
         <div className="aurelia-order-detail-hero-meta">
           <span className="aurelia-order-detail-kicker">
-            {isCreate ? "New piece" : "Product reference"}
+            {isCreate ? t("admin.productDetail.newPiece") : t("admin.productDetail.reference")}
           </span>
           <h1 className="aurelia-order-detail-ref">
-            {isCreate ? "Create new product" : form.name || "Untitled product"}
+            {isCreate ? t("admin.productDetail.createTitle") : form.name || t("admin.productDetail.untitled")}
           </h1>
           {!isCreate && productQuery.data && (
             <p className="aurelia-order-detail-placed">
-              Created {new Date(productQuery.data.createdAt).toLocaleDateString("en-GB")}
-              {" · "}Updated {new Date(productQuery.data.updatedAt).toLocaleDateString("en-GB")}
+              {t("admin.productDetail.createdUpdated", {
+                created: new Date(productQuery.data.createdAt).toLocaleDateString(locale),
+                updated: new Date(productQuery.data.updatedAt).toLocaleDateString(locale),
+              })}
             </p>
           )}
         </div>
@@ -358,10 +363,10 @@ export const AdminProductDetailPage = () => {
           <span
             className={`aurelia-admin-status-chip ${form.isActive ? "is-success" : "is-muted"}`}
           >
-            {form.isActive ? "Active" : "Archived"}
+            {form.isActive ? t("admin.products.active") : t("admin.products.archived")}
           </span>
           {form.featured && (
-            <span className="aurelia-admin-status-chip is-info">Featured</span>
+            <span className="aurelia-admin-status-chip is-info">{t("admin.products.featured")}</span>
           )}
         </div>
       </header>
@@ -370,12 +375,12 @@ export const AdminProductDetailPage = () => {
         <div className="aurelia-order-detail-main">
           <article className="aurelia-order-detail-card">
             <header className="aurelia-order-detail-card-header">
-              <h2 className="aurelia-order-detail-card-title">Identity</h2>
+              <h2 className="aurelia-order-detail-card-title">{t("admin.productDetail.identity")}</h2>
             </header>
             <div className="row g-3">
               <div className="col-md-6">
                 <label className="form-label" htmlFor="prod-name">
-                  Name
+                  {t("admin.productDetail.name")}
                 </label>
                 <input
                   id="prod-name"
@@ -386,19 +391,19 @@ export const AdminProductDetailPage = () => {
               </div>
               <div className="col-md-6">
                 <label className="form-label" htmlFor="prod-category">
-                  Category
+                  {t("admin.products.category")}
                 </label>
                 <AureliaCustomSelect
                   id="prod-category"
                   value={form.categoryId}
                   onChange={(v) => updateField("categoryId", v)}
                   options={categorySelectOptions}
-                  placeholder="Select category..."
+                  placeholder={t("admin.productDetail.selectCategory")}
                 />
               </div>
               <div className="col-12">
                 <label className="form-label" htmlFor="prod-description">
-                  Description
+                  {t("admin.productDetail.description")}
                 </label>
                 <textarea
                   id="prod-description"
@@ -413,9 +418,9 @@ export const AdminProductDetailPage = () => {
 
           <article className="aurelia-order-detail-card">
             <header className="aurelia-order-detail-card-header">
-              <h2 className="aurelia-order-detail-card-title">Photos</h2>
+              <h2 className="aurelia-order-detail-card-title">{t("admin.productDetail.photos")}</h2>
               <span className="aurelia-order-detail-card-meta">
-                {form.imageUrls.length} {form.imageUrls.length === 1 ? "photo" : "photos"}
+                {t(form.imageUrls.length === 1 ? "admin.productDetail.photosOne" : "admin.productDetail.photosMany", { count: form.imageUrls.length })}
               </span>
             </header>
             <div className="aurelia-admin-products-media-grid">
@@ -423,7 +428,7 @@ export const AdminProductDetailPage = () => {
                 <div key={`${url}-${index}`} className="aurelia-admin-products-media-tile">
                   <img src={resolveMediaUrl(url)} alt="" loading="lazy" />
                   {index === 0 && (
-                    <span className="aurelia-admin-products-media-cover">Cover</span>
+                    <span className="aurelia-admin-products-media-cover">{t("admin.productDetail.cover")}</span>
                   )}
                   <div className="aurelia-admin-products-media-actions">
                     <button
@@ -431,7 +436,7 @@ export const AdminProductDetailPage = () => {
                       className="aurelia-admin-products-media-btn"
                       onClick={() => moveImage(index, -1)}
                       disabled={index === 0}
-                      aria-label="Move up"
+                      aria-label={t("admin.productDetail.moveUp")}
                     >
                       <span className="material-symbols-outlined">arrow_upward</span>
                     </button>
@@ -440,7 +445,7 @@ export const AdminProductDetailPage = () => {
                       className="aurelia-admin-products-media-btn"
                       onClick={() => moveImage(index, 1)}
                       disabled={index === form.imageUrls.length - 1}
-                      aria-label="Move down"
+                      aria-label={t("admin.productDetail.moveDown")}
                     >
                       <span className="material-symbols-outlined">arrow_downward</span>
                     </button>
@@ -448,7 +453,7 @@ export const AdminProductDetailPage = () => {
                       type="button"
                       className="aurelia-admin-products-media-btn is-danger"
                       onClick={() => removeImage(index)}
-                      aria-label="Remove photo"
+                      aria-label={t("admin.productDetail.removePhoto")}
                     >
                       <span className="material-symbols-outlined">delete</span>
                     </button>
@@ -464,8 +469,8 @@ export const AdminProductDetailPage = () => {
                 <span className="material-symbols-outlined" aria-hidden>
                   {imageUploading ? "hourglass_top" : "add_photo_alternate"}
                 </span>
-                <span>{imageUploading ? "Uploading..." : "Add photos"}</span>
-                <small>JPG, PNG, WEBP up to 8MB</small>
+                <span>{imageUploading ? t("admin.common.uploading") : t("admin.productDetail.addPhotos")}</span>
+                <small>{t("admin.productDetail.photoFormats")}</small>
               </button>
             </div>
             <input
@@ -482,14 +487,14 @@ export const AdminProductDetailPage = () => {
 
           <article className="aurelia-order-detail-card">
             <header className="aurelia-order-detail-card-header">
-              <h2 className="aurelia-order-detail-card-title">Video</h2>
+              <h2 className="aurelia-order-detail-card-title">{t("admin.productDetail.video")}</h2>
               {form.videoUrl && (
                 <button
                   type="button"
                   className="aurelia-btn aurelia-btn-soft-danger"
                   onClick={removeVideo}
                 >
-                  Remove video
+                  {t("admin.productDetail.removeVideo")}
                 </button>
               )}
             </header>
@@ -502,7 +507,7 @@ export const AdminProductDetailPage = () => {
                   onClick={() => videoInputRef.current?.click()}
                   disabled={videoUploading}
                 >
-                  {videoUploading ? "Uploading..." : "Replace video"}
+                  {videoUploading ? t("admin.common.uploading") : t("admin.productDetail.replaceVideo")}
                 </button>
               </div>
             ) : (
@@ -515,8 +520,8 @@ export const AdminProductDetailPage = () => {
                 <span className="material-symbols-outlined" aria-hidden>
                   {videoUploading ? "hourglass_top" : "movie"}
                 </span>
-                <span>{videoUploading ? "Uploading..." : "Add a video"}</span>
-                <small>MP4, WEBM, MOV up to 100MB</small>
+                <span>{videoUploading ? t("admin.common.uploading") : t("admin.productDetail.addVideo")}</span>
+                <small>{t("admin.productDetail.videoFormats")}</small>
               </button>
             )}
             <input
@@ -535,12 +540,12 @@ export const AdminProductDetailPage = () => {
         <aside className="aurelia-order-detail-aside">
           <article className="aurelia-order-detail-card">
             <header className="aurelia-order-detail-card-header">
-              <h2 className="aurelia-order-detail-card-title">Pricing & inventory</h2>
+              <h2 className="aurelia-order-detail-card-title">{t("admin.productDetail.pricingInventory")}</h2>
             </header>
             <div className="row g-3">
               <div className="col-12">
                 <label className="form-label" htmlFor="prod-price">
-                  Price ({displayCurrency})
+                  {t("admin.productDetail.priceLabel", { currency: displayCurrency })}
                 </label>
                 <input
                   id="prod-price"
@@ -552,7 +557,7 @@ export const AdminProductDetailPage = () => {
               </div>
               <div className="col-6">
                 <label className="form-label" htmlFor="prod-stock">
-                  Stock
+                  {t("admin.productDetail.stock")}
                 </label>
                 <input
                   id="prod-stock"
@@ -567,7 +572,7 @@ export const AdminProductDetailPage = () => {
               </div>
               <div className="col-6">
                 <label className="form-label" htmlFor="prod-low-threshold">
-                  Low-stock at
+                  {t("admin.productDetail.lowStockAt")}
                 </label>
                 <input
                   id="prod-low-threshold"
@@ -582,14 +587,14 @@ export const AdminProductDetailPage = () => {
               </div>
               <div className="col-12">
                 <label className="form-label" htmlFor="prod-badge">
-                  Urgency badge
+                  {t("admin.productDetail.urgencyBadge")}
                 </label>
                 <AureliaCustomSelect
                   id="prod-badge"
                   value={form.urgencyBadge}
                   onChange={(v) => updateField("urgencyBadge", v as UrgencyBadge)}
                   options={urgencySelectOptions}
-                  placeholder="Select badge…"
+                  placeholder={t("admin.productDetail.selectBadge")}
                 />
               </div>
               <div className="col-12">
@@ -602,7 +607,7 @@ export const AdminProductDetailPage = () => {
                     onChange={(event) => updateField("featured", event.target.checked)}
                   />
                   <label className="form-check-label" htmlFor="prod-featured">
-                    Featured on storefront
+                    {t("admin.productDetail.featuredOnStore")}
                   </label>
                 </div>
                 {!isCreate && (
@@ -615,7 +620,7 @@ export const AdminProductDetailPage = () => {
                       onChange={(event) => updateField("isActive", event.target.checked)}
                     />
                     <label className="form-check-label" htmlFor="prod-active">
-                      Active (visible to customers)
+                      {t("admin.productDetail.activeVisible")}
                     </label>
                   </div>
                 )}
@@ -626,30 +631,30 @@ export const AdminProductDetailPage = () => {
           {!isCreate && (
             <article className="aurelia-order-detail-card">
               <header className="aurelia-order-detail-card-header">
-                <h2 className="aurelia-order-detail-card-title">Danger zone</h2>
+                <h2 className="aurelia-order-detail-card-title">{t("admin.productDetail.dangerZone")}</h2>
               </header>
               <p className="aurelia-muted mb-3">
-                Deleting a product removes it from the catalog. This action cannot be undone.
+                {t("admin.productDetail.deleteWarning")}
               </p>
               <button
                 type="button"
                 className="aurelia-btn aurelia-btn-solid-danger"
                 onClick={() => setConfirmDelete(true)}
               >
-                Delete product
+                {t("admin.productDetail.deleteProduct")}
               </button>
             </article>
           )}
         </aside>
       </div>
 
-      <div className="aurelia-admin-products-save-bar" role="region" aria-label="Save changes">
+      <div className="aurelia-admin-products-save-bar" role="region" aria-label={t("admin.productDetail.saveRegionAria")}>
         <span className="aurelia-admin-products-save-status">
           {isCreate
-            ? "New products are saved as active by default."
+            ? t("admin.productDetail.statusNew")
             : isDirty
-              ? "You have unsaved changes."
-              : "All changes saved."}
+              ? t("admin.productDetail.statusUnsaved")
+              : t("admin.productDetail.statusSaved")}
         </span>
         <div className="aurelia-admin-products-save-actions">
           <button
@@ -658,7 +663,7 @@ export const AdminProductDetailPage = () => {
             onClick={onDiscard}
             disabled={!isDirty || saving}
           >
-            Discard
+            {t("admin.productDetail.discard")}
           </button>
           <button
             type="button"
@@ -666,7 +671,7 @@ export const AdminProductDetailPage = () => {
             onClick={onSave}
             disabled={saving || (!isCreate && !isDirty)}
           >
-            {saving ? "Saving..." : isCreate ? "Create product" : "Save changes"}
+            {saving ? t("admin.common.saving") : isCreate ? t("admin.productDetail.createProduct") : t("admin.productDetail.saveChanges")}
           </button>
         </div>
       </div>
@@ -679,12 +684,12 @@ export const AdminProductDetailPage = () => {
           aria-labelledby="admin-product-delete-title"
         >
           <div className="aurelia-admin-confirm-modal">
-            <p className="aurelia-admin-kicker mb-2">Confirm deletion</p>
+            <p className="aurelia-admin-kicker mb-2">{t("admin.productDetail.confirmDeletion")}</p>
             <h3 id="admin-product-delete-title" className="aurelia-admin-card-title mb-2">
-              Delete {form.name || "this product"}?
+              {form.name ? t("admin.productDetail.deleteTitle", { name: form.name }) : t("admin.productDetail.deleteTitleFallback")}
             </h3>
             <p className="aurelia-muted mb-3">
-              The product will be removed from the catalog and pending orders.
+              {t("admin.productDetail.deleteBody")}
             </p>
             <div className="aurelia-admin-confirm-actions">
               <button
@@ -692,7 +697,7 @@ export const AdminProductDetailPage = () => {
                 className="aurelia-btn aurelia-btn-outline"
                 onClick={() => setConfirmDelete(false)}
               >
-                Cancel
+                {t("admin.common.cancel")}
               </button>
               <button
                 type="button"
@@ -703,7 +708,7 @@ export const AdminProductDetailPage = () => {
                 }}
                 disabled={remove.isPending}
               >
-                {remove.isPending ? "Deleting..." : "Delete product"}
+                {remove.isPending ? t("admin.common.deleting") : t("admin.productDetail.deleteProduct")}
               </button>
             </div>
           </div>

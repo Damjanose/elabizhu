@@ -6,16 +6,18 @@ import { useQueryLoadState } from "../../hooks/useQueryLoadState"
 import { queryKeys } from "../../lib/query-keys"
 import { queryTiming } from "../../lib/query-client"
 import { useAdminUsersStore } from "../../stores/adminUsersStore"
+import { useI18n, type TFunction } from "../../i18n"
 
 const hasAdminPermission = (user: AdminUserRow) => user.permissions.includes("admin")
 const isAdministrator = (user: AdminUserRow) => user.permissions.includes("administrator")
-const getUserRoleLabel = (user: AdminUserRow) => {
-  if (hasAdminPermission(user)) return "Admin"
-  if (isAdministrator(user)) return "Administrator"
-  return "Member"
+const getUserRoleLabel = (t: TFunction, user: AdminUserRow) => {
+  if (hasAdminPermission(user)) return t("admin.users.role.admin")
+  if (isAdministrator(user)) return t("admin.users.role.administrator")
+  return t("admin.users.role.member")
 }
 
 export const AdminUsersPage = () => {
+  const { t } = useI18n()
   const queryClient = useQueryClient()
   const usersQuery = useQuery({
     queryKey: queryKeys.admin.users(),
@@ -67,11 +69,11 @@ export const AdminUsersPage = () => {
 
   if (usersLoading) {
     return (
-      <div className="aurelia-admin-page" aria-busy="true" aria-live="polite" aria-label="Loading users">
+      <div className="aurelia-admin-page" aria-busy="true" aria-live="polite" aria-label={t("admin.users.loadingAria")}>
         <div className="aurelia-admin-page-header">
           <div>
-            <p className="aurelia-admin-kicker mb-2">Identity & Access</p>
-            <h1 className="aurelia-admin-title mb-0">Users</h1>
+            <p className="aurelia-admin-kicker mb-2">{t("admin.users.kicker")}</p>
+            <h1 className="aurelia-admin-title mb-0">{t("admin.users.title")}</h1>
           </div>
         </div>
         <section className="aurelia-admin-orders-section">
@@ -88,9 +90,9 @@ export const AdminUsersPage = () => {
   if (usersQuery.isError) {
     return (
       <div className="aurelia-admin-panel p-4">
-        <p className="mb-3">Could not load users right now.</p>
+        <p className="mb-3">{t("admin.users.loadError")}</p>
         <button type="button" className="aurelia-btn aurelia-btn-primary" onClick={() => void usersQuery.refetch()}>
-          Retry
+          {t("admin.common.retry")}
         </button>
       </div>
     )
@@ -128,8 +130,8 @@ export const AdminUsersPage = () => {
     <div className="aurelia-admin-page">
       <div className="aurelia-admin-page-header">
         <div>
-          <p className="aurelia-admin-kicker mb-2">Identity & Access</p>
-          <h1 className="aurelia-admin-title mb-0">Users</h1>
+          <p className="aurelia-admin-kicker mb-2">{t("admin.users.kicker")}</p>
+          <h1 className="aurelia-admin-title mb-0">{t("admin.users.title")}</h1>
         </div>
       </div>
 
@@ -141,17 +143,17 @@ export const AdminUsersPage = () => {
               <input
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                placeholder="Search users, emails, permissions"
+                placeholder={t("admin.users.searchPlaceholder")}
               />
             </label>
-            <p className="aurelia-admin-users-count mb-0">{filteredUsers.length} users</p>
+            <p className="aurelia-admin-users-count mb-0">{t(filteredUsers.length === 1 ? "admin.users.countOne" : "admin.users.countMany", { count: filteredUsers.length })}</p>
           </div>
 
           <div className="aurelia-admin-users-list-scroll">
             <div className="aurelia-admin-users-table-head">
-              <span>Name</span>
-              <span>Status</span>
-              <span>Role</span>
+              <span>{t("admin.users.colName")}</span>
+              <span>{t("admin.users.colStatus")}</span>
+              <span>{t("admin.users.colRole")}</span>
             </div>
             {filteredUsers.map((user) => (
               <button
@@ -164,10 +166,10 @@ export const AdminUsersPage = () => {
                 <span className="aurelia-admin-user-row-name">{user.fullName}</span>
                 <span className="aurelia-admin-user-row-status">
                   <span className={`aurelia-admin-status-chip ${user.isActive ? "is-success" : "is-danger"}`}>
-                    {user.isActive ? "active" : "blocked/deactivated"}
+                    {t(user.isActive ? "admin.users.statusActive" : "admin.users.statusBlocked")}
                   </span>
                 </span>
-                <span className="aurelia-admin-user-row-role">{getUserRoleLabel(user)}</span>
+                <span className="aurelia-admin-user-row-role">{getUserRoleLabel(t, user)}</span>
               </button>
             ))}
           </div>
@@ -175,29 +177,29 @@ export const AdminUsersPage = () => {
 
         <section className="aurelia-admin-users-detail">
           {!selectedUser ? (
-            <div className="aurelia-admin-panel p-4">No users found for this search.</div>
+            <div className="aurelia-admin-panel p-4">{t("admin.users.noResults")}</div>
           ) : (
             <div className="aurelia-admin-users-detail-panel">
               <header>
-                <p className="aurelia-admin-kicker mb-2">User profile</p>
+                <p className="aurelia-admin-kicker mb-2">{t("admin.users.profile")}</p>
                 <h2 className="aurelia-admin-card-title mb-1">{selectedUser.fullName}</h2>
                 <p className="aurelia-muted mb-0">{selectedUser.email}</p>
               </header>
 
               <div className="aurelia-admin-users-metadata">
                 <div>
-                  <span>Status</span>
+                  <span>{t("admin.users.colStatus")}</span>
                   <strong className={selectedUser.isActive ? "aurelia-status-strong-active" : "aurelia-status-strong-danger"}>
-                    {selectedUser.isActive ? "Active" : "Blocked / Deactivated"}
+                    {selectedUser.isActive ? t("admin.users.activeLabel") : t("admin.users.statusBlocked")}
                   </strong>
                 </div>
                 <div>
-                  <span>Session</span>
-                  <strong>{selectedUser.hasActiveSession ? "Online" : "Offline"}</strong>
+                  <span>{t("admin.users.session")}</span>
+                  <strong>{selectedUser.hasActiveSession ? t("admin.users.online") : t("admin.users.offline")}</strong>
                 </div>
                 <div>
-                  <span>Role</span>
-                  <strong>{getUserRoleLabel(selectedUser)}</strong>
+                  <span>{t("admin.users.colRole")}</span>
+                  <strong>{getUserRoleLabel(t, selectedUser)}</strong>
                 </div>
               </div>
 
@@ -208,12 +210,12 @@ export const AdminUsersPage = () => {
                   disabled={isSaving}
                   onClick={() => setConfirmIntent(selectedUser.isActive ? "deactivate" : "activate")}
                 >
-                  {selectedUser.isActive ? "Deactivate account" : "Activate account"}
+                  {selectedUser.isActive ? t("admin.users.deactivateAccount") : t("admin.users.activateAccount")}
                 </button>
               </div>
 
               <div className="aurelia-admin-users-permissions">
-                <h3 className="aurelia-admin-card-title mb-2">Permissions</h3>
+                <h3 className="aurelia-admin-card-title mb-2">{t("admin.users.permissions")}</h3>
                 <div className="aurelia-admin-users-permission-grid">
                   {availablePermissions.map((permission) => (
                     <label key={permission} className="aurelia-admin-users-permission-item">
@@ -238,7 +240,7 @@ export const AdminUsersPage = () => {
                       })
                     }
                   >
-                    Save permissions
+                    {t("admin.users.savePermissions")}
                   </button>
                 </div>
               </div>
@@ -250,21 +252,21 @@ export const AdminUsersPage = () => {
       {selectedUser && confirmIntent && (
         <div className="aurelia-admin-confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="admin-confirm-title">
           <div className="aurelia-admin-confirm-modal">
-            <p className="aurelia-admin-kicker mb-2">Confirm action</p>
+            <p className="aurelia-admin-kicker mb-2">{t("admin.users.confirmKicker")}</p>
             <h3 id="admin-confirm-title" className="aurelia-admin-card-title mb-2">
-              {confirmIntent === "activate" ? "Activate account?" : "Deactivate account?"}
+              {confirmIntent === "activate" ? t("admin.users.activateTitle") : t("admin.users.deactivateTitle")}
             </h3>
             <p className="aurelia-muted mb-3">
               {confirmIntent === "activate"
-                ? "This will reactivate the user account and restore access immediately."
-                : "This soft-delete will deactivate the account. You can reverse it later by activating the user."}
+                ? t("admin.users.activateBody")
+                : t("admin.users.deactivateBody")}
             </p>
             <div className="aurelia-admin-confirm-actions">
               <button type="button" className="aurelia-btn aurelia-btn-outline" onClick={() => setConfirmIntent(null)}>
-                Cancel
+                {t("admin.common.cancel")}
               </button>
               <button type="button" className={confirmActionClass} onClick={runConfirmedAction}>
-                {confirmIntent === "activate" ? "Confirm activate" : "Confirm deactivate"}
+                {confirmIntent === "activate" ? t("admin.users.confirmActivate") : t("admin.users.confirmDeactivate")}
               </button>
             </div>
           </div>

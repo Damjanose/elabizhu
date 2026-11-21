@@ -1,4 +1,5 @@
 import axios from "axios"
+import { tNow } from "../i18n"
 
 type ApiIssue = {
   path?: string[]
@@ -11,22 +12,22 @@ type ApiErrorBody = {
 }
 
 const humanizeFieldName = (field: string) => {
-  if (field === "fullName") return "Full name"
-  if (field === "email") return "Email"
-  if (field === "password") return "Password"
+  if (field === "fullName") return tNow("account.field.fullName")
+  if (field === "email") return tNow("account.field.email")
+  if (field === "password") return tNow("account.field.password")
   return field
 }
 
 const toFriendlyIssueMessage = (field: string, rawMessage: string) => {
   const label = humanizeFieldName(field)
   if (rawMessage.includes("expected string to have >=1 characters")) {
-    return `${label} is required`
+    return tNow("account.validation.fieldRequired", { field: label })
   }
   if (rawMessage.includes("expected string to have >=8 characters")) {
-    return `${label} must be at least 8 characters`
+    return tNow("account.validation.fieldMin", { field: label })
   }
   if (rawMessage.toLowerCase().includes("invalid email")) {
-    return "Please enter a valid email address"
+    return tNow("account.validation.emailInvalid")
   }
   return rawMessage
 }
@@ -51,6 +52,6 @@ export const extractFieldErrors = (error: unknown) => {
     }
   }
 
-  formError = data?.message ?? error.message ?? "Request failed"
+  formError = data?.message ?? error.message ?? tNow("account.error.requestFailed")
   return { fieldErrors, formError }
 }

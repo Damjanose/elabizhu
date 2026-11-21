@@ -1,0 +1,236 @@
+import type { MessageSet } from "../types"
+
+/** Keys for the "catalog" area, prefixed "catalog." e.g. "catalog.title". Add keys to BOTH sq and en. */
+export const catalogMessages: MessageSet = {
+  sq: {
+    "catalog.products.featuredTitle": "Copat e zgjedhura",
+    "catalog.products.allTitle": "Të gjitha produktet",
+
+    "catalog.collections.kicker": "Atelier-i",
+    "catalog.collections.title": "Koleksionet",
+    "catalog.collections.copy":
+      "Zbuloni çdo copë që gjendet aktualisht në katalogun tonë—të përpunuar me dorë, gati për t’u dashur dhe e krijuar për t’u mbajtur gjatë.",
+
+    "catalog.categories.kicker": "ElaBizhu Atelier",
+    "catalog.categories.title": "Blini sipas kategorisë",
+    "catalog.categories.copy":
+      "Zgjidhni një kategori për të eksploruar copat e krijuara me kujdes nga artizanët tanë mjeshtër.",
+    "catalog.categories.loading": "Duke ngarkuar kategoritë",
+    "catalog.categories.error": "Kategoritë nuk u ngarkuan. Ju lutemi rifreskoni faqen dhe provoni përsëri.",
+    "catalog.categories.empty": "Nuk ka ende kategori të disponueshme.",
+    "catalog.categories.browse": "Shfleto {name}",
+    "catalog.categories.collection": "Koleksion",
+
+    "catalog.action.tryAgain": "Provo përsëri",
+    "catalog.action.retrying": "Duke provuar përsëri…",
+    "catalog.action.returnHome": "Kthehu në kryefaqe",
+    "catalog.action.browseCategories": "Shfleto të gjitha kategoritë",
+    "catalog.action.shopByCategory": "Blini sipas kategorisë",
+    "catalog.action.viewAllProducts": "Shiko të gjitha produktet",
+    "catalog.action.browseCollections": "Shfleto koleksionet",
+
+    "catalog.error.kicker": "Problem me lidhjen",
+    "catalog.error.catalogueTitle": "Nuk mundëm ta ngarkojmë katalogun",
+    "catalog.error.categoryTitle": "Nuk mundëm ta ngarkojmë këtë kategori",
+    "catalog.error.copy": "Diçka e papritur ndërpreu kërkesën tonë. Ju lutemi provoni përsëri.",
+
+    "catalog.empty.featuredKicker": "Copa të zgjedhura",
+    "catalog.empty.catalogueKicker": "Katalogu i Atelier-it",
+    "catalog.empty.featuredTitle": "Asnjë copë e zgjedhur për momentin",
+    "catalog.empty.allTitle": "Nuk ka ende copa të disponueshme",
+    "catalog.empty.featuredCopy":
+      "Redaktorët tanë po përzgjedhin koleksionin e radhës. Ndërkohë, eksploroni koleksionin e plotë.",
+    "catalog.empty.allCopy": "Artizanët tanë po krijojnë koleksionin e radhës. Kthehuni së shpejti.",
+
+    "catalog.category.fallbackTitle": "Produktet e kategorisë",
+    "catalog.category.emptyTitle": "Nuk ka ende copa në këtë kategori",
+    "catalog.category.emptyCopy":
+      "Artizanët tanë ende po përfundojnë përzgjedhjen e fundit. Ndërkohë, eksploroni koleksione të tjera.",
+
+    "catalog.notFound.kicker": "E humbur në Atelier",
+    "catalog.notFound.title": "Faqja që kërkoni është tërhequr me qetësi.",
+    "catalog.notFound.copy":
+      "Mund të jetë zhvendosur, riemërtuar ose të mos ketë ekzistuar kurrë. Lejoni t’ju udhëheqim përsëri te koleksioni.",
+
+    "catalog.errorPage.kicker": "Një pauzë e papritur",
+    "catalog.errorPage.title": "Diçka u prish në punishte.",
+    "catalog.errorPage.copy":
+      "Një gabim i papritur ndërpreu punën tonë. Ekipi ynë është njoftuar—ju lutemi rifreskoni faqen, ose kthehuni në kryefaqe dhe provoni përsëri pas pak.",
+
+    "catalog.support.assist": "Keni nevojë për ndihmë? Na kontaktoni te konsulenti ynë në",
+
+    "catalog.journal.kicker": "Jurnali",
+    "catalog.journal.title": "Histori nga Atelier-i",
+    "catalog.journal.copy":
+      "Zanati, përgjegjësia dhe arti i qetë i veshjes së diçkaje që do t’i mbijetojë modave.",
+    "catalog.journal.featuredMeta": "Të zgjedhura · {min} min lexim",
+    "catalog.journal.minRead": "{min} min lexim",
+    "catalog.journal.minOnly": "{min} min",
+    "catalog.journal.notFoundTitle": "Kjo histori nuk u gjet",
+    "catalog.journal.notFoundCopy": "Artikulli mund të jetë zhvendosur ose lidhja është e gabuar.",
+    "catalog.journal.backToJournal": "Kthehu te Jurnali",
+    "catalog.journal.allStories": "← Të gjitha historitë e jurnalit",
+
+    "catalog.badge.new": "E re",
+    "catalog.badge.lowStock": "Shitet shpejt",
+    "catalog.badge.soldOut": "E shitur",
+
+    "catalog.pdp.collection": "KOLEKSIONI {name}",
+    "catalog.pdp.notFound": "Nuk e gjetëm këtë copë.",
+    "catalog.pdp.browseLink": "Shfletoni koleksionin",
+    "catalog.pdp.addedOne": "“{name}” u shtua në shportë",
+    "catalog.pdp.addedMany": "{count} × “{name}” u shtua në shportë",
+    "catalog.pdp.addFailed": "Nuk mundëm ta shtonim në shportë",
+    "catalog.pdp.outOfStock": "Jashtë stokut",
+    "catalog.pdp.lowStock": "Stok i ulët — kanë mbetur vetëm disa",
+    "catalog.pdp.inStock": "Në stok dhe gati për dërgim",
+    "catalog.pdp.soldOut": "E shitur",
+    "catalog.pdp.adding": "Duke shtuar…",
+    "catalog.pdp.added": "U shtua në shportë ✓",
+    "catalog.pdp.addToCart": "Shto në shportë",
+    "catalog.pdp.orderInstagram": "Porosit në Instagram",
+    "catalog.pdp.quantity": "Sasia",
+    "catalog.pdp.decrease": "Zvogëlo sasinë",
+    "catalog.pdp.increase": "Rrit sasinë",
+    "catalog.pdp.thumbs": "Fotot e produktit",
+    "catalog.pdp.viewing": "Rezervo një shikim privat",
+    "catalog.pdp.viewingSubject": "Shikim privat — {name}",
+    "catalog.pdp.viewingBody":
+      "Përshëndetje, atelier ElaBizhu,\n\nDo të doja të rezervoja një shikim privat për “{name}”. A mund të më tregoni disponueshmërinë për dy javët e ardhshme?\n\nFaleminderit.",
+    "catalog.pdp.guestLead": "Po blini si vizitor.",
+    "catalog.pdp.signIn": "Hyni",
+    "catalog.pdp.guestTail": "për ta sinkronizuar përzgjedhjen tuaj në të gjitha pajisjet dhe për të përfunduar blerjen me siguri.",
+    "catalog.pdp.specs": "Materialet dhe specifikimet",
+    "catalog.pdp.rowCollection": "Koleksioni",
+    "catalog.pdp.rowReference": "Referenca",
+    "catalog.pdp.rowAvailability": "Disponueshmëria",
+    "catalog.pdp.rowCrafted": "Prodhuar",
+    "catalog.pdp.craftedAt": "Atelier-i në Londër",
+    "catalog.pdp.readyToShip": "{count} gati për dërgim",
+    "catalog.pdp.madeToOrder": "Bëhet me porosi",
+    "catalog.pdp.shipping": "Dërgesa dhe kthimet",
+    "catalog.pdp.shippingCopy":
+      "Dërgesë e kujdesshme, me nënshkrim të marrësit. Copat dërgohen brenda dy ditësh pune, të paraqitura në kutinë tonë të lakuar me vernik. Kthimet pranohen brenda 30 ditësh nga marrja, për çdo copë të pa veshur.",
+    "catalog.pdp.recommended": "Të rekomanduara për ju",
+    "catalog.pdp.scrollLeft": "Lëviz rekomandimet majtas",
+    "catalog.pdp.scrollRight": "Lëviz rekomandimet djathtas",
+    "catalog.pdp.recEmpty": "Do t’i shfaqim copat plotësuese këtu sapo të kemi më shumë artikuj në stok.",
+    "catalog.pdp.loadingProduct": "Duke ngarkuar produktin",
+    "catalog.pdp.loadingRecs": "Duke ngarkuar rekomandimet",
+  },
+  en: {
+    "catalog.products.featuredTitle": "Featured products",
+    "catalog.products.allTitle": "All products",
+
+    "catalog.collections.kicker": "The Atelier",
+    "catalog.collections.title": "Collections",
+    "catalog.collections.copy":
+      "Discover every piece currently in our catalogue—hand-finished, ready to love, and made to last.",
+
+    "catalog.categories.kicker": "ElaBizhu Atelier",
+    "catalog.categories.title": "Shop by Category",
+    "catalog.categories.copy": "Pick a category to explore pieces crafted with intention by our master artisans.",
+    "catalog.categories.loading": "Loading categories",
+    "catalog.categories.error": "Could not load categories. Please refresh and try again.",
+    "catalog.categories.empty": "No categories available yet.",
+    "catalog.categories.browse": "Browse {name}",
+    "catalog.categories.collection": "Collection",
+
+    "catalog.action.tryAgain": "Try Again",
+    "catalog.action.retrying": "Retrying…",
+    "catalog.action.returnHome": "Return Home",
+    "catalog.action.browseCategories": "Browse All Categories",
+    "catalog.action.shopByCategory": "Shop by Category",
+    "catalog.action.viewAllProducts": "View All Products",
+    "catalog.action.browseCollections": "Browse Collections",
+
+    "catalog.error.kicker": "Connection Issue",
+    "catalog.error.catalogueTitle": "We couldn’t load the catalogue",
+    "catalog.error.categoryTitle": "We couldn’t load this category",
+    "catalog.error.copy": "An unexpected issue interrupted our request. Please try again.",
+
+    "catalog.empty.featuredKicker": "Featured Pieces",
+    "catalog.empty.catalogueKicker": "Atelier Catalogue",
+    "catalog.empty.featuredTitle": "No featured pieces just now",
+    "catalog.empty.allTitle": "No pieces available yet",
+    "catalog.empty.featuredCopy":
+      "Our editors are curating the next selection. Explore the full collection in the meantime.",
+    "catalog.empty.allCopy": "Our artisans are crafting the next collection. Check back soon.",
+
+    "catalog.category.fallbackTitle": "Category products",
+    "catalog.category.emptyTitle": "No pieces in this category yet",
+    "catalog.category.emptyCopy":
+      "Our artisans are still finishing the latest selection. Explore other collections in the meantime.",
+
+    "catalog.notFound.kicker": "Lost in the Atelier",
+    "catalog.notFound.title": "The page you’re looking for has been quietly retired.",
+    "catalog.notFound.copy":
+      "It may have been moved, renamed, or never quite existed. Allow us to guide you back to the collection.",
+
+    "catalog.errorPage.kicker": "An Unexpected Pause",
+    "catalog.errorPage.title": "Something has come undone in the workshop.",
+    "catalog.errorPage.copy":
+      "An unexpected error interrupted our craft. Our team has been notified — please refresh, or return home and try again in a moment.",
+
+    "catalog.support.assist": "Need assistance? Reach our concierge at",
+
+    "catalog.journal.kicker": "Journal",
+    "catalog.journal.title": "Stories from the Atelier",
+    "catalog.journal.copy":
+      "Craft, responsibility, and the quiet art of wearing something that will outlive trends.",
+    "catalog.journal.featuredMeta": "Featured · {min} min read",
+    "catalog.journal.minRead": "{min} min read",
+    "catalog.journal.minOnly": "{min} min",
+    "catalog.journal.notFoundTitle": "This story could not be found",
+    "catalog.journal.notFoundCopy": "The article may have moved or the link is incorrect.",
+    "catalog.journal.backToJournal": "Back to Journal",
+    "catalog.journal.allStories": "← All journal stories",
+
+    "catalog.badge.new": "New",
+    "catalog.badge.lowStock": "Selling fast",
+    "catalog.badge.soldOut": "Sold out",
+
+    "catalog.pdp.collection": "{name} COLLECTION",
+    "catalog.pdp.notFound": "We couldn’t find this piece.",
+    "catalog.pdp.browseLink": "Browse the collection",
+    "catalog.pdp.addedOne": "“{name}” added to cart",
+    "catalog.pdp.addedMany": "{count} × “{name}” added to cart",
+    "catalog.pdp.addFailed": "Could not add to cart",
+    "catalog.pdp.outOfStock": "Out of stock",
+    "catalog.pdp.lowStock": "Low stock — only a few remain",
+    "catalog.pdp.inStock": "In stock & ready to ship",
+    "catalog.pdp.soldOut": "Sold Out",
+    "catalog.pdp.adding": "Adding…",
+    "catalog.pdp.added": "Added to Cart ✓",
+    "catalog.pdp.addToCart": "Add to Cart",
+    "catalog.pdp.orderInstagram": "Order on Instagram",
+    "catalog.pdp.quantity": "Quantity",
+    "catalog.pdp.decrease": "Decrease quantity",
+    "catalog.pdp.increase": "Increase quantity",
+    "catalog.pdp.thumbs": "Product images",
+    "catalog.pdp.viewing": "Book a Private Viewing",
+    "catalog.pdp.viewingSubject": "Private viewing — {name}",
+    "catalog.pdp.viewingBody":
+      "Hello ElaBizhu atelier,\n\nI’d like to book a private viewing for the “{name}”. Could you share availability over the next two weeks?\n\nThank you.",
+    "catalog.pdp.guestLead": "Shopping as a guest.",
+    "catalog.pdp.signIn": "Sign in",
+    "catalog.pdp.guestTail": "to sync your selection across devices and check out securely.",
+    "catalog.pdp.specs": "Materials & Specifications",
+    "catalog.pdp.rowCollection": "Collection",
+    "catalog.pdp.rowReference": "Reference",
+    "catalog.pdp.rowAvailability": "Availability",
+    "catalog.pdp.rowCrafted": "Crafted",
+    "catalog.pdp.craftedAt": "London Atelier",
+    "catalog.pdp.readyToShip": "{count} ready to ship",
+    "catalog.pdp.madeToOrder": "Made to order",
+    "catalog.pdp.shipping": "Shipping & Returns",
+    "catalog.pdp.shippingCopy":
+      "Complimentary white-glove delivery, signature required. Pieces ship within two business days, presented in our signature lacquered case. Returns are accepted within 30 days of receipt for any unworn piece.",
+    "catalog.pdp.recommended": "Recommended for You",
+    "catalog.pdp.scrollLeft": "Scroll recommendations left",
+    "catalog.pdp.scrollRight": "Scroll recommendations right",
+    "catalog.pdp.recEmpty": "We’ll surface companion pieces here once more of the collection is in stock.",
+    "catalog.pdp.loadingProduct": "Loading product",
+    "catalog.pdp.loadingRecs": "Loading recommendations",
+  },
+}

@@ -6,6 +6,8 @@ import { useProductQuery, useProductRecommendationsQuery } from "../hooks/querie
 import { useCart } from "../hooks/useCart"
 import { useCategories } from "../hooks/useCatalog"
 import { useQueryLoadState } from "../hooks/useQueryLoadState"
+import { INSTAGRAM_URL } from "../data/instagram"
+import { useI18n } from "../i18n"
 import { fadeIn, fadeUp, listItem, listStagger, scrollRevealViewport, transition } from "../lib/motion"
 import { loginHrefWithReturn } from "../utils/post-auth-redirect"
 import { successToast, toastFromError } from "../utils/toast"
@@ -25,6 +27,7 @@ export const ProductDetailsPage = () => {
   const location = useLocation()
   const signInHref = loginHrefWithReturn(location)
   const { addItem, isUpdating, isGuest } = useCart()
+  const { t } = useI18n()
 
   const productQuery = useProductQuery(productId, !!productId)
   const recommendationsQuery = useProductRecommendationsQuery(productId, !!productId)
@@ -49,7 +52,7 @@ export const ProductDetailsPage = () => {
     return (
       <section className="aurelia-pdp-shell">
         <div className="aurelia-pdp-state aurelia-pdp-state-error">
-          We couldn’t find this piece. <Link to="/products">Browse the collection</Link>.
+          {t("catalog.pdp.notFound")} <Link to="/products">{t("catalog.pdp.browseLink")}</Link>.
         </div>
       </section>
     )
@@ -69,16 +72,16 @@ export const ProductDetailsPage = () => {
             await addItem({ product, quantity })
             successToast(
               quantity > 1
-                ? `${quantity} × “${product.name}” added to cart`
-                : `“${product.name}” added to cart`,
+                ? t("catalog.pdp.addedMany", { count: quantity, name: product.name })
+                : t("catalog.pdp.addedOne", { name: product.name }),
             )
           } catch (err) {
-            toastFromError(err, "Could not add to cart")
+            toastFromError(err, t("catalog.pdp.addFailed"))
           }
         }}
       />
       <RecommendationsRail
-        title="Recommended for You"
+        title={t("catalog.pdp.recommended")}
         items={recommendationsQuery.data ?? []}
         showSkeleton={showRecommendationsSkeleton}
       />
@@ -97,6 +100,7 @@ type HeroProps = {
 }
 
 const ProductHero = ({ product, categoryName, signInHref, canBuy, isGuest, isUpdating, onAdd }: HeroProps) => {
+  const { t } = useI18n()
   const images = product.images.length > 0 ? product.images : []
   const [activeIndex, setActiveIndex] = useState(0)
   const [quantity, setQuantity] = useState(1)
@@ -105,12 +109,12 @@ const ProductHero = ({ product, categoryName, signInHref, canBuy, isGuest, isUpd
   const activeImage = images[activeIndex]?.url ?? PLACEHOLDER_IMAGE
 
   const stockState = product.stockQuantity <= 0
-    ? { label: "Out of stock", tone: "out-of-stock" as const }
+    ? { label: t("catalog.pdp.outOfStock"), tone: "out-of-stock" as const }
     : product.stockQuantity <= product.lowStockThreshold
-      ? { label: "Low stock — only a few remain", tone: "low-stock" as const }
-      : { label: "In stock & ready to ship", tone: "in-stock" as const }
+      ? { label: t("catalog.pdp.lowStock"), tone: "low-stock" as const }
+      : { label: t("catalog.pdp.inStock"), tone: "in-stock" as const }
 
-  const collectionLabel = (categoryName ?? "ElaBizhu").toUpperCase() + " COLLECTION"
+  const collectionLabel = t("catalog.pdp.collection", { name: (categoryName ?? "ElaBizhu").toUpperCase() })
 
   const handleAdd = () => {
     if (!canBuy || isUpdating) return
@@ -121,16 +125,14 @@ const ProductHero = ({ product, categoryName, signInHref, canBuy, isGuest, isUpd
 
   const viewingMailto =
     `mailto:atelier@aurelia.com` +
-    `?subject=${encodeURIComponent(`Private viewing — ${product.name}`)}` +
-    `&body=${encodeURIComponent(
-      `Hello ElaBizhu atelier,\n\nI’d like to book a private viewing for the “${product.name}”. Could you share availability over the next two weeks?\n\nThank you.`,
-    )}`
+    `?subject=${encodeURIComponent(t("catalog.pdp.viewingSubject", { name: product.name }))}` +
+    `&body=${encodeURIComponent(t("catalog.pdp.viewingBody", { name: product.name }))}`
 
   return (
     <div className="aurelia-pdp-grid">
       <div className="aurelia-pdp-gallery-col">
         <div className="aurelia-pdp-gallery">
-          <div className="aurelia-pdp-thumbs" role="tablist" aria-label="Product images">
+          <div className="aurelia-pdp-thumbs" role="tablist" aria-label={t("catalog.pdp.thumbs")}>
             {(images.length > 0 ? images : [{ id: "placeholder", url: PLACEHOLDER_IMAGE, sortOrder: 0 }]).map((img, i) => (
               <motion.button
                 key={img.id}
@@ -188,10 +190,10 @@ const ProductHero = ({ product, categoryName, signInHref, canBuy, isGuest, isUpd
 
         <div className="aurelia-pdp-actions">
           <div className="aurelia-pdp-action-row">
-            <div className="aurelia-pdp-qty" role="group" aria-label="Quantity">
+            <div className="aurelia-pdp-qty" role="group" aria-label={t("catalog.pdp.quantity")}>
               <motion.button
                 type="button"
-                aria-label="Decrease quantity"
+                aria-label={t("catalog.pdp.decrease")}
                 disabled={quantity <= 1}
                 onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                 whileTap={quantity <= 1 ? undefined : { scale: 0.9 }}
@@ -202,7 +204,7 @@ const ProductHero = ({ product, categoryName, signInHref, canBuy, isGuest, isUpd
               <span className="aurelia-pdp-qty-value" aria-live="polite">{quantity}</span>
               <motion.button
                 type="button"
-                aria-label="Increase quantity"
+                aria-label={t("catalog.pdp.increase")}
                 disabled={quantity >= maxQty}
                 onClick={() => setQuantity((q) => Math.min(maxQty, q + 1))}
                 whileTap={quantity >= maxQty ? undefined : { scale: 0.9 }}
@@ -221,59 +223,64 @@ const ProductHero = ({ product, categoryName, signInHref, canBuy, isGuest, isUpd
               transition={transition.quick}
             >
               {!canBuy
-                ? "Sold Out"
+                ? t("catalog.pdp.soldOut")
                 : isUpdating
-                  ? "Adding…"
+                  ? t("catalog.pdp.adding")
                   : justAdded
-                    ? "Added to Cart ✓"
-                    : "Add to Cart"}
+                    ? t("catalog.pdp.added")
+                    : t("catalog.pdp.addToCart")}
             </motion.button>
           </div>
+          <a
+            className="btn btn-outline-dark rounded-pill"
+            href={INSTAGRAM_URL}
+            target="_blank"
+            rel="noopener"
+          >
+            {t("catalog.pdp.orderInstagram")}
+          </a>
           <a className="aurelia-pdp-secondary" href={viewingMailto}>
-            Book a Private Viewing
+            {t("catalog.pdp.viewing")}
           </a>
           {isGuest && (
             <p className="aurelia-pdp-signin">
-              Shopping as a guest.{" "}
-              <Link to={signInHref}>Sign in</Link> to sync your selection across
-              devices and check out securely.
+              {t("catalog.pdp.guestLead")}{" "}
+              <Link to={signInHref}>{t("catalog.pdp.signIn")}</Link> {t("catalog.pdp.guestTail")}
             </p>
           )}
         </div>
 
         <div className="aurelia-pdp-accordion">
-          <Accordion title="Materials & Specifications" defaultOpen>
+          <Accordion title={t("catalog.pdp.specs")} defaultOpen>
             <dl className="aurelia-pdp-acc-rows">
               {categoryName && (
                 <div className="aurelia-pdp-acc-row">
-                  <span>Collection</span>
+                  <span>{t("catalog.pdp.rowCollection")}</span>
                   <span>{categoryName}</span>
                 </div>
               )}
               <div className="aurelia-pdp-acc-row">
-                <span>Reference</span>
+                <span>{t("catalog.pdp.rowReference")}</span>
                 <span>{product.id.slice(0, 8).toUpperCase()}</span>
               </div>
               <div className="aurelia-pdp-acc-row">
-                <span>Availability</span>
+                <span>{t("catalog.pdp.rowAvailability")}</span>
                 <span>
                   {product.stockQuantity > 0
-                    ? `${product.stockQuantity} ready to ship`
-                    : "Made to order"}
+                    ? t("catalog.pdp.readyToShip", { count: product.stockQuantity })
+                    : t("catalog.pdp.madeToOrder")}
                 </span>
               </div>
               <div className="aurelia-pdp-acc-row">
-                <span>Crafted</span>
-                <span>London Atelier</span>
+                <span>{t("catalog.pdp.rowCrafted")}</span>
+                <span>{t("catalog.pdp.craftedAt")}</span>
               </div>
             </dl>
           </Accordion>
 
-          <Accordion title="Shipping & Returns">
+          <Accordion title={t("catalog.pdp.shipping")}>
             <p className="aurelia-pdp-acc-copy">
-              Complimentary white-glove delivery, signature required. Pieces ship within
-              two business days, presented in our signature lacquered case. Returns are
-              accepted within 30 days of receipt for any unworn piece.
+              {t("catalog.pdp.shippingCopy")}
             </p>
           </Accordion>
         </div>
@@ -337,6 +344,7 @@ const RecommendationsRail = ({
   items: Product[]
   showSkeleton: boolean
 }) => {
+  const { t } = useI18n()
   const trackRef = useRef<HTMLDivElement | null>(null)
 
   const scrollBy = (direction: 1 | -1) => {
@@ -362,7 +370,7 @@ const RecommendationsRail = ({
           <motion.button
             type="button"
             className="aurelia-rec-arrow"
-            aria-label="Scroll recommendations left"
+            aria-label={t("catalog.pdp.scrollLeft")}
             onClick={() => scrollBy(-1)}
             disabled={items.length === 0}
             whileTap={items.length === 0 ? undefined : { scale: 0.92 }}
@@ -373,7 +381,7 @@ const RecommendationsRail = ({
           <motion.button
             type="button"
             className="aurelia-rec-arrow"
-            aria-label="Scroll recommendations right"
+            aria-label={t("catalog.pdp.scrollRight")}
             onClick={() => scrollBy(1)}
             disabled={items.length === 0}
             whileTap={items.length === 0 ? undefined : { scale: 0.92 }}
@@ -388,7 +396,7 @@ const RecommendationsRail = ({
         <RecommendationsRailSkeleton />
       ) : items.length === 0 ? (
         <div className="aurelia-rec-empty">
-          We’ll surface companion pieces here once more of the collection is in stock.
+          {t("catalog.pdp.recEmpty")}
         </div>
       ) : (
         <motion.div
@@ -429,44 +437,50 @@ const RecommendationsRail = ({
   )
 }
 
-const ProductDetailsSkeleton = () => (
-  <section className="aurelia-pdp-shell" aria-busy="true" aria-live="polite" aria-label="Loading product">
-    <div className="aurelia-pdp-grid">
-      <div className="aurelia-pdp-gallery-col">
-        <div className="aurelia-pdp-gallery">
-          <div className="aurelia-pdp-thumbs" aria-hidden>
-            {[0, 1, 2].map((index) => (
-              <div key={index} className="aurelia-pdp-skeleton-thumb aurelia-shimmer-block" />
-            ))}
+const ProductDetailsSkeleton = () => {
+  const { t } = useI18n()
+  return (
+    <section className="aurelia-pdp-shell" aria-busy="true" aria-live="polite" aria-label={t("catalog.pdp.loadingProduct")}>
+      <div className="aurelia-pdp-grid">
+        <div className="aurelia-pdp-gallery-col">
+          <div className="aurelia-pdp-gallery">
+            <div className="aurelia-pdp-thumbs" aria-hidden>
+              {[0, 1, 2].map((index) => (
+                <div key={index} className="aurelia-pdp-skeleton-thumb aurelia-shimmer-block" />
+              ))}
+            </div>
+            <div className="aurelia-pdp-skeleton-main aurelia-shimmer-block" aria-hidden />
           </div>
-          <div className="aurelia-pdp-skeleton-main aurelia-shimmer-block" aria-hidden />
         </div>
-      </div>
 
-      <div className="aurelia-pdp-info-col" aria-hidden>
-        <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--kicker aurelia-shimmer-block" />
-        <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--title aurelia-shimmer-block" />
-        <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--price aurelia-shimmer-block" />
-        <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--copy aurelia-shimmer-block" />
-        <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--copy aurelia-shimmer-block" />
-        <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--copy-short aurelia-shimmer-block" />
-        <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--stock aurelia-shimmer-block" />
-        <div className="aurelia-pdp-skeleton-actions">
-          <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--qty aurelia-shimmer-block" />
-          <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--cta aurelia-shimmer-block" />
+        <div className="aurelia-pdp-info-col" aria-hidden>
+          <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--kicker aurelia-shimmer-block" />
+          <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--title aurelia-shimmer-block" />
+          <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--price aurelia-shimmer-block" />
+          <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--copy aurelia-shimmer-block" />
+          <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--copy aurelia-shimmer-block" />
+          <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--copy-short aurelia-shimmer-block" />
+          <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--stock aurelia-shimmer-block" />
+          <div className="aurelia-pdp-skeleton-actions">
+            <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--qty aurelia-shimmer-block" />
+            <div className="aurelia-pdp-skeleton-line aurelia-pdp-skeleton-line--cta aurelia-shimmer-block" />
+          </div>
         </div>
       </div>
+    </section>
+  )
+}
+
+const RecommendationsRailSkeleton = () => {
+  const { t } = useI18n()
+  return (
+    <div className="aurelia-rec-track" aria-busy="true" aria-live="polite" aria-label={t("catalog.pdp.loadingRecs")}>
+      {[0, 1, 2, 3].map((index) => (
+        <div key={index} className="aurelia-rec-item" aria-hidden>
+          <div className="aurelia-rec-skeleton-image aurelia-shimmer-block" />
+          <div className="aurelia-rec-skeleton-caption aurelia-shimmer-block" />
+        </div>
+      ))}
     </div>
-  </section>
-)
-
-const RecommendationsRailSkeleton = () => (
-  <div className="aurelia-rec-track" aria-busy="true" aria-live="polite" aria-label="Loading recommendations">
-    {[0, 1, 2, 3].map((index) => (
-      <div key={index} className="aurelia-rec-item" aria-hidden>
-        <div className="aurelia-rec-skeleton-image aurelia-shimmer-block" />
-        <div className="aurelia-rec-skeleton-caption aurelia-shimmer-block" />
-      </div>
-    ))}
-  </div>
-)
+  )
+}

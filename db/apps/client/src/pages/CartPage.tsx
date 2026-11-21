@@ -7,11 +7,14 @@ import { useCart } from "../hooks/useCart"
 import { EmptyState } from "../components/feedback/EmptyState"
 import { fadeUp, listItem, listStagger, transition } from "../lib/motion"
 import { successToast, toastFromError } from "../utils/toast"
+import { useI18n, type Lang, type TFunction } from "../i18n"
 
 const TAX_RATE = 0.2
 
-const formatCurrency = (value: string | number) =>
-  new Intl.NumberFormat("en-GB", {
+const localeFor = (lang: Lang) => (lang === "sq" ? "sq-AL" : "en-GB")
+
+const formatCurrency = (value: string | number, lang: Lang) =>
+  new Intl.NumberFormat(localeFor(lang), {
     style: "currency",
     currency: "GBP",
     minimumFractionDigits: 2,
@@ -19,18 +22,19 @@ const formatCurrency = (value: string | number) =>
   }).format(Number(value))
 
 const STEPS = [
-  { id: "cart", label: "Cart" },
-  { id: "shipping", label: "Shipping" },
-  { id: "payment", label: "Payment" },
+  { id: "cart", labelKey: "account.steps.cart" },
+  { id: "shipping", labelKey: "account.steps.shipping" },
+  { id: "payment", labelKey: "account.steps.payment" },
 ] as const
 
 const TRUST_BADGES = [
-  { icon: "verified", label: "Authenticated" },
-  { icon: "lock", label: "Secure Payment" },
-  { icon: "recycling", label: "Ethical Sourcing" },
+  { icon: "verified", labelKey: "account.trust.authenticated" },
+  { icon: "lock", labelKey: "account.trust.securePayment" },
+  { icon: "recycling", labelKey: "account.trust.ethical" },
 ] as const
 
 export const CartPage = () => {
+  const { t, lang } = useI18n()
   const {
     data,
     isLoading,
@@ -45,7 +49,7 @@ export const CartPage = () => {
 
   if (isLoading) {
     return (
-      <section className="aurelia-cart-shell" aria-busy="true" aria-live="polite" aria-label="Loading cart">
+      <section className="aurelia-cart-shell" aria-busy="true" aria-live="polite" aria-label={t("account.cart.loadingAria")}>
         <Stepper activeIndex={0} />
         <div className="aurelia-cart-grid">
           <div className="aurelia-cart-main">
@@ -79,11 +83,11 @@ export const CartPage = () => {
           variant="card"
           tone="danger"
           icon="error"
-          kicker="Connection Issue"
-          title="We couldn’t load your cart"
-          copy="An unexpected error interrupted our request. Please try again."
-          cta={{ label: isFetching ? "Retrying…" : "Try Again", onClick: () => void refetch() }}
-          secondaryCta={{ to: "/products", label: "Browse Collections" }}
+          kicker={t("account.common.connectionIssue")}
+          title={t("account.cart.loadError")}
+          copy={t("account.common.unexpectedError")}
+          cta={{ label: isFetching ? t("account.common.retrying") : t("account.common.tryAgain"), onClick: () => void refetch() }}
+          secondaryCta={{ to: "/products", label: t("account.common.browseCollections") }}
         />
       </section>
     )
@@ -98,11 +102,11 @@ export const CartPage = () => {
         <EmptyState
           variant="card"
           icon="shopping_bag"
-          kicker="Your Atelier"
-          title="Your cart is empty"
-          copy="When you set a piece aside, it will rest here until you’re ready to continue."
-          cta={{ to: "/products", label: "Browse Collections" }}
-          secondaryCta={{ to: "/categories", label: "Shop by Category" }}
+          kicker={t("account.cart.emptyKicker")}
+          title={t("account.cart.emptyTitle")}
+          copy={t("account.cart.emptyCopy")}
+          cta={{ to: "/products", label: t("account.common.browseCollections") }}
+          secondaryCta={{ to: "/categories", label: t("account.common.shopByCategory") }}
         />
       </section>
     )
@@ -113,7 +117,7 @@ export const CartPage = () => {
   const total = subtotalNumber + estimatedTax
 
   const checkoutTo = isGuest ? `/login?redirect=${encodeURIComponent("/checkout")}` : "/checkout"
-  const checkoutLabel = isGuest ? "Sign in to Checkout" : "Proceed to Checkout"
+  const checkoutLabel = isGuest ? t("account.cart.checkoutGuest") : t("account.cart.checkout")
 
   return (
     <motion.section className="aurelia-cart-shell" variants={fadeUp} initial="hidden" animate="visible">
@@ -121,13 +125,13 @@ export const CartPage = () => {
 
       <div className="aurelia-cart-grid">
         <div className="aurelia-cart-main">
-          <h1 className="aurelia-cart-title">Your Selection</h1>
+          <h1 className="aurelia-cart-title">{t("account.cart.title")}</h1>
 
-          <div className="aurelia-cart-table" role="table" aria-label="Cart items">
+          <div className="aurelia-cart-table" role="table" aria-label={t("account.cart.tableAria")}>
             <div className="aurelia-cart-thead" role="row">
-              <span role="columnheader">Product</span>
-              <span role="columnheader" className="text-center">Quantity</span>
-              <span role="columnheader" className="text-end">Total</span>
+              <span role="columnheader">{t("account.cart.colProduct")}</span>
+              <span role="columnheader" className="text-center">{t("account.cart.colQuantity")}</span>
+              <span role="columnheader" className="text-end">{t("account.cart.colTotal")}</span>
             </div>
 
             <motion.ul className="aurelia-cart-rows" variants={listStagger} initial="hidden" animate="visible">
@@ -141,15 +145,15 @@ export const CartPage = () => {
                     try {
                       await setQty({ productId: line.productId, quantity })
                     } catch (err) {
-                      toastFromError(err, "Could not update quantity")
+                      toastFromError(err, t("account.cart.updateQtyError"))
                     }
                   }}
                   onRemove={async () => {
                     try {
                       await removeLine(line.productId)
-                      successToast(`“${line.name}” removed from cart`)
+                      successToast(t("account.cart.removed", { name: line.name }))
                     } catch (err) {
-                      toastFromError(err, "Could not remove item")
+                      toastFromError(err, t("account.cart.removeError"))
                     }
                   }}
                 />
@@ -162,26 +166,26 @@ export const CartPage = () => {
 
         <aside className="aurelia-cart-aside">
           <div className="aurelia-cart-summary">
-            <h2 className="aurelia-cart-summary-title">Summary</h2>
+            <h2 className="aurelia-cart-summary-title">{t("account.summary.title")}</h2>
 
             <dl className="aurelia-cart-summary-rows">
               <div>
-                <dt>Subtotal</dt>
-                <dd>{formatCurrency(subtotalNumber)}</dd>
+                <dt>{t("account.summary.subtotal")}</dt>
+                <dd>{formatCurrency(subtotalNumber, lang)}</dd>
               </div>
               <div>
-                <dt>Estimated Taxes</dt>
-                <dd>{formatCurrency(estimatedTax)}</dd>
+                <dt>{t("account.summary.estimatedTaxes")}</dt>
+                <dd>{formatCurrency(estimatedTax, lang)}</dd>
               </div>
               <div>
-                <dt>Shipping</dt>
-                <dd className="aurelia-cart-summary-shipping">Complimentary</dd>
+                <dt>{t("account.summary.shipping")}</dt>
+                <dd className="aurelia-cart-summary-shipping">{t("account.common.complimentary")}</dd>
               </div>
             </dl>
 
             <div className="aurelia-cart-summary-total">
-              <span className="aurelia-cart-summary-total-label">Total Amount</span>
-              <span className="aurelia-cart-summary-total-value">{formatCurrency(total)}</span>
+              <span className="aurelia-cart-summary-total-label">{t("account.summary.totalAmount")}</span>
+              <span className="aurelia-cart-summary-total-value">{formatCurrency(total, lang)}</span>
             </div>
 
             <div className="aurelia-cart-summary-actions">
@@ -199,18 +203,18 @@ export const CartPage = () => {
               </MotionLink>
               <p className="aurelia-cart-finance-note">
                 {isGuest
-                  ? "Your selection is saved on this device. Sign in to securely complete the order."
-                  : "Interest-free financing available via Klarna."}
+                  ? t("account.cart.financeGuest")
+                  : t("account.cart.financeKlarna")}
               </p>
             </div>
 
             <div className="aurelia-cart-trust">
               {TRUST_BADGES.map((badge) => (
-                <div key={badge.label} className="aurelia-cart-trust-item">
+                <div key={badge.labelKey} className="aurelia-cart-trust-item">
                   <span className="material-symbols-outlined" aria-hidden>
                     {badge.icon}
                   </span>
-                  <p>{badge.label}</p>
+                  <p>{t(badge.labelKey)}</p>
                 </div>
               ))}
             </div>
@@ -221,26 +225,29 @@ export const CartPage = () => {
   )
 }
 
-const Stepper = ({ activeIndex }: { activeIndex: number }) => (
-  <nav className="aurelia-cart-stepper" aria-label="Checkout progress">
-    {STEPS.map((step, index) => {
-      const state = index < activeIndex ? "complete" : index === activeIndex ? "active" : "upcoming"
-      return (
-        <div key={step.id} className={`aurelia-cart-stepper-item is-${state}`}>
-          <div className="aurelia-cart-stepper-bullet" aria-hidden>
-            {state === "complete" ? (
-              <span className="material-symbols-outlined">check</span>
-            ) : (
-              index + 1
-            )}
+const Stepper = ({ activeIndex }: { activeIndex: number }) => {
+  const { t } = useI18n()
+  return (
+    <nav className="aurelia-cart-stepper" aria-label={t("account.stepper.aria")}>
+      {STEPS.map((step, index) => {
+        const state = index < activeIndex ? "complete" : index === activeIndex ? "active" : "upcoming"
+        return (
+          <div key={step.id} className={`aurelia-cart-stepper-item is-${state}`}>
+            <div className="aurelia-cart-stepper-bullet" aria-hidden>
+              {state === "complete" ? (
+                <span className="material-symbols-outlined">check</span>
+              ) : (
+                index + 1
+              )}
+            </div>
+            <span className="aurelia-cart-stepper-label">{t(step.labelKey)}</span>
+            {index < STEPS.length - 1 && <span className="aurelia-cart-stepper-line" aria-hidden />}
           </div>
-          <span className="aurelia-cart-stepper-label">{step.label}</span>
-          {index < STEPS.length - 1 && <span className="aurelia-cart-stepper-line" aria-hidden />}
-        </div>
-      )
-    })}
-  </nav>
-)
+        )
+      })}
+    </nav>
+  )
+}
 
 const CartRow = ({
   line,
@@ -255,7 +262,8 @@ const CartRow = ({
   onChangeQty: (quantity: number) => void
   onRemove: () => void
 }) => {
-  const meta = describeLine(line)
+  const { t, lang } = useI18n()
+  const meta = describeLine(line, t, lang)
   const qtySpring = useSpring({
     from: { transform: "scale(0.92)" },
     to: { transform: "scale(1)" },
@@ -270,7 +278,7 @@ const CartRow = ({
         <Link
           to={`/products/${line.productId}`}
           className="aurelia-cart-row-image overflow-hidden"
-          aria-label={`View ${line.name}`}
+          aria-label={t("account.cart.viewItem", { name: line.name })}
         >
           {line.imageUrl ? (
             <motion.img
@@ -297,17 +305,17 @@ const CartRow = ({
             whileTap={isUpdating ? undefined : { scale: 0.97 }}
             transition={transition.quick}
           >
-            Remove
+            {t("account.cart.remove")}
           </motion.button>
         </div>
       </div>
 
       <div className="aurelia-cart-cell aurelia-cart-cell--qty" role="cell">
-        <span className="aurelia-cart-cell-label">Qty</span>
-        <div className="aurelia-cart-qty" role="group" aria-label={`Quantity for ${line.name}`}>
+        <span className="aurelia-cart-cell-label">{t("account.cart.colQuantity")}</span>
+        <div className="aurelia-cart-qty" role="group" aria-label={t("account.cart.qtyGroup", { name: line.name })}>
           <motion.button
             type="button"
-            aria-label="Decrease quantity"
+            aria-label={t("account.cart.decrease")}
             disabled={isUpdating || line.quantity <= 1}
             onClick={() => onChangeQty(Math.max(1, line.quantity - 1))}
             whileTap={isUpdating || line.quantity <= 1 ? undefined : { scale: 0.9 }}
@@ -320,7 +328,7 @@ const CartRow = ({
           </animated.span>
           <motion.button
             type="button"
-            aria-label="Increase quantity"
+            aria-label={t("account.cart.increase")}
             disabled={isUpdating}
             onClick={() => onChangeQty(line.quantity + 1)}
             whileTap={isUpdating ? undefined : { scale: 0.9 }}
@@ -332,33 +340,34 @@ const CartRow = ({
       </div>
 
       <div className="aurelia-cart-cell aurelia-cart-cell--total" role="cell">
-        <span className="aurelia-cart-cell-label">Total</span>
+        <span className="aurelia-cart-cell-label">{t("account.cart.colTotal")}</span>
         <span className="aurelia-cart-row-total">
-          {formatCurrency(Number(line.price) * line.quantity)}
+          {formatCurrency(Number(line.price) * line.quantity, lang)}
         </span>
       </div>
     </motion.li>
   )
 }
 
-const ShippingBanner = () => (
-  <aside className="aurelia-cart-banner" role="note">
-    <span className="material-symbols-outlined aurelia-cart-banner-icon" aria-hidden>
-      local_shipping
-    </span>
-    <div>
-      <p className="aurelia-cart-banner-title">Complimentary White-Glove Delivery</p>
-      <p className="aurelia-cart-banner-copy">
-        Insured worldwide shipping is included with your selection today.
-      </p>
-    </div>
-  </aside>
-)
+const ShippingBanner = () => {
+  const { t } = useI18n()
+  return (
+    <aside className="aurelia-cart-banner" role="note">
+      <span className="material-symbols-outlined aurelia-cart-banner-icon" aria-hidden>
+        local_shipping
+      </span>
+      <div>
+        <p className="aurelia-cart-banner-title">{t("account.cart.shippingTitle")}</p>
+        <p className="aurelia-cart-banner-copy">{t("account.cart.shippingCopy")}</p>
+      </div>
+    </aside>
+  )
+}
 
 // Best-effort to derive the secondary "18K Gold / 0.5ct Diamond" style line.
 // The cart line API only exposes name/price/qty/imageUrl, so we surface unit price
 // as a refined sub-line when nothing richer is available.
-const describeLine = (line: CartLine) => {
-  const unit = formatCurrency(line.price)
-  return `${unit} each`
+const describeLine = (line: CartLine, t: TFunction, lang: Lang) => {
+  const unit = formatCurrency(line.price, lang)
+  return t("account.common.each", { price: unit })
 }

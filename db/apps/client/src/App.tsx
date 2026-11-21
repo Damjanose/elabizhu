@@ -1,16 +1,21 @@
+import { useEffect } from "react"
 import { motion } from "motion/react"
 import { Link, NavLink, Route, Routes, useLocation } from "react-router-dom"
 import { FiInstagram, FiLayout, FiSearch, FiShoppingBag } from "react-icons/fi"
 import { INSTAGRAM_URL } from "./data/instagram"
 import { Slide, ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
+import "./styles/shell.css"
 import { ErrorBoundary } from "./components/feedback/ErrorBoundary"
 import { AdminRoute } from "./components/AdminRoute"
 import { AdminShell } from "./components/admin/AdminShell"
 import { GuestRoute } from "./components/GuestRoute"
 import { ProtectedRoute } from "./components/ProtectedRoute"
 import { UserMenu } from "./components/auth/UserMenu"
+import { LanguageToggle } from "./components/nav/LanguageToggle"
+import { MobileTabBar } from "./components/nav/MobileTabBar"
 import { NavIconHint } from "./components/nav/NavIconHint"
+import { useI18n } from "./i18n"
 import { useCart } from "./hooks/useCart"
 import { useSocketLifecycle } from "./hooks/useSocketLifecycle"
 import { AccountPage } from "./pages/AccountPage"
@@ -47,29 +52,39 @@ const Shell = () => {
   useSocketLifecycle()
   const { user } = useAuth()
   const { itemCount } = useCart()
+  const { t, lang } = useI18n()
   const location = useLocation()
   const isAdminView = location.pathname.startsWith("/admin")
   const canAccessAdmin =
     user?.permissions.includes("admin") || user?.permissions.includes("administrator")
 
+  useEffect(() => {
+    document.documentElement.lang = lang
+  }, [lang])
+
   return (
-    <div className={`aurelia-app-shell min-vh-100${isAdminView ? " aurelia-app-shell--admin" : ""}`}>
+    <div
+      className={`aurelia-app-shell min-vh-100${isAdminView ? " aurelia-app-shell--admin" : " aurelia-app-shell--with-tab-bar"}`}
+    >
       {!isAdminView && (
-        <nav className="aurelia-topbar sticky-top">
+        <nav className="aurelia-topbar sticky-top" aria-label={t("shell.nav.ariaLabel")}>
           <div className="aurelia-container aurelia-nav-grid">
             <div className="aurelia-nav-left">
-              <NavLink className={navLinkClass} to="/collections">
-                Collections
-              </NavLink>
-              <NavLink className={navLinkClass} to="/categories">
-                Story
-              </NavLink>
-              <NavLink className={navLinkClass} to="/account">
-                Bespoke
-              </NavLink>
-              <NavLink className={navLinkClass} to="/journal">
-                Journal
-              </NavLink>
+              <div className="aurelia-nav-links">
+                <NavLink className={navLinkClass} to="/products">
+                  {t("shell.nav.shop")}
+                </NavLink>
+                <NavLink className={navLinkClass} to="/categories">
+                  {t("shell.nav.categories")}
+                </NavLink>
+                <NavLink className={navLinkClass} to="/collections">
+                  {t("shell.nav.collections")}
+                </NavLink>
+                <NavLink className={navLinkClass} to="/journal">
+                  {t("shell.nav.journal")}
+                </NavLink>
+              </div>
+              <LanguageToggle />
             </div>
 
             <Link className="aurelia-brand text-decoration-none text-center" to="/">
@@ -77,28 +92,36 @@ const Shell = () => {
             </Link>
 
             <div className="aurelia-nav-right">
-              <NavIconHint label="Instagram">
-                <a
-                  className="aurelia-icon-link text-decoration-none"
-                  href={INSTAGRAM_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="ElaBizhu on Instagram"
-                >
-                  <FiInstagram />
-                </a>
-              </NavIconHint>
-              <NavIconHint label="Search">
-                <Link className="aurelia-icon-link text-decoration-none" to="/collections" aria-label="Search">
+              <span className="aurelia-desktop-only">
+                <NavIconHint label={t("shell.instagram.hint")}>
+                  <a
+                    className="aurelia-icon-link text-decoration-none"
+                    href={INSTAGRAM_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={t("shell.instagram.label")}
+                  >
+                    <FiInstagram />
+                  </a>
+                </NavIconHint>
+              </span>
+              <NavIconHint label={t("shell.search.label")}>
+                <Link className="aurelia-icon-link text-decoration-none" to="/collections" aria-label={t("shell.search.label")}>
                   <FiSearch />
                 </Link>
               </NavIconHint>
-              <UserMenu />
-              <NavIconHint label="Cart">
+              <span className="aurelia-desktop-only">
+                <UserMenu />
+              </span>
+              <NavIconHint label={t("shell.cart.label")}>
                 <Link
                   className="aurelia-cart-icon text-decoration-none"
                   to="/cart"
-                  aria-label={itemCount > 0 ? `Cart, ${itemCount} item${itemCount === 1 ? "" : "s"}` : "Cart"}
+                  aria-label={
+                    itemCount > 0
+                      ? t("shell.cart.labelWithCount", { count: itemCount })
+                      : t("shell.cart.label")
+                  }
                 >
                   <FiShoppingBag />
                   {itemCount > 0 && (
@@ -107,8 +130,8 @@ const Shell = () => {
                 </Link>
               </NavIconHint>
               {canAccessAdmin && (
-                <NavIconHint label="Dashboard">
-                  <Link className="aurelia-icon-link text-decoration-none" to="/admin" aria-label="Admin dashboard">
+                <NavIconHint label={t("shell.admin.hint")}>
+                  <Link className="aurelia-icon-link text-decoration-none" to="/admin" aria-label={t("shell.admin.label")}>
                     <FiLayout />
                   </Link>
                 </NavIconHint>
@@ -223,6 +246,7 @@ const Shell = () => {
         </Routes>
         </ErrorBoundary>
       </main>
+      {!isAdminView && <MobileTabBar />}
     </div>
   )
 }

@@ -9,6 +9,7 @@ import { fetchOrders } from "../../services/orders"
 import { fetchProducts } from "../../services/products"
 import { useAdminDisplayCurrency } from "../../stores/adminDisplayCurrencyStore"
 import { AdminDashboardCharts } from "./AdminDashboardCharts"
+import { useI18n, type TFunction } from "../../i18n"
 
 const statusTone = (status: string) => {
   if (status === "delivered") return "is-success"
@@ -18,13 +19,15 @@ const statusTone = (status: string) => {
   return "is-muted"
 }
 
-const clientLabel = (userId: string) => `Client ${userId.slice(0, 6).toUpperCase()}`
-const tierLabel = (id: string) => `Tier ${id.slice(0, 4).toUpperCase()}`
-const pieceLabel = (id: string) => `Signature Piece ${id.slice(0, 4).toUpperCase()}`
+const clientLabel = (t: TFunction, userId: string) => t("admin.labels.client", { id: userId.slice(0, 6).toUpperCase() })
+const tierLabel = (t: TFunction, id: string) => t("admin.labels.tier", { id: id.slice(0, 4).toUpperCase() })
+const pieceLabel = (t: TFunction, id: string) => t("admin.labels.piece", { id: id.slice(0, 4).toUpperCase() })
 const orderLabel = (id: string) => `#AUR-${id.slice(0, 4).toUpperCase()}`
 
 export const AdminDashboardPage = () => {
   const navigate = useNavigate()
+  const { t, lang } = useI18n()
+  const locale = lang === "sq" ? "sq-AL" : "en-GB"
   const displayCurrency = useAdminDisplayCurrency()
   const ordersQuery = useQuery({
     queryKey: queryKeys.orders(),
@@ -43,7 +46,7 @@ export const AdminDashboardPage = () => {
     return (
       <div className="aurelia-admin-dashboard">
         <header className="aurelia-admin-dashboard-heading">
-          <h1 className="aurelia-admin-title mb-0">Executive Overview</h1>
+          <h1 className="aurelia-admin-title mb-0">{t("admin.dashboard.title")}</h1>
         </header>
         <section className="aurelia-admin-kpi-grid">
           {Array.from({ length: 4 }).map((_, index) => (
@@ -57,9 +60,9 @@ export const AdminDashboardPage = () => {
   if (ordersQuery.isError || productsQuery.isError) {
     return (
       <div className="aurelia-admin-dashboard">
-        <h1 className="aurelia-admin-title mb-3">Executive Overview</h1>
+        <h1 className="aurelia-admin-title mb-3">{t("admin.dashboard.title")}</h1>
         <div className="aurelia-admin-panel p-4">
-          <p className="mb-3">Unable to load dashboard insights right now.</p>
+          <p className="mb-3">{t("admin.dashboard.loadError")}</p>
           <button
             type="button"
             className="aurelia-btn aurelia-btn-primary"
@@ -68,7 +71,7 @@ export const AdminDashboardPage = () => {
               void productsQuery.refetch()
             }}
           >
-            Retry
+            {t("admin.common.retry")}
           </button>
         </div>
       </div>
@@ -83,34 +86,34 @@ export const AdminDashboardPage = () => {
   return (
     <div className="aurelia-admin-dashboard">
       <header className="aurelia-admin-dashboard-heading">
-        <h1 className="aurelia-admin-title mb-2">Executive Overview</h1>
+        <h1 className="aurelia-admin-title mb-2">{t("admin.dashboard.title")}</h1>
         <span className="aurelia-admin-dashboard-divider" />
       </header>
 
-      <section className="aurelia-admin-kpi-grid" aria-label="Performance metrics">
+      <section className="aurelia-admin-kpi-grid" aria-label={t("admin.dashboard.metricsAria")}>
         <article className="aurelia-admin-kpi-card">
-          <p className="aurelia-admin-kpi-label">Active Bespoke Orders</p>
+          <p className="aurelia-admin-kpi-label">{t("admin.dashboard.activeOrders")}</p>
           <p className="aurelia-admin-kpi-value">{metrics.activeOrders}</p>
           <Link className="aurelia-admin-kpi-link" to="/admin/orders">
-            View all
+            {t("admin.dashboard.viewAll")}
           </Link>
         </article>
         <article className="aurelia-admin-kpi-card">
-          <p className="aurelia-admin-kpi-label">Inventory Alert</p>
+          <p className="aurelia-admin-kpi-label">{t("admin.dashboard.inventoryAlert")}</p>
           <p className="aurelia-admin-kpi-value">{metrics.inventoryAlert}</p>
-          <p className="aurelia-admin-kpi-meta">Low stock</p>
+          <p className="aurelia-admin-kpi-meta">{t("admin.dashboard.lowStock")}</p>
         </article>
         <article className="aurelia-admin-kpi-card">
-          <p className="aurelia-admin-kpi-label">Weekly Revenue</p>
+          <p className="aurelia-admin-kpi-label">{t("admin.dashboard.weeklyRevenue")}</p>
           <p className="aurelia-admin-kpi-value is-money">
             {formatDisplayMoney(metrics.weeklyRevenue, displayCurrency, { maximumFractionDigits: 0 })}
           </p>
-          <p className="aurelia-admin-kpi-meta">Live from placed orders</p>
+          <p className="aurelia-admin-kpi-meta">{t("admin.dashboard.liveFromOrders")}</p>
         </article>
         <article className="aurelia-admin-kpi-card">
-          <p className="aurelia-admin-kpi-label">Pending Shipments</p>
+          <p className="aurelia-admin-kpi-label">{t("admin.dashboard.pendingShipments")}</p>
           <p className="aurelia-admin-kpi-value">{metrics.pendingShipments}</p>
-          <p className="aurelia-admin-kpi-meta">Confirmed + shipped</p>
+          <p className="aurelia-admin-kpi-meta">{t("admin.dashboard.confirmedShipped")}</p>
         </article>
       </section>
 
@@ -119,24 +122,24 @@ export const AdminDashboardPage = () => {
       <section className="aurelia-admin-dashboard-table-section">
         <div className="aurelia-admin-dashboard-table-header">
           <div>
-            <h2 className="aurelia-admin-card-title mb-2">Recent Boutique Orders</h2>
-            <p className="aurelia-muted mb-0">A curated live view of current acquisitions and fulfilment progress.</p>
+            <h2 className="aurelia-admin-card-title mb-2">{t("admin.dashboard.recentOrders")}</h2>
+            <p className="aurelia-muted mb-0">{t("admin.dashboard.recentOrdersSub")}</p>
           </div>
         </div>
 
         {recentOrders.length === 0 ? (
           <div className="aurelia-admin-panel p-4">
-            <p className="mb-0">No orders available yet.</p>
+            <p className="mb-0">{t("admin.dashboard.noOrders")}</p>
           </div>
         ) : (
           <div className="table-responsive aurelia-admin-table-wrap aurelia-admin-orders-table-wrap">
             <table className="table align-middle mb-0 aurelia-admin-table aurelia-admin-orders-table">
               <thead>
                 <tr>
-                  <th>Order ID</th>
-                  <th>Customer</th>
-                  <th>Piece</th>
-                  <th>Status</th>
+                  <th>{t("admin.table.orderId")}</th>
+                  <th>{t("admin.table.customer")}</th>
+                  <th>{t("admin.table.piece")}</th>
+                  <th>{t("admin.table.status")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -153,20 +156,20 @@ export const AdminDashboardPage = () => {
                         navigate(`/admin/orders/${order.id}`)
                       }
                     }}
-                    aria-label={`Open order ${orderLabel(order.id)}`}
+                    aria-label={t("admin.common.openOrder", { id: orderLabel(order.id) })}
                   >
                     <td className="aurelia-admin-orders-id">
                       <strong>{orderLabel(order.id)}</strong>
-                      <span>{new Date(order.createdAt).toLocaleDateString("en-GB")}</span>
+                      <span>{new Date(order.createdAt).toLocaleDateString(locale)}</span>
                     </td>
                     <td className="aurelia-admin-orders-customer">
-                      <strong>{clientLabel(order.userId)}</strong>
-                      <span>{tierLabel(order.id)}</span>
+                      <strong>{clientLabel(t, order.userId)}</strong>
+                      <span>{tierLabel(t, order.id)}</span>
                     </td>
                     <td className="aurelia-admin-orders-piece">
-                      <strong>{pieceLabel(order.id)}</strong>
+                      <strong>{pieceLabel(t, order.id)}</strong>
                       <span>
-                        Total{" "}
+                        {t("admin.common.total")}{" "}
                         {formatDisplayMoney(Number(order.total), displayCurrency, {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
@@ -174,7 +177,7 @@ export const AdminDashboardPage = () => {
                       </span>
                     </td>
                     <td>
-                      <span className={`aurelia-admin-status-chip ${statusTone(order.status)}`}>{order.status}</span>
+                      <span className={`aurelia-admin-status-chip ${statusTone(order.status)}`}>{t(`admin.status.${order.status}`)}</span>
                     </td>
                   </tr>
                 ))}
@@ -182,7 +185,7 @@ export const AdminDashboardPage = () => {
             </table>
             <div className="aurelia-admin-table-foot aurelia-admin-orders-foot">
               <span>
-                Showing {recentOrders.length} of {orders.length} orders
+                {t("admin.common.showingOrders", { shown: recentOrders.length, total: orders.length })}
               </span>
               <div className="aurelia-admin-orders-pager" aria-hidden>
                 <button type="button" className="aurelia-admin-orders-pager-btn" tabIndex={-1}>
@@ -199,33 +202,33 @@ export const AdminDashboardPage = () => {
 
       <section className="aurelia-admin-spotlight-grid">
         <article className="aurelia-admin-spotlight-image">
-          <img src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?auto=format&fit=crop&w=1200&q=80" alt="Luxury necklace spotlight" />
+          <img src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?auto=format&fit=crop&w=1200&q=80" alt={t("admin.dashboard.spotlightAlt")} />
         </article>
         <article className="aurelia-admin-spotlight-panel">
-          <p className="aurelia-admin-kicker mb-3">Master Inventory</p>
-          <h2 className="aurelia-admin-card-title mb-3">Allocation Balance</h2>
+          <p className="aurelia-admin-kicker mb-3">{t("admin.dashboard.masterInventory")}</p>
+          <h2 className="aurelia-admin-card-title mb-3">{t("admin.dashboard.allocationBalance")}</h2>
           <p className="aurelia-muted mb-4">
-            Global boutiques are showing elevated demand on signature pieces. Keep allocation and replenishment aligned with current stock pressure.
+            {t("admin.dashboard.allocationBody")}
           </p>
           <div className="aurelia-admin-spotlight-row">
-            <span>London Flagship</span>
-            <strong>Surplus</strong>
+            <span>{t("admin.dashboard.londonFlagship")}</span>
+            <strong>{t("admin.dashboard.surplus")}</strong>
           </div>
           <div className="aurelia-admin-spotlight-row">
-            <span>Paris Atelier</span>
-            <strong>Critical stock</strong>
+            <span>{t("admin.dashboard.parisAtelier")}</span>
+            <strong>{t("admin.dashboard.criticalStock")}</strong>
           </div>
           <Link to="/admin/products" className="aurelia-btn aurelia-btn-outline text-decoration-none mt-3">
-            Adjust allocation
+            {t("admin.dashboard.adjustAllocation")}
           </Link>
         </article>
       </section>
 
       <footer className="aurelia-admin-dashboard-foot">
-        <p className="mb-0">© 2024 ElaBizhu Luxury Jewellery Limited. All rights reserved.</p>
+        <p className="mb-0">{t("admin.dashboard.copyright")}</p>
         <div>
-          <a href="#">Terms of Service</a>
-          <a href="#">Privacy Protocol</a>
+          <a href="#">{t("admin.dashboard.terms")}</a>
+          <a href="#">{t("admin.dashboard.privacy")}</a>
         </div>
       </footer>
     </div>

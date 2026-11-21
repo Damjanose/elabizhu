@@ -13,14 +13,15 @@ import { queryTiming } from "../../lib/query-client"
 import { formatDisplayMoney } from "../../lib/display-currency"
 import { fetchAdminProducts, resolveMediaUrl } from "../../services/admin"
 import { useAdminDisplayCurrency } from "../../stores/adminDisplayCurrencyStore"
+import { useI18n } from "../../i18n"
 
 const PAGE_SIZE = 20
 
-const BADGE_LABEL: Record<UrgencyBadge, string> = {
-  none: "Standard",
-  new: "New",
-  low_stock: "Low stock",
-  sold_out: "Sold out",
+const BADGE_LABEL_KEY: Record<UrgencyBadge, string> = {
+  none: "admin.products.badge.none",
+  new: "admin.products.badge.new",
+  low_stock: "admin.products.badge.lowStock",
+  sold_out: "admin.products.badge.soldOut",
 }
 
 const BADGE_TONE: Record<UrgencyBadge, string> = {
@@ -37,6 +38,7 @@ const productThumb = (product: Product) => {
 
 export const AdminProductsPage = () => {
   const navigate = useNavigate()
+  const { t } = useI18n()
   const displayCurrency = useAdminDisplayCurrency()
   const { data: categories } = useCategories()
 
@@ -82,10 +84,10 @@ export const AdminProductsPage = () => {
 
   const categoryFilterOptions = useMemo(
     () => [
-      { value: "", label: "All categories" },
+      { value: "", label: t("admin.products.allCategories") },
       ...(categories?.map((c) => ({ value: c.id, label: c.name })) ?? []),
     ],
-    [categories],
+    [categories, t],
   )
 
   const goToProduct = (productId: string) => navigate(`/admin/products/${productId}`)
@@ -101,39 +103,39 @@ export const AdminProductsPage = () => {
     <div className="aurelia-admin-page">
       <div className="aurelia-admin-page-header">
         <div>
-          <p className="aurelia-admin-kicker mb-2">Curation Suite</p>
-          <h1 className="aurelia-admin-title mb-0">Products</h1>
+          <p className="aurelia-admin-kicker mb-2">{t("admin.products.kicker")}</p>
+          <h1 className="aurelia-admin-title mb-0">{t("admin.products.title")}</h1>
         </div>
         <button
           type="button"
           className="aurelia-btn aurelia-btn-primary"
           onClick={() => navigate("/admin/products/new")}
         >
-          New product
+          {t("admin.common.newProduct")}
         </button>
       </div>
 
       <section className="aurelia-admin-orders-section">
         <div className="aurelia-admin-products-toolbar">
-          <label className="aurelia-admin-products-search" aria-label="Search products">
+          <label className="aurelia-admin-products-search" aria-label={t("admin.products.searchAria")}>
             <FiSearch aria-hidden />
             <input
               type="search"
-              placeholder="Search by name or description..."
+              placeholder={t("admin.products.searchPlaceholder")}
               value={search}
               onChange={(event) => setSearch(event.target.value)}
             />
           </label>
           <div className="aurelia-admin-products-filter">
             <label className="form-label mb-0" htmlFor="admin-products-category">
-              Category
+              {t("admin.products.category")}
             </label>
             <AureliaCustomSelect
               id="admin-products-category"
               value={categoryId}
               onChange={setCategoryId}
               options={categoryFilterOptions}
-              placeholder="All categories"
+              placeholder={t("admin.products.allCategories")}
             />
           </div>
         </div>
@@ -142,13 +144,13 @@ export const AdminProductsPage = () => {
           <table className="table align-middle mb-0 aurelia-admin-table aurelia-admin-orders-table">
             <thead>
               <tr>
-                <th style={{ width: 64 }} aria-label="Image" />
-                <th>Product</th>
-                <th>Category</th>
-                <th>Price</th>
-                <th>Stock</th>
-                <th>Badge</th>
-                <th>Status</th>
+                <th style={{ width: 64 }} aria-label={t("admin.table.image")} />
+                <th>{t("admin.table.product")}</th>
+                <th>{t("admin.table.category")}</th>
+                <th>{t("admin.table.price")}</th>
+                <th>{t("admin.table.stock")}</th>
+                <th>{t("admin.table.badge")}</th>
+                <th>{t("admin.table.status")}</th>
               </tr>
             </thead>
             <tbody>
@@ -175,7 +177,7 @@ export const AdminProductsPage = () => {
                     tabIndex={0}
                     onClick={() => goToProduct(product.id)}
                     onKeyDown={(event) => onRowKey(event, product.id)}
-                    aria-label={`Open ${product.name}`}
+                    aria-label={t("admin.products.openProduct", { name: product.name })}
                   >
                     <td>
                       <div className="aurelia-admin-products-thumb" aria-hidden>
@@ -193,7 +195,7 @@ export const AdminProductsPage = () => {
                           ? product.description.length > 80
                             ? `${product.description.slice(0, 80)}…`
                             : product.description
-                          : "No description"}
+                          : t("admin.products.noDescription")}
                       </span>
                     </td>
                     <td>{categoryName(product.categoryId)}</td>
@@ -216,20 +218,20 @@ export const AdminProductsPage = () => {
                       <span
                         className={`aurelia-admin-status-chip ${BADGE_TONE[product.urgencyBadge]}`}
                       >
-                        {BADGE_LABEL[product.urgencyBadge]}
+                        {t(BADGE_LABEL_KEY[product.urgencyBadge])}
                       </span>
                     </td>
                     <td>
                       <div className="aurelia-admin-products-flags">
                         {product.featured && (
-                          <span className="aurelia-admin-products-flag is-featured">Featured</span>
+                          <span className="aurelia-admin-products-flag is-featured">{t("admin.products.featured")}</span>
                         )}
                         <span
                           className={`aurelia-admin-products-flag ${
                             product.isActive ? "is-active" : "is-archived"
                           }`}
                         >
-                          {product.isActive ? "Active" : "Archived"}
+                          {product.isActive ? t("admin.products.active") : t("admin.products.archived")}
                         </span>
                       </div>
                     </td>
@@ -244,23 +246,23 @@ export const AdminProductsPage = () => {
               <EmptyState
                 variant="inline"
                 icon="inventory_2"
-                kicker="Empty catalog"
-                title={debouncedSearch || categoryId ? "No matches found" : "No products yet"}
+                kicker={t("admin.products.emptyKicker")}
+                title={debouncedSearch || categoryId ? t("admin.products.noMatches") : t("admin.products.noProducts")}
                 copy={
                   debouncedSearch || categoryId
-                    ? "Try a different search or clear filters."
-                    : "Add your first piece to start curating the collection."
+                    ? t("admin.products.tryDifferent")
+                    : t("admin.products.addFirst")
                 }
                 cta={
                   debouncedSearch || categoryId
                     ? {
-                        label: "Clear filters",
+                        label: t("admin.products.clearFilters"),
                         onClick: () => {
                           setSearch("")
                           setCategoryId("")
                         },
                       }
-                    : { label: "New product", onClick: () => navigate("/admin/products/new") }
+                    : { label: t("admin.common.newProduct"), onClick: () => navigate("/admin/products/new") }
                 }
               />
             </div>
@@ -270,17 +272,17 @@ export const AdminProductsPage = () => {
             <span>
               {total === 0
                 ? showSkeleton || isFetching
-                  ? "Preparing products…"
-                  : "Showing 0 products"
-                : `Showing ${startIndex}–${endIndex} of ${total} product${total === 1 ? "" : "s"}`}
+                  ? t("admin.products.preparing")
+                  : t("admin.products.showingNone")
+                : t(total === 1 ? "admin.products.showingOne" : "admin.products.showingMany", { from: startIndex, to: endIndex, total })}
             </span>
-            <div className="aurelia-admin-orders-pager" role="navigation" aria-label="Pagination">
+            <div className="aurelia-admin-orders-pager" role="navigation" aria-label={t("admin.products.pagination")}>
               <button
                 type="button"
                 className="aurelia-admin-orders-pager-btn"
                 onClick={() => setPage((current) => Math.max(1, current - 1))}
                 disabled={!canPrev}
-                aria-label="Previous page"
+                aria-label={t("admin.products.prevPage")}
               >
                 <span className="material-symbols-outlined">chevron_left</span>
               </button>
@@ -292,7 +294,7 @@ export const AdminProductsPage = () => {
                 className="aurelia-admin-orders-pager-btn"
                 onClick={() => setPage((current) => current + 1)}
                 disabled={!canNext}
-                aria-label="Next page"
+                aria-label={t("admin.products.nextPage")}
               >
                 <span className="material-symbols-outlined">chevron_right</span>
               </button>

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&family=Inter:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@400;500&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 @import "bootstrap/dist/css/bootstrap.min.css" layer(bootstrap);
 @import "tailwindcss";
@@ -15,13 +15,13 @@
   --color-secondary-container: #d6e3d5;
   --color-on-secondary: #ffffff;
   --color-secondary-fixed: #d9e6d7;
-  --color-surface: #fff8f3;
+  --color-surface: #f6f0e6;
   --color-primary-container: #c5a059;
   --color-primary-fixed-dim: #e9c176;
   --color-surface-container: #f5ede4;
   --color-on-surface-variant: #4e4639;
   --color-primary-fixed: #ffdea5;
-  --color-outline-variant: #d1c5b4;
+  --color-outline-variant: #dccdaa;
   --color-on-tertiary-fixed: #2c1600;
   --color-on-primary-fixed-variant: #5d4201;
   --color-surface-container-high: #efe7de;
@@ -38,18 +38,18 @@
   --color-surface-variant: #e9e1d8;
   --color-on-tertiary-container: #55340d;
   --color-tertiary-fixed-dim: #f0bd8b;
-  --color-surface-bright: #fff8f3;
-  --color-background: #fff8f3;
+  --color-surface-bright: #f6f0e6;
+  --color-background: #f6f0e6;
   --color-secondary: #556156;
   --color-surface-container-low: #fbf2e9;
   --color-tertiary: #7d562d;
-  --color-on-background: #1e1b16;
-  --color-primary: #775a19;
+  --color-on-background: #2a2118;
+  --color-primary: #7a5c24;
   --color-on-tertiary: #ffffff;
   --color-surface-tint: #775a19;
   --color-on-tertiary-fixed-variant: #623f18;
   --color-tertiary-container: #cc9c6d;
-  --color-on-surface: #1e1b16;
+  --color-on-surface: #2a2118;
   --color-on-error-container: #93000a;
   --color-surface-container-lowest: #ffffff;
   --color-outline: #7f7667;
@@ -66,12 +66,12 @@
   --spacing-container-max: 1440px;
   --spacing-margin-mobile: 24px;
 
-  --font-display-xl: "Noto Serif", serif;
-  --font-headline-md: "Noto Serif", serif;
-  --font-headline-lg: "Noto Serif", serif;
-  --font-body-md: "Inter", sans-serif;
-  --font-body-lg: "Inter", sans-serif;
-  --font-label-sm: "Inter", sans-serif;
+  --font-display-xl: "Cormorant Garamond", serif;
+  --font-headline-md: "Cormorant Garamond", serif;
+  --font-headline-lg: "Cormorant Garamond", serif;
+  --font-body-md: "Jost", sans-serif;
+  --font-body-lg: "Jost", sans-serif;
+  --font-label-sm: "Jost", sans-serif;
 
   --text-display-xl: 64px;
   --text-display-xl--line-height: 1.1;
@@ -101,15 +101,15 @@
 }
 
 :root {
-  --aurelia-primary: #c5a059;
+  --aurelia-primary: #7a5c24;
   --aurelia-secondary: #8e9b8e;
   --aurelia-tertiary: #d4a373;
   --aurelia-neutral: #7c766f;
-  --aurelia-surface: #fff8f3;
-  --aurelia-surface-soft: #f5ede4;
-  --aurelia-surface-border: #d1c5b4;
-  --aurelia-text: #1e1b16;
-  --aurelia-text-muted: #4e4639;
+  --aurelia-surface: #f6f0e6;
+  --aurelia-surface-soft: #efe6d6;
+  --aurelia-surface-border: #cdb98e;
+  --aurelia-text: #2a2118;
+  --aurelia-text-muted: #5c4d3c;
 }
 
 .material-symbols-outlined {
@@ -132,9 +132,9 @@ html {
 }
 
 body {
-  background-color: var(--aurelia-surface);
-  font-family: Inter, sans-serif;
-  color: var(--aurelia-text);
+  background-color: #f6f0e6;
+  font-family: "Jost", sans-serif;
+  color: #2a2118;
 }
 
 h1,
@@ -145,7 +145,7 @@ h4,
 .aurelia-brand,
 .aurelia-admin-title,
 .aurelia-hero-title {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", serif;
 }
 
 .hero-gradient {
@@ -214,10 +214,11 @@ h4,
 }
 
 .aurelia-brand {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 500;
   letter-spacing: 0.2em;
   color: var(--aurelia-text);
-  font-size: 1.1rem;
+  font-size: 1.3rem;
 }
 
 .aurelia-nav-grid {
@@ -561,7 +562,7 @@ h4,
 
 .aurelia-product-name {
   color: var(--aurelia-text);
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 1.03rem;
 }
 
@@ -612,7 +613,7 @@ h4,
 }
 
 .aurelia-admin-card-title {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 1.35rem;
   margin-bottom: 0.5rem;
 }
@@ -697,7 +698,7 @@ h4,
 }
 
 .aurelia-admin-shell-logo {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 1.72rem;
   letter-spacing: 0.08em;
   color: #775a19;
@@ -903,7 +904,7 @@ h4,
 }
 
 .aurelia-admin-shell-user-display {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 0.72rem;
   color: var(--aurelia-text);
   letter-spacing: 0.02em;
@@ -998,7 +999,7 @@ h4,
 }
 
 .aurelia-admin-order-alerts-title {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 1.05rem;
   margin: 0 0 0.35rem;
   color: var(--aurelia-text);
@@ -1041,7 +1042,7 @@ h4,
 }
 
 .aurelia-admin-order-alerts-row-id {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 0.82rem;
   font-weight: 600;
 }
@@ -1161,7 +1162,7 @@ h4,
 
 .aurelia-admin-kpi-value {
   margin: 0;
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(1.3rem, 2.4vw, 2rem);
   line-height: 1.1;
 }
@@ -1269,7 +1270,7 @@ h4,
 
 .aurelia-admin-chart-tooltip-list strong {
   margin-left: auto;
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-weight: 600;
 }
 
@@ -1458,7 +1459,7 @@ h4,
 .aurelia-admin-orders-customer strong,
 .aurelia-admin-orders-piece strong {
   display: block;
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-weight: 500;
   color: var(--aurelia-text);
   line-height: 1.2;
@@ -1637,7 +1638,7 @@ select.aurelia-select {
   max-width: 100%;
   margin: 0;
   padding: 0.48rem 2.35rem 0.48rem 0.75rem;
-  font-family: Inter, system-ui, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.82rem;
   line-height: 1.35;
   letter-spacing: 0.02em;
@@ -1713,7 +1714,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   width: 100%;
   margin: 0;
   padding: 0.48rem 0.65rem 0.48rem 0.75rem;
-  font-family: Inter, system-ui, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.82rem;
   line-height: 1.35;
   letter-spacing: 0.02em;
@@ -2178,7 +2179,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-hero-title {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(2rem, 6vw, 4rem);
   font-weight: 400;
   line-height: 1.08;
@@ -2205,7 +2206,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 .aurelia-feature-point {
   border-left: 2px solid var(--aurelia-tertiary);
   padding-left: 0.7rem;
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 1rem;
 }
 
@@ -2230,7 +2231,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   text-transform: uppercase;
   letter-spacing: 0.16em;
   color: #fff8f3;
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   background: rgba(30, 27, 22, 0.22);
 }
 
@@ -2258,10 +2259,6 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 @media (max-width: 991px) {
-  .aurelia-nav-left {
-    display: none;
-  }
-
   .aurelia-nav-grid {
     grid-template-columns: auto 1fr auto;
     gap: 0.8rem;
@@ -2374,7 +2371,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-auth-visual-title {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-weight: 400;
   font-size: clamp(1.75rem, 3vw, 2.5rem);
   line-height: 1.1;
@@ -2401,7 +2398,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-auth-title {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-weight: 400;
   font-size: clamp(2rem, 3.6vw, 2.75rem);
   line-height: 1.15;
@@ -2441,7 +2438,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 
 .aurelia-auth-label {
   display: block;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.2em;
@@ -2457,7 +2454,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   border-bottom: 1px solid var(--aurelia-surface-border);
   border-radius: 0;
   padding: 0.55rem 0;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 16px;
   line-height: 1.4;
   color: var(--aurelia-text);
@@ -2542,7 +2539,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   color: #ffffff;
   padding: 1.05rem 1.5rem;
   border: 0;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -2639,7 +2636,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-user-menu-kicker {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -2648,7 +2645,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-user-menu-name {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 1rem;
   color: var(--aurelia-text);
   line-height: 1.2;
@@ -2671,7 +2668,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   align-items: center;
   gap: 0.7rem;
   padding: 0.65rem 0.85rem;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.85rem;
   color: var(--aurelia-text);
   background: transparent;
@@ -2738,7 +2735,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-account-hero-title {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-weight: 400;
   font-size: clamp(2.25rem, 4.2vw, 3.25rem);
   line-height: 1.15;
@@ -2748,7 +2745,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-account-hero-copy {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 1.05rem;
   line-height: 1.6;
   color: var(--aurelia-text-muted);
@@ -2877,7 +2874,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-bento-action {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -2896,7 +2893,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-bento-headline {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-weight: 400;
   font-size: 1.6rem;
   line-height: 1.2;
@@ -2910,7 +2907,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-bento-meta {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.92rem;
   line-height: 1.5;
   color: var(--aurelia-text-muted);
@@ -2931,7 +2928,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   padding: 0.25rem 0.7rem;
   background: rgba(233, 193, 118, 0.22);
   color: #5d4201;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -2947,7 +2944,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   border: 1px solid #e9c176;
   background: transparent;
   color: #e9c176;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -2970,7 +2967,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 
 .aurelia-bento-notification-kicker {
   display: block;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.18em;
@@ -2979,7 +2976,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-bento-notification-title {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.92rem;
   line-height: 1.45;
   margin: 0 0 0.15rem;
@@ -2987,7 +2984,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-bento-notification-body {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.85rem;
   line-height: 1.45;
   color: var(--aurelia-text-muted);
@@ -3024,7 +3021,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-timeline-title {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-weight: 400;
   font-size: 1.6rem;
   line-height: 1.2;
@@ -3082,7 +3079,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-timeline-label {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.22em;
@@ -3095,7 +3092,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 
 .aurelia-timeline-text {
   margin: 0;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.95rem;
   line-height: 1.5;
   color: var(--aurelia-text);
@@ -3106,7 +3103,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-timeline-meta {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.78rem;
   letter-spacing: 0.05em;
   color: var(--aurelia-text-muted);
@@ -3166,7 +3163,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 
 .aurelia-item-detail-kicker {
   display: block;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -3176,7 +3173,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-item-detail-title {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-weight: 400;
   font-size: 1.7rem;
   line-height: 1.2;
@@ -3185,7 +3182,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-item-detail-copy {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.92rem;
   line-height: 1.6;
   color: var(--aurelia-text-muted);
@@ -3208,7 +3205,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-item-detail-stats dt {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -3218,7 +3215,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 
 .aurelia-item-detail-stats dd {
   margin: 0;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 1.05rem;
   font-weight: 600;
   color: var(--aurelia-text);
@@ -3243,7 +3240,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-account-alert-title {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-weight: 700;
   font-size: 0.95rem;
   margin: 0 0 0.4rem;
@@ -3252,14 +3249,14 @@ select.aurelia-select.aurelia-select--compact:hover {
 
 .aurelia-account-alert-copy {
   margin: 0 0 1rem;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.92rem;
   line-height: 1.55;
   color: var(--aurelia-text-muted);
 }
 
 .aurelia-account-alert-link {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.22em;
@@ -3279,7 +3276,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 .aurelia-pdp-state {
   text-align: center;
   padding: 4rem 0;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.95rem;
   color: var(--aurelia-text-muted);
 }
@@ -3399,7 +3396,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 
 .aurelia-pdp-collection {
   display: inline-block;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.32em;
@@ -3409,7 +3406,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-pdp-title {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(2rem, 4vw, 2.75rem);
   line-height: 1.15;
   font-weight: 400;
@@ -3418,14 +3415,14 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-pdp-price {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(1.5rem, 2.4vw, 2rem);
   color: var(--aurelia-primary);
   margin: 0 0 32px;
 }
 
 .aurelia-pdp-description {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 1rem;
   line-height: 1.65;
   color: var(--aurelia-text-muted);
@@ -3436,7 +3433,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   display: inline-flex;
   align-items: flex-start;
   gap: 10px;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -3530,7 +3527,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 .aurelia-pdp-qty-value {
   width: 40px;
   text-align: center;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 1rem;
   color: var(--aurelia-text);
 }
@@ -3543,7 +3540,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   border: 0;
   padding: 0 32px;
   height: 56px;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -3579,7 +3576,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   border: 1px solid #34302a;
   padding: 0 32px;
   height: 56px;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -3596,7 +3593,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-pdp-signin {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.85rem;
   color: var(--aurelia-text-muted);
   margin: 0;
@@ -3631,7 +3628,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   background: transparent;
   border: 0;
   color: var(--aurelia-text);
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -3657,7 +3654,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 
 .aurelia-pdp-acc-body {
   padding-bottom: 24px;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.95rem;
   color: var(--aurelia-text-muted);
 }
@@ -3703,7 +3700,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-rec-title {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(1.6rem, 3vw, 2rem);
   font-weight: 400;
   margin: 0;
@@ -3799,7 +3796,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-rec-name {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 1.05rem;
   font-weight: 400;
   text-align: center;
@@ -3808,7 +3805,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-rec-price {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -3821,7 +3818,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 .aurelia-rec-empty {
   text-align: center;
   padding: 40px 0;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.95rem;
   color: var(--aurelia-text-muted);
 }
@@ -3989,7 +3986,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-orders-hero-title {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-weight: 400;
   font-size: clamp(2rem, 4vw, 3rem);
   line-height: 1.15;
@@ -3999,7 +3996,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-orders-hero-copy {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 1.05rem;
   line-height: 1.6;
   color: var(--aurelia-text-muted);
@@ -4030,7 +4027,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   background: transparent;
   border: 1px solid var(--aurelia-surface-border);
   color: var(--aurelia-text-muted);
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.18em;
@@ -4059,7 +4056,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   padding: 0 6px;
   border-radius: 999px;
   background: rgba(78, 70, 57, 0.1);
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -4104,7 +4101,7 @@ select.aurelia-select.aurelia-select--compact:hover {
     gap: 24px;
     padding: 16px 8px;
     border-bottom: 1px solid var(--aurelia-surface-border);
-    font-family: Inter, sans-serif;
+    font-family: "Jost", system-ui, sans-serif;
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.22em;
@@ -4185,7 +4182,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-orders-cell-label {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -4200,7 +4197,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-orders-cell-value {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 1rem;
   color: var(--aurelia-text);
   word-break: break-word;
@@ -4226,7 +4223,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.18em;
@@ -4262,7 +4259,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -4395,7 +4392,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-empty-kicker {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.32em;
@@ -4409,7 +4406,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-empty-title {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(1.4rem, 2.5vw, 1.85rem);
   font-weight: 400;
   line-height: 1.25;
@@ -4418,7 +4415,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-empty-copy {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.95rem;
   line-height: 1.6;
   color: var(--aurelia-text-muted);
@@ -4439,7 +4436,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   align-items: center;
   justify-content: center;
   padding: 14px 28px;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -4500,7 +4497,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-error-code {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(5rem, 16vw, 10rem);
   font-weight: 400;
   line-height: 1;
@@ -4511,7 +4508,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-error-title {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(1.5rem, 3.2vw, 2.25rem);
   font-weight: 400;
   line-height: 1.25;
@@ -4520,7 +4517,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-error-copy {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 1rem;
   line-height: 1.65;
   color: var(--aurelia-text-muted);
@@ -4541,7 +4538,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   align-items: center;
   justify-content: center;
   padding: 14px 32px;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -4588,7 +4585,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-error-meta {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.9rem;
   color: var(--aurelia-text-muted);
   margin: 0;
@@ -4644,7 +4641,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-notifications-title {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-weight: 400;
   font-size: clamp(2rem, 4vw, 3rem);
   line-height: 1.15;
@@ -4654,7 +4651,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-notifications-copy {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 1.05rem;
   line-height: 1.6;
   color: var(--aurelia-text-muted);
@@ -4668,7 +4665,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   background: transparent;
   color: var(--aurelia-text);
   border: 1px solid var(--aurelia-text);
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.18em;
@@ -4755,7 +4752,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-notifications-row-kicker {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -4764,7 +4761,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-notifications-row-time {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.78rem;
   color: var(--aurelia-text-muted);
   flex: 0 0 auto;
@@ -4772,7 +4769,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-notifications-row-title {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 1.05rem;
   margin: 0 0 4px;
   color: var(--aurelia-text);
@@ -4783,7 +4780,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-notifications-row-copy {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.92rem;
   line-height: 1.55;
   color: var(--aurelia-text-muted);
@@ -5142,7 +5139,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.85rem;
   font-weight: 700;
   color: var(--aurelia-text);
@@ -5151,7 +5148,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-cart-stepper-label {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -5242,7 +5239,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-cart-title {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-weight: 400;
   font-size: clamp(2rem, 4vw, 3rem);
   line-height: 1.15;
@@ -5268,7 +5265,7 @@ select.aurelia-select.aurelia-select--compact:hover {
     gap: 24px;
     padding: 22px 8px;
     border-bottom: 1px solid var(--aurelia-surface-border);
-    font-family: Inter, sans-serif;
+    font-family: "Jost", system-ui, sans-serif;
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.22em;
@@ -5359,7 +5356,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-cart-cell-label {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -5414,7 +5411,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-cart-row-name {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(1rem, 1.2vw + 0.7rem, 1.15rem);
   line-height: 1.3;
   color: var(--aurelia-text);
@@ -5427,7 +5424,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-cart-row-sub {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.18em;
@@ -5442,7 +5439,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   background: transparent;
   border: 0;
   padding: 0;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -5500,13 +5497,13 @@ select.aurelia-select.aurelia-select--compact:hover {
 .aurelia-cart-qty-value {
   width: 32px;
   text-align: center;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 1rem;
   color: var(--aurelia-text);
 }
 
 .aurelia-cart-row-total {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 1.05rem;
   color: var(--aurelia-text);
   white-space: nowrap;
@@ -5536,14 +5533,14 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-cart-banner-title {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(1rem, 1.4vw + 0.5rem, 1.2rem);
   color: var(--aurelia-primary);
   margin: 0 0 4px;
 }
 
 .aurelia-cart-banner-copy {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.18em;
@@ -5575,7 +5572,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-cart-summary-title {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(1.4rem, 2vw + 0.5rem, 1.75rem);
   font-weight: 400;
   margin: 0;
@@ -5596,7 +5593,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   justify-content: space-between;
   align-items: baseline;
   gap: 12px;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.98rem;
 }
 
@@ -5627,7 +5624,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-cart-summary-total-label {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -5636,7 +5633,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-cart-summary-total-value {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(1.6rem, 2.5vw, 2rem);
   color: var(--aurelia-text);
 }
@@ -5657,7 +5654,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   color: #fff8f3;
   border: 0;
   padding: 18px 24px;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -5684,7 +5681,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-cart-finance-note {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.78rem;
   text-align: center;
   color: var(--aurelia-text-muted);
@@ -5715,7 +5712,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-cart-trust-item p {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 9.5px;
   font-weight: 600;
   letter-spacing: 0.12em;
@@ -5795,7 +5792,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-checkout-kicker {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -5805,7 +5802,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-checkout-title {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-weight: 400;
   font-size: clamp(2rem, 4vw, 3rem);
   line-height: 1.15;
@@ -5815,7 +5812,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-checkout-sub {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.95rem;
   color: var(--aurelia-text-muted);
   margin: 0 auto;
@@ -5854,7 +5851,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-checkout-label {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -5869,7 +5866,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   border: 0;
   padding: 0;
   margin: 0;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 1.05rem;
   color: var(--aurelia-text);
   outline: none;
@@ -5901,7 +5898,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 
 .aurelia-form-field-error {
   margin: 6px 0 0;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.78rem;
   line-height: 1.4;
   color: #ba1a1a;
@@ -5910,7 +5907,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 
 .aurelia-form-field-help {
   margin: 6px 0 0;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.78rem;
   line-height: 1.4;
   color: var(--aurelia-text-muted);
@@ -5928,7 +5925,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-checkout-payment-legend {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(1.2rem, 1.8vw + 0.3rem, 1.5rem);
   font-weight: 400;
   color: var(--aurelia-text);
@@ -5937,7 +5934,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-checkout-payment-note {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.9rem;
   color: var(--aurelia-text-muted);
   margin: 0 0 8px;
@@ -6011,14 +6008,14 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-checkout-payment-label {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.98rem;
   font-weight: 500;
   color: var(--aurelia-text);
 }
 
 .aurelia-checkout-payment-helper {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.16em;
@@ -6035,7 +6032,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   background: #fff4f4;
   border: 1px solid #f1c4c4;
   color: #93000a;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.92rem;
   line-height: 1.5;
 }
@@ -6064,7 +6061,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   background: transparent;
   border: 0;
   padding: 10px 0;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -6094,7 +6091,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   color: #fff8f3;
   border: 0;
   padding: 18px 36px;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -6145,7 +6142,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-checkout-summary-title {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(1.25rem, 1.6vw + 0.5rem, 1.5rem);
   font-weight: 400;
   margin: 0;
@@ -6214,7 +6211,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   background: var(--aurelia-primary);
   color: #fff8f3;
   border-radius: 999px;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 10px;
   font-weight: 700;
   display: inline-flex;
@@ -6230,7 +6227,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-checkout-summary-name {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 0.98rem;
   color: var(--aurelia-text);
   margin: 0;
@@ -6242,7 +6239,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-checkout-summary-unit {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.16em;
@@ -6252,14 +6249,14 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-checkout-summary-line-total {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.95rem;
   color: var(--aurelia-text);
   white-space: nowrap;
 }
 
 .aurelia-checkout-summary-loading {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.9rem;
   color: var(--aurelia-text-muted);
   padding: 16px 0;
@@ -6279,7 +6276,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.95rem;
 }
 
@@ -6309,7 +6306,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-checkout-summary-total-label {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -6318,13 +6315,13 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-checkout-summary-total-value {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(1.4rem, 2vw, 1.8rem);
   color: var(--aurelia-text);
 }
 
 .aurelia-checkout-summary-syncing {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.78rem;
   color: var(--aurelia-text-muted);
   text-align: center;
@@ -6369,7 +6366,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -6413,7 +6410,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-order-detail-kicker {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -6422,7 +6419,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-order-detail-ref {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-weight: 400;
   font-size: clamp(1.8rem, 4vw, 2.75rem);
   line-height: 1.15;
@@ -6432,7 +6429,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-order-detail-placed {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.92rem;
   color: var(--aurelia-text-muted);
   margin: 0;
@@ -6460,7 +6457,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 
 .aurelia-order-detail-status-copy {
   margin: 0;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.88rem;
   line-height: 1.5;
   color: var(--aurelia-text-muted);
@@ -6517,7 +6514,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-order-detail-card-title {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-weight: 400;
   font-size: clamp(1.15rem, 1.6vw + 0.4rem, 1.4rem);
   margin: 0;
@@ -6525,7 +6522,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-order-detail-card-meta {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -6598,7 +6595,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-order-item-name {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(1rem, 1.2vw + 0.5rem, 1.1rem);
   color: var(--aurelia-text);
   text-decoration: none;
@@ -6612,7 +6609,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-order-item-sub {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.16em;
@@ -6622,7 +6619,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-order-item-total {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 1rem;
   color: var(--aurelia-text);
   white-space: nowrap;
@@ -6642,7 +6639,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.95rem;
 }
 
@@ -6670,7 +6667,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-order-detail-totals-final dt {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -6680,7 +6677,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-order-detail-totals-final dd {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(1.4rem, 2vw, 1.7rem);
   color: var(--aurelia-text);
   font-weight: 400;
@@ -6688,7 +6685,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 
 /* Aside cards */
 .aurelia-order-detail-address {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.95rem;
   font-style: normal;
   line-height: 1.7;
@@ -6698,21 +6695,21 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-order-detail-empty {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.9rem;
   color: var(--aurelia-text-muted);
   margin: 0;
 }
 
 .aurelia-order-detail-payment {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 1.1rem;
   color: var(--aurelia-text);
   margin: 0;
 }
 
 .aurelia-order-detail-payment-note {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.85rem;
   color: var(--aurelia-text-muted);
   margin: 0;
@@ -6724,7 +6721,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-order-detail-concierge-copy {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.92rem;
   line-height: 1.55;
   color: var(--aurelia-text-muted);
@@ -6739,7 +6736,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   padding: 14px 18px;
   background: #ffffff;
   border: 1px solid var(--aurelia-surface-border);
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -6811,7 +6808,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -6840,7 +6837,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-profile-kicker {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -6849,7 +6846,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-profile-title {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-weight: 400;
   font-size: clamp(1.8rem, 4vw, 2.75rem);
   line-height: 1.15;
@@ -6859,7 +6856,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-profile-sub {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.95rem;
   color: var(--aurelia-text-muted);
   margin: 0;
@@ -6902,7 +6899,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-profile-card-title {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-weight: 400;
   font-size: clamp(1.15rem, 1.6vw + 0.4rem, 1.4rem);
   margin: 0;
@@ -6922,7 +6919,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   background: transparent;
   border: 1px solid var(--aurelia-surface-border);
   padding: 10px 16px;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -6983,7 +6980,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.18em;
@@ -7004,7 +7001,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   color: #fff8f3;
   border: 0;
   padding: 14px 28px;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -7036,7 +7033,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   background: #fff4f4;
   border: 1px solid #f1c4c4;
   color: #93000a;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.92rem;
   line-height: 1.5;
 }
@@ -7095,7 +7092,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-address-card-label {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -7109,7 +7106,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   padding: 4px 10px;
   background: var(--aurelia-primary);
   color: #fff8f3;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 9.5px;
   font-weight: 700;
   letter-spacing: 0.2em;
@@ -7129,7 +7126,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-address-card-body {
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-style: normal;
   font-size: 0.9rem;
   line-height: 1.55;
@@ -7142,7 +7139,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-address-card-recipient {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-size: 1rem;
   margin: 0 0 4px !important;
   color: var(--aurelia-text);
@@ -7171,7 +7168,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   background: transparent;
   border: 0;
   padding: 4px 0;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.22em;
@@ -7259,7 +7256,7 @@ select.aurelia-select.aurelia-select--compact:hover {
 }
 
 .aurelia-address-dialog-title {
-  font-family: "Noto Serif", serif;
+  font-family: "Cormorant Garamond", Georgia, serif;
   font-weight: 400;
   font-size: clamp(1.4rem, 2.4vw, 1.8rem);
   margin: 8px 0 0;
@@ -7288,7 +7285,7 @@ select.aurelia-select.aurelia-select--compact:hover {
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  font-family: Inter, sans-serif;
+  font-family: "Jost", system-ui, sans-serif;
   font-size: 0.92rem;
   color: var(--aurelia-text);
   cursor: pointer;

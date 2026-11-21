@@ -19,11 +19,14 @@ import { useAuth } from "../types/auth-context"
 import { EmptyState } from "../components/feedback/EmptyState"
 import { EditorialFormField } from "../components/forms/FormFields"
 import { errorToast, successToast } from "../utils/toast"
+import { useI18n, type Lang, type TFunction } from "../i18n"
 
 const TAX_RATE = 0.2
 
-const formatCurrency = (value: string | number) =>
-  new Intl.NumberFormat("en-GB", {
+const localeFor = (lang: Lang) => (lang === "sq" ? "sq-AL" : "en-GB")
+
+const formatCurrency = (value: string | number, lang: Lang) =>
+  new Intl.NumberFormat(localeFor(lang), {
     style: "currency",
     currency: "GBP",
     minimumFractionDigits: 2,
@@ -31,15 +34,15 @@ const formatCurrency = (value: string | number) =>
   }).format(Number(value))
 
 const STEPS = [
-  { id: "cart", label: "Cart" },
-  { id: "shipping", label: "Shipping" },
-  { id: "payment", label: "Payment" },
+  { id: "cart", labelKey: "account.steps.cart" },
+  { id: "shipping", labelKey: "account.steps.shipping" },
+  { id: "payment", labelKey: "account.steps.payment" },
 ] as const
 
 const PAYMENT_OPTIONS = [
-  { id: "card", label: "Card (simulated)", helper: "Visa, Mastercard, Amex" },
-  { id: "cod", label: "Cash on delivery", helper: "Pay when your piece arrives" },
-  { id: "bank", label: "Bank transfer", helper: "Receive instructions by email" },
+  { id: "card", labelKey: "account.checkout.paymentCard", helperKey: "account.checkout.paymentCardHelper" },
+  { id: "cod", labelKey: "account.checkout.paymentCod", helperKey: "account.checkout.paymentCodHelper" },
+  { id: "bank", labelKey: "account.checkout.paymentBank", helperKey: "account.checkout.paymentBankHelper" },
 ] as const
 
 type CheckoutValues = {
@@ -62,17 +65,18 @@ const initialValues: CheckoutValues = {
   paymentMethod: "card",
 }
 
-const checkoutSchema = Yup.object({
-  firstName: Yup.string().trim().required("First name is required"),
-  lastName: Yup.string().trim().required("Last name is required"),
-  address: Yup.string().trim().required("Shipping address is required"),
-  city: Yup.string().trim().required("City is required"),
-  postalCode: Yup.string().trim().required("Postal code is required"),
-  phone: Yup.string().trim(),
-  paymentMethod: Yup.string()
-    .oneOf(PAYMENT_OPTIONS.map((o) => o.id), "Please select a payment method")
-    .required("Please select a payment method"),
-})
+const makeCheckoutSchema = (t: TFunction) =>
+  Yup.object({
+    firstName: Yup.string().trim().required(t("account.validation.firstNameRequired")),
+    lastName: Yup.string().trim().required(t("account.validation.lastNameRequired")),
+    address: Yup.string().trim().required(t("account.validation.shippingAddressRequired")),
+    city: Yup.string().trim().required(t("account.validation.cityRequired")),
+    postalCode: Yup.string().trim().required(t("account.validation.postalCodeRequired")),
+    phone: Yup.string().trim(),
+    paymentMethod: Yup.string()
+      .oneOf(PAYMENT_OPTIONS.map((o) => o.id), t("account.validation.paymentRequired"))
+      .required(t("account.validation.paymentRequired")),
+  })
 
 const splitName = (fullName?: string | null) => {
   if (!fullName) return { firstName: "", lastName: "" }
@@ -95,6 +99,8 @@ const streetFromAddress = (addr: Address) => {
 }
 
 export const CheckoutPage = () => {
+  const { t, lang } = useI18n()
+  const checkoutSchema = makeCheckoutSchema(t)
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const setLast = useOrderStore((s) => s.setLastCheckoutId)
@@ -143,7 +149,7 @@ export const CheckoutPage = () => {
       setLast(order.id)
       void queryClient.invalidateQueries({ queryKey: queryKeys.cart() })
       void queryClient.invalidateQueries({ queryKey: queryKeys.orders() })
-      successToast(`Order placed · #AUR-${order.id.slice(0, 6).toUpperCase()}`)
+      successToast(t("account.checkout.placed", { ref: `#AUR-${order.id.slice(0, 6).toUpperCase()}` }))
       navigate(`/orders/${order.id}`)
     },
   })
@@ -166,7 +172,7 @@ export const CheckoutPage = () => {
         ? String((err.response?.data as { message?: string })?.message ?? err.message)
         : err instanceof Error
           ? err.message
-          : "Checkout failed"
+          : t("account.checkout.failed")
       setFormError(message)
       errorToast(message)
     } finally {
@@ -182,11 +188,11 @@ export const CheckoutPage = () => {
         <EmptyState
           variant="card"
           icon="shopping_bag"
-          kicker="Empty Cart"
-          title="There’s nothing to check out yet"
-          copy="Add a piece to your selection before continuing."
-          cta={{ to: "/products", label: "Browse Collections" }}
-          secondaryCta={{ to: "/cart", label: "Return to Cart" }}
+          kicker={t("account.checkout.emptyKicker")}
+          title={t("account.checkout.emptyTitle")}
+          copy={t("account.checkout.emptyCopy")}
+          cta={{ to: "/products", label: t("account.common.browseCollections") }}
+          secondaryCta={{ to: "/cart", label: t("account.common.returnToCart") }}
         />
       </motion.section>
     )
@@ -201,7 +207,7 @@ export const CheckoutPage = () => {
         animate="visible"
         aria-busy="true"
         aria-live="polite"
-        aria-label="Loading checkout"
+        aria-label={t("account.checkout.loadingAria")}
       >
         <Stepper activeIndex={1} />
         <div className="aurelia-checkout-grid">
@@ -245,53 +251,51 @@ export const CheckoutPage = () => {
                   whileInView="visible"
                   viewport={scrollRevealViewport}
                 >
-                  <p className="aurelia-checkout-kicker">Step 2 · Shipping & Payment</p>
-                  <h1 className="aurelia-checkout-title">Shipping Details</h1>
-                  <p className="aurelia-checkout-sub">
-                    Tell us where your piece should arrive. We will only contact you about this order.
-                  </p>
+                  <p className="aurelia-checkout-kicker">{t("account.checkout.kicker")}</p>
+                  <h1 className="aurelia-checkout-title">{t("account.checkout.title")}</h1>
+                  <p className="aurelia-checkout-sub">{t("account.checkout.sub")}</p>
                 </motion.header>
 
                 <div className="aurelia-checkout-fields">
                   <EditorialFormField
                     name="firstName"
-                    label="First Name"
+                    label={t("account.field.firstName")}
                     placeholder="John"
                     autoComplete="given-name"
                     required
                   />
                   <EditorialFormField
                     name="lastName"
-                    label="Last Name"
+                    label={t("account.field.lastName")}
                     placeholder="Doe"
                     autoComplete="family-name"
                     required
                   />
                   <EditorialFormField
                     name="address"
-                    label="Shipping Address"
+                    label={t("account.field.shippingAddress")}
                     colSpan={2}
-                    placeholder="123 Mayfair Terrace"
+                    placeholder={t("account.placeholder.address")}
                     autoComplete="street-address"
                     required
                   />
                   <EditorialFormField
                     name="city"
-                    label="City"
-                    placeholder="London"
+                    label={t("account.field.city")}
+                    placeholder={t("account.placeholder.city")}
                     autoComplete="address-level2"
                     required
                   />
                   <EditorialFormField
                     name="postalCode"
-                    label="Postal Code"
-                    placeholder="W1K 7AA"
+                    label={t("account.field.postalCode")}
+                    placeholder={t("account.placeholder.postalCode")}
                     autoComplete="postal-code"
                     required
                   />
                   <EditorialFormField
                     name="phone"
-                    label="Phone Number"
+                    label={t("account.field.phoneNumber")}
                     colSpan={2}
                     type="tel"
                     placeholder="+44 20 1234 5678"
@@ -300,9 +304,9 @@ export const CheckoutPage = () => {
                 </div>
 
                 <fieldset className="aurelia-checkout-payment">
-                  <legend className="aurelia-checkout-payment-legend">Payment Method</legend>
+                  <legend className="aurelia-checkout-payment-legend">{t("account.checkout.paymentLegend")}</legend>
                   <p className="aurelia-checkout-payment-note">
-                    MVP checkout captures a payment label only — no card processor is charged.
+                    {t("account.checkout.paymentNote")}
                   </p>
                   <div className="aurelia-checkout-payment-options">
                     {PAYMENT_OPTIONS.map((option) => {
@@ -324,8 +328,8 @@ export const CheckoutPage = () => {
                           />
                           <span className="aurelia-checkout-payment-bullet" aria-hidden />
                           <span className="aurelia-checkout-payment-text">
-                            <span className="aurelia-checkout-payment-label">{option.label}</span>
-                            <span className="aurelia-checkout-payment-helper">{option.helper}</span>
+                            <span className="aurelia-checkout-payment-label">{t(option.labelKey)}</span>
+                            <span className="aurelia-checkout-payment-helper">{t(option.helperKey)}</span>
                           </span>
                         </label>
                       )
@@ -337,8 +341,7 @@ export const CheckoutPage = () => {
                   <div className="aurelia-checkout-error" role="alert">
                     <span className="material-symbols-outlined" aria-hidden>error</span>
                     <span>
-                      {formError ??
-                        "Please fix the highlighted fields and try again."}
+                      {formError ?? t("account.validation.fixFields")}
                     </span>
                   </div>
                 )}
@@ -351,7 +354,7 @@ export const CheckoutPage = () => {
 
         <motion.aside className="aurelia-checkout-aside" variants={fadeUp} initial="hidden" animate="visible">
           <div className="aurelia-checkout-summary">
-            <h2 className="aurelia-checkout-summary-title">Order Summary</h2>
+            <h2 className="aurelia-checkout-summary-title">{t("account.checkout.summaryTitle")}</h2>
 
             <motion.ul className="aurelia-checkout-summary-items" variants={listStagger} initial="hidden" animate="visible">
               {items.map((line) => (
@@ -362,16 +365,16 @@ export const CheckoutPage = () => {
                     ) : (
                       <div className="aurelia-checkout-summary-thumb-fallback" aria-hidden />
                     )}
-                    <span className="aurelia-checkout-summary-qty" aria-label={`Quantity ${line.quantity}`}>
+                    <span className="aurelia-checkout-summary-qty" aria-label={t("account.checkout.quantityAria", { quantity: line.quantity })}>
                       {line.quantity}
                     </span>
                   </div>
                   <div className="aurelia-checkout-summary-meta">
                     <p className="aurelia-checkout-summary-name">{line.name}</p>
-                    <p className="aurelia-checkout-summary-unit">{formatCurrency(line.price)} each</p>
+                    <p className="aurelia-checkout-summary-unit">{t("account.common.each", { price: formatCurrency(line.price, lang) })}</p>
                   </div>
                   <span className="aurelia-checkout-summary-line-total">
-                    {formatCurrency(Number(line.price) * line.quantity)}
+                    {formatCurrency(Number(line.price) * line.quantity, lang)}
                   </span>
                 </motion.li>
               ))}
@@ -393,26 +396,26 @@ export const CheckoutPage = () => {
 
             <dl className="aurelia-checkout-summary-rows">
               <div>
-                <dt>Subtotal</dt>
-                <dd>{formatCurrency(subtotalNumber)}</dd>
+                <dt>{t("account.summary.subtotal")}</dt>
+                <dd>{formatCurrency(subtotalNumber, lang)}</dd>
               </div>
               <div>
-                <dt>Estimated Taxes</dt>
-                <dd>{formatCurrency(estimatedTax)}</dd>
+                <dt>{t("account.summary.estimatedTaxes")}</dt>
+                <dd>{formatCurrency(estimatedTax, lang)}</dd>
               </div>
               <div>
-                <dt>Shipping</dt>
-                <dd className="aurelia-checkout-summary-shipping">Complimentary</dd>
+                <dt>{t("account.summary.shipping")}</dt>
+                <dd className="aurelia-checkout-summary-shipping">{t("account.common.complimentary")}</dd>
               </div>
             </dl>
 
             <div className="aurelia-checkout-summary-total">
-              <span className="aurelia-checkout-summary-total-label">Total Amount</span>
-              <span className="aurelia-checkout-summary-total-value">{formatCurrency(total)}</span>
+              <span className="aurelia-checkout-summary-total-label">{t("account.summary.totalAmount")}</span>
+              <span className="aurelia-checkout-summary-total-value">{formatCurrency(total, lang)}</span>
             </div>
 
             {cartFetching && (
-              <p className="aurelia-checkout-summary-syncing">Syncing latest pricing…</p>
+              <p className="aurelia-checkout-summary-syncing">{t("account.checkout.syncing")}</p>
             )}
           </div>
         </motion.aside>
@@ -424,6 +427,7 @@ export const CheckoutPage = () => {
 const CheckoutActions = ({ isSubmitting }: { isSubmitting: boolean }) => {
   // Marks every field as touched so all validation messages surface on the first submit.
   const { validateForm, setTouched, values } = useFormikContext<CheckoutValues>()
+  const { t } = useI18n()
 
   return (
     <div className="aurelia-checkout-actions">
@@ -435,7 +439,7 @@ const CheckoutActions = ({ isSubmitting }: { isSubmitting: boolean }) => {
         transition={transition.quick}
       >
         <span className="material-symbols-outlined" aria-hidden>chevron_left</span>
-        <span>Return to Cart</span>
+        <span>{t("account.common.returnToCart")}</span>
       </MotionLink>
       <motion.button
         type="submit"
@@ -454,31 +458,34 @@ const CheckoutActions = ({ isSubmitting }: { isSubmitting: boolean }) => {
           void validateForm()
         }}
       >
-        <span>{isSubmitting ? "Placing Order…" : "Place Order"}</span>
+        <span>{isSubmitting ? t("account.checkout.placingOrder") : t("account.checkout.placeOrder")}</span>
         <span className="material-symbols-outlined" aria-hidden>arrow_forward</span>
       </motion.button>
     </div>
   )
 }
 
-const Stepper = ({ activeIndex }: { activeIndex: number }) => (
-  <nav className="aurelia-cart-stepper" aria-label="Checkout progress">
-    {STEPS.map((step, index) => {
-      const state =
-        index < activeIndex ? "complete" : index === activeIndex ? "active" : "upcoming"
-      return (
-        <div key={step.id} className={`aurelia-cart-stepper-item is-${state}`}>
-          <div className="aurelia-cart-stepper-bullet" aria-hidden>
-            {state === "complete" ? (
-              <span className="material-symbols-outlined">check</span>
-            ) : (
-              index + 1
-            )}
+const Stepper = ({ activeIndex }: { activeIndex: number }) => {
+  const { t } = useI18n()
+  return (
+    <nav className="aurelia-cart-stepper" aria-label={t("account.stepper.aria")}>
+      {STEPS.map((step, index) => {
+        const state =
+          index < activeIndex ? "complete" : index === activeIndex ? "active" : "upcoming"
+        return (
+          <div key={step.id} className={`aurelia-cart-stepper-item is-${state}`}>
+            <div className="aurelia-cart-stepper-bullet" aria-hidden>
+              {state === "complete" ? (
+                <span className="material-symbols-outlined">check</span>
+              ) : (
+                index + 1
+              )}
+            </div>
+            <span className="aurelia-cart-stepper-label">{t(step.labelKey)}</span>
+            {index < STEPS.length - 1 && <span className="aurelia-cart-stepper-line" aria-hidden />}
           </div>
-          <span className="aurelia-cart-stepper-label">{step.label}</span>
-          {index < STEPS.length - 1 && <span className="aurelia-cart-stepper-line" aria-hidden />}
-        </div>
-      )
-    })}
-  </nav>
-)
+        )
+      })}
+    </nav>
+  )
+}

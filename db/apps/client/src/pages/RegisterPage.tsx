@@ -11,6 +11,7 @@ import { useAuth } from "../types/auth-context"
 import { extractFieldErrors } from "../utils/form-errors"
 import { sanitizeRedirect } from "../utils/post-auth-redirect"
 import { errorToast, successToast } from "../utils/toast"
+import { useI18n, type TFunction } from "../i18n"
 
 const REGISTER_VISUAL =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuC2a5NvgT3nw6nbJt-1nTW555XAN_2nqzoDEJlxE1Buz1a9wIlJwjMBKBPE3SYoVCgjcmMk73lmQxuFIPqwNxY3OO9d7cXTWP24To_WNRtfKhh2Mzw2pXUzPEJFOlK86EIc9epl5o5RrjnxrczcCgdgUkr3E9iqmuy4I98xXxl_tM6vVN7fY3_Af7o-WArja1GKsU4YSxs18tr7BxcMR-mgBaKTCTHd3zN6l2rK9Ar3eqFZLpezmxsR0dKM6YYD3ELNN6tanVCUPw"
@@ -31,20 +32,23 @@ const initialValues: RegisterValues = {
   joinCircle: true,
 }
 
-const registerSchema = Yup.object({
-  firstName: Yup.string().trim().required("First name is required"),
-  lastName: Yup.string().trim().required("Last name is required"),
-  email: Yup.string()
-    .trim()
-    .required("Email is required")
-    .email("Please enter a valid email address"),
-  password: Yup.string()
-    .required("Password is required")
-    .min(8, "Password must be at least 8 characters"),
-  joinCircle: Yup.boolean(),
-})
+const makeRegisterSchema = (t: TFunction) =>
+  Yup.object({
+    firstName: Yup.string().trim().required(t("account.validation.firstNameRequired")),
+    lastName: Yup.string().trim().required(t("account.validation.lastNameRequired")),
+    email: Yup.string()
+      .trim()
+      .required(t("account.validation.emailRequired"))
+      .email(t("account.validation.emailInvalid")),
+    password: Yup.string()
+      .required(t("account.validation.passwordRequired"))
+      .min(8, t("account.validation.passwordMin")),
+    joinCircle: Yup.boolean(),
+  })
 
 export const RegisterPage = () => {
+  const { t } = useI18n()
+  const registerSchema = makeRegisterSchema(t)
   const { register } = useAuth()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -61,7 +65,7 @@ export const RegisterPage = () => {
         email: values.email.trim(),
         password: values.password,
       })
-      successToast(`Welcome to ElaBizhu, ${values.firstName.trim()}`)
+      successToast(t("account.register.welcomeToast", { name: values.firstName.trim() }))
       navigate(redirectTo, { replace: true })
     } catch (err) {
       const { fieldErrors: rawErrors, formError: nextFormError } = extractFieldErrors(err)
@@ -74,7 +78,7 @@ export const RegisterPage = () => {
       if (Object.keys(next).length > 0) {
         helpers.setErrors(next)
       }
-      const message = nextFormError ?? "Could not create account"
+      const message = nextFormError ?? t("account.register.failed")
       setFormError(message)
       errorToast(message)
     } finally {
@@ -85,14 +89,12 @@ export const RegisterPage = () => {
   return (
     <AuthShell
       imageUrl={REGISTER_VISUAL}
-      imageAlt="A jeweller's hands setting a stone, sunlit close-up of craftsmanship"
-      overlayHeadline="Timeless Elegance."
-      overlaySubcopy="Become part of an exclusive circle where fine craftsmanship meets soulful storytelling."
+      imageAlt={t("account.register.visualAlt")}
+      overlayHeadline={t("account.register.overlayHeadline")}
+      overlaySubcopy={t("account.register.overlaySubcopy")}
     >
-      <h1 className="aurelia-auth-title">Create Account</h1>
-      <p className="aurelia-auth-subtitle">
-        Experience the art of fine jewellery through a personalized lens.
-      </p>
+      <h1 className="aurelia-auth-title">{t("account.register.title")}</h1>
+      <p className="aurelia-auth-subtitle">{t("account.register.subtitle")}</p>
 
       <Formik
         initialValues={initialValues}
@@ -110,7 +112,7 @@ export const RegisterPage = () => {
                 <div className="aurelia-auth-row">
                   <AuthFormField
                     name="firstName"
-                    label="First Name"
+                    label={t("account.field.firstName")}
                     type="text"
                     autoComplete="given-name"
                     placeholder="Evelyn"
@@ -118,7 +120,7 @@ export const RegisterPage = () => {
                   />
                   <AuthFormField
                     name="lastName"
-                    label="Last Name"
+                    label={t("account.field.lastName")}
                     type="text"
                     autoComplete="family-name"
                     placeholder="Aurelius"
@@ -128,7 +130,7 @@ export const RegisterPage = () => {
 
                 <AuthFormField
                   name="email"
-                  label="Email Address"
+                  label={t("account.field.emailAddress")}
                   type="email"
                   autoComplete="email"
                   placeholder="evelyn@aurelia.com"
@@ -137,17 +139,17 @@ export const RegisterPage = () => {
 
                 <AuthFormField
                   name="password"
-                  label="Password"
+                  label={t("account.field.password")}
                   type={showPassword ? "text" : "password"}
                   autoComplete="new-password"
-                  placeholder="At least 8 characters"
+                  placeholder={t("account.placeholder.password")}
                   required
                   rightAdornment={
                     <button
                       type="button"
                       className="aurelia-auth-toggle"
                       onClick={() => setShowPassword((p) => !p)}
-                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      aria-label={showPassword ? t("account.password.hide") : t("account.password.show")}
                       aria-pressed={showPassword}
                     >
                       {showPassword ? <FiEyeOff aria-hidden="true" /> : <FiEye aria-hidden="true" />}
@@ -162,13 +164,13 @@ export const RegisterPage = () => {
                     checked={values.joinCircle}
                     onChange={(e) => void setFieldValue("joinCircle", e.target.checked)}
                   />
-                  <span>Join the ElaBizhu Circle for exclusive collections and journal entries.</span>
+                  <span>{t("account.register.joinCircle")}</span>
                 </label>
               </div>
 
               {(formError || showInvalidBanner) && (
                 <div role="alert" className="aurelia-auth-banner">
-                  {formError ?? "Please fix the highlighted fields and try again."}
+                  {formError ?? t("account.validation.fixFields")}
                 </div>
               )}
 
@@ -181,11 +183,11 @@ export const RegisterPage = () => {
                 whileTap={isSubmitting ? undefined : { scale: 0.97 }}
                 transition={transition.quick}
               >
-                {isSubmitting ? "Creating Account…" : "Create Account"}
+                {isSubmitting ? t("account.register.submitting") : t("account.register.submit")}
               </motion.button>
 
               <p className="aurelia-auth-footnote">
-                Already have an account?
+                {t("account.register.haveAccount")}
                 <Link
                   to={
                     redirectTo !== "/categories"
@@ -193,7 +195,7 @@ export const RegisterPage = () => {
                       : "/login"
                   }
                 >
-                  Sign In
+                  {t("account.login.submit")}
                 </Link>
               </p>
             </Form>

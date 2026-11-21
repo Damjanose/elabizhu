@@ -11,22 +11,24 @@ import {
   markNotificationRead,
 } from "../services/notifications"
 import { successToast, toastFromError } from "../utils/toast"
+import { useI18n, type TFunction, type Lang } from "../i18n"
 
-const formatRelative = (iso: string) => {
+const formatRelative = (iso: string, t: TFunction, lang: Lang) => {
   const date = new Date(iso)
   if (Number.isNaN(date.getTime())) return ""
   const diffMs = Date.now() - date.getTime()
   const minutes = Math.round(diffMs / 60000)
-  if (minutes < 1) return "Just now"
-  if (minutes < 60) return `${minutes} min ago`
+  if (minutes < 1) return t("account.notifications.justNow")
+  if (minutes < 60) return t("account.notifications.minutesAgo", { count: minutes })
   const hours = Math.round(minutes / 60)
-  if (hours < 24) return `${hours} hr ago`
+  if (hours < 24) return t("account.notifications.hoursAgo", { count: hours })
   const days = Math.round(hours / 24)
-  if (days < 7) return `${days} d ago`
-  return date.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" })
+  if (days < 7) return t("account.notifications.daysAgo", { count: days })
+  return date.toLocaleDateString(lang === "sq" ? "sq-AL" : undefined, { day: "numeric", month: "short", year: "numeric" })
 }
 
 export const NotificationsPage = () => {
+  const { t } = useI18n()
   const queryClient = useQueryClient()
   const notificationsQuery = useQuery({
     queryKey: queryKeys.notifications(),
@@ -39,16 +41,16 @@ export const NotificationsPage = () => {
   const markOne = useMutation({
     mutationFn: markNotificationRead,
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: queryKeys.notifications() }),
-    onError: (err) => toastFromError(err, "Could not mark notification as read"),
+    onError: (err) => toastFromError(err, t("account.notifications.markOneError")),
   })
 
   const markAll = useMutation({
     mutationFn: markAllNotificationsRead,
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.notifications() })
-      successToast("All notifications marked as read")
+      successToast(t("account.notifications.markAllSuccess"))
     },
-    onError: (err) => toastFromError(err, "Could not mark all as read"),
+    onError: (err) => toastFromError(err, t("account.notifications.markAllError")),
   })
 
   const sorted = useMemo(
@@ -65,11 +67,9 @@ export const NotificationsPage = () => {
     <section className="aurelia-notifications">
       <header className="aurelia-notifications-hero">
         <div>
-          <span className="aurelia-admin-kicker d-block mb-3">Personal Atelier</span>
-          <h1 className="aurelia-notifications-title">Notifications</h1>
-          <p className="aurelia-notifications-copy">
-            Updates on your orders, atelier announcements, and curated stories — all in one place.
-          </p>
+          <span className="aurelia-admin-kicker d-block mb-3">{t("account.common.personalAtelier")}</span>
+          <h1 className="aurelia-notifications-title">{t("account.notifications.title")}</h1>
+          <p className="aurelia-notifications-copy">{t("account.notifications.copy")}</p>
         </div>
         {sorted.length > 0 && (
           <button
@@ -79,10 +79,10 @@ export const NotificationsPage = () => {
             onClick={() => void markAll.mutateAsync()}
           >
             {unreadCount === 0
-              ? "All Caught Up"
+              ? t("account.notifications.allCaughtUp")
               : markAll.isPending
-                ? "Marking…"
-                : `Mark All as Read (${unreadCount})`}
+                ? t("account.notifications.marking")
+                : t("account.notifications.markAll", { count: unreadCount })}
           </button>
         )}
       </header>
@@ -94,19 +94,19 @@ export const NotificationsPage = () => {
           variant="card"
           tone="danger"
           icon="error"
-          kicker="Connection Issue"
-          title="We couldn’t fetch your notifications"
-          copy="Please refresh, or come back in a moment."
-          cta={{ label: isFetching ? "Retrying…" : "Try Again", onClick: () => void refetch() }}
+          kicker={t("account.common.connectionIssue")}
+          title={t("account.notifications.errorTitle")}
+          copy={t("account.notifications.errorCopy")}
+          cta={{ label: isFetching ? t("account.common.retrying") : t("account.common.tryAgain"), onClick: () => void refetch() }}
         />
       ) : sorted.length === 0 ? (
         <EmptyState
           variant="card"
           icon="notifications_off"
-          kicker="All Quiet"
-          title="You’re all caught up"
-          copy="When orders progress or your atelier has news, updates will appear here."
-          cta={{ to: "/products", label: "Browse Collections" }}
+          kicker={t("account.notifications.emptyKicker")}
+          title={t("account.notifications.emptyTitle")}
+          copy={t("account.notifications.emptyCopy")}
+          cta={{ to: "/products", label: t("account.common.browseCollections") }}
         />
       ) : (
         <ul className="aurelia-notifications-list">
@@ -130,6 +130,7 @@ const NotificationRow = ({
   notification: NotificationDto
   onMarkRead: () => void
 }) => {
+  const { t, lang } = useI18n()
   const isUnread = !notification.readAt
   return (
     <li className={`aurelia-notifications-row ${isUnread ? "is-unread" : ""}`}>
@@ -137,7 +138,7 @@ const NotificationRow = ({
         type="button"
         className="aurelia-notifications-row-link"
         onClick={isUnread ? onMarkRead : undefined}
-        aria-label={isUnread ? `Mark "${notification.title}" as read` : notification.title}
+        aria-label={isUnread ? t("account.notifications.markOneAria", { title: notification.title }) : notification.title}
       >
         <span className="aurelia-notifications-row-marker" aria-hidden />
         <div className="aurelia-notifications-row-body">
@@ -146,7 +147,7 @@ const NotificationRow = ({
               {notification.type.replace(/_/g, " ").toUpperCase()}
             </span>
             <time className="aurelia-notifications-row-time" dateTime={notification.createdAt}>
-              {formatRelative(notification.createdAt)}
+              {formatRelative(notification.createdAt, t, lang)}
             </time>
           </div>
           <p className="aurelia-notifications-row-title">{notification.title}</p>

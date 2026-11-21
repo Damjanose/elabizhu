@@ -1,6 +1,8 @@
 export const INSTAGRAM_HANDLE = "elabizhu"
 export const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}/`
 
+export const TIKTOK_URL = "https://www.tiktok.com/@elabizhu"
+
 export type InstagramPost = {
   /** Image path, e.g. "/instagram/post-1.jpg" (place files in public/instagram/) */
   image: string

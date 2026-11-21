@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
+import { useI18n } from "../../i18n"
 
 export type AureliaSelectOption = { value: string; label: string }
 
@@ -22,11 +23,13 @@ export const AureliaCustomSelect = ({
   value,
   onChange,
   options,
-  placeholder = "Select…",
+  placeholder: placeholderProp,
   disabled,
   variant = "default",
   "aria-label": ariaLabel,
 }: Props) => {
+  const { t } = useI18n()
+  const placeholder = placeholderProp ?? t("account.select.placeholder")
   const [open, setOpen] = useState(false)
   const [highlightIndex, setHighlightIndex] = useState(0)
   const [panelPos, setPanelPos] = useState<PanelPos | null>(null)

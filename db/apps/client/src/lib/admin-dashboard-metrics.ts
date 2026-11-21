@@ -1,4 +1,7 @@
 import type { OrderStatus, OrderSummary, Product } from "@jewellery/types"
+import { tNow, useLangStore } from "../i18n"
+
+const dateLocale = () => (useLangStore.getState().lang === "sq" ? "sq-AL" : "en-GB")
 
 const toLocalDateKey = (d: Date) => {
   const y = d.getFullYear()
@@ -53,7 +56,7 @@ export const getDailyOrderSeries = (orders: OrderSummary[], dayCount = 14): Dail
     d.setDate(start.getDate() + i)
     series.push({
       key: toLocalDateKey(d),
-      label: d.toLocaleDateString("en-GB", { day: "numeric", month: "short" }),
+      label: d.toLocaleDateString(dateLocale(), { day: "numeric", month: "short" }),
       orders: 0,
       revenue: 0,
     })
@@ -75,12 +78,12 @@ export const getDailyOrderSeries = (orders: OrderSummary[], dayCount = 14): Dail
 
 const STATUS_ORDER: OrderStatus[] = ["pending", "confirmed", "shipped", "delivered", "cancelled"]
 
-const STATUS_DISPLAY: Record<OrderStatus, string> = {
-  pending: "Pending",
-  confirmed: "Confirmed",
-  shipped: "Shipped",
-  delivered: "Delivered",
-  cancelled: "Cancelled",
+const STATUS_LABEL_KEY: Record<OrderStatus, string> = {
+  pending: "admin.status.pending",
+  confirmed: "admin.status.confirmed",
+  shipped: "admin.status.shipped",
+  delivered: "admin.status.delivered",
+  cancelled: "admin.status.cancelled",
 }
 
 const STATUS_CHART_COLOR: Record<OrderStatus, string> = {
@@ -106,7 +109,7 @@ export const getOrderStatusDistribution = (orders: OrderSummary[]): StatusCountP
   }
   return STATUS_ORDER.filter((s) => (counts.get(s) ?? 0) > 0).map((status) => ({
     status,
-    label: STATUS_DISPLAY[status],
+    label: tNow(STATUS_LABEL_KEY[status]),
     count: counts.get(status) ?? 0,
     fill: STATUS_CHART_COLOR[status],
   }))

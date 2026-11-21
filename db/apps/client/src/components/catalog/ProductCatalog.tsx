@@ -7,6 +7,7 @@ import { listItem, listStagger } from "../../lib/motion"
 import { queryKeys } from "../../lib/query-keys"
 import { queryTiming } from "../../lib/query-client"
 import { fetchProducts } from "../../services/products"
+import { useI18n } from "../../i18n"
 
 type ProductCatalogProps = {
   featuredOnly: boolean
@@ -15,6 +16,7 @@ type ProductCatalogProps = {
 }
 
 export const ProductCatalog = ({ featuredOnly, viewAllHref = "/collections" }: ProductCatalogProps) => {
+  const { t } = useI18n()
   const productsQuery = useQuery({
     queryKey: queryKeys.products.list({ featuredOnly }),
     queryFn: () => fetchProducts({ featured: featuredOnly || undefined }),
@@ -33,11 +35,14 @@ export const ProductCatalog = ({ featuredOnly, viewAllHref = "/collections" }: P
         variant="card"
         tone="danger"
         icon="error"
-        kicker="Connection Issue"
-        title="We couldn’t load the catalogue"
-        copy="An unexpected issue interrupted our request. Please try again."
-        cta={{ label: isFetching ? "Retrying…" : "Try Again", onClick: () => void refetch() }}
-        secondaryCta={{ to: "/", label: "Return Home" }}
+        kicker={t("catalog.error.kicker")}
+        title={t("catalog.error.catalogueTitle")}
+        copy={t("catalog.error.copy")}
+        cta={{
+          label: isFetching ? t("catalog.action.retrying") : t("catalog.action.tryAgain"),
+          onClick: () => void refetch(),
+        }}
+        secondaryCta={{ to: "/", label: t("catalog.action.returnHome") }}
       />
     )
   }
@@ -47,15 +52,11 @@ export const ProductCatalog = ({ featuredOnly, viewAllHref = "/collections" }: P
       <EmptyState
         variant="card"
         icon="auto_awesome"
-        kicker={featuredOnly ? "Featured Pieces" : "Atelier Catalogue"}
-        title={featuredOnly ? "No featured pieces just now" : "No pieces available yet"}
-        copy={
-          featuredOnly
-            ? "Our editors are curating the next selection. Explore the full collection in the meantime."
-            : "Our artisans are crafting the next collection. Check back soon."
-        }
-        cta={featuredOnly ? { to: viewAllHref, label: "View All Products" } : undefined}
-        secondaryCta={{ to: "/categories", label: "Shop by Category" }}
+        kicker={featuredOnly ? t("catalog.empty.featuredKicker") : t("catalog.empty.catalogueKicker")}
+        title={featuredOnly ? t("catalog.empty.featuredTitle") : t("catalog.empty.allTitle")}
+        copy={featuredOnly ? t("catalog.empty.featuredCopy") : t("catalog.empty.allCopy")}
+        cta={featuredOnly ? { to: viewAllHref, label: t("catalog.action.viewAllProducts") } : undefined}
+        secondaryCta={{ to: "/categories", label: t("catalog.action.shopByCategory") }}
       />
     )
   }

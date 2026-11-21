@@ -2,6 +2,7 @@ import { Link } from "react-router-dom"
 import { MotionLink, linkPressProps } from "../components/motion/MotionLink"
 import { useCategories } from "../hooks/useCatalog"
 import { useQueryLoadState } from "../hooks/useQueryLoadState"
+import { useI18n } from "../i18n"
 
 const CATEGORY_IMAGES: Record<string, string> = {
   rings:
@@ -24,6 +25,7 @@ const FALLBACK_IMAGE =
 const imageFor = (name: string) => CATEGORY_IMAGES[name.toLowerCase().trim()] ?? FALLBACK_IMAGE
 
 export const CategoriesPage = () => {
+  const { t } = useI18n()
   const categoriesQuery = useCategories()
   const { data, isError } = categoriesQuery
   const { showSkeleton } = useQueryLoadState(categoriesQuery)
@@ -31,10 +33,10 @@ export const CategoriesPage = () => {
   return (
     <section className="py-12 md:py-20">
       <header className="text-center max-w-2xl mx-auto mb-12 md:mb-16">
-        <span className="aurelia-admin-kicker mb-3 d-inline-block">ElaBizhu Atelier</span>
-        <h1 className="font-display-xl text-headline-lg font-normal mb-4 mt-2">Shop by Category</h1>
+        <span className="aurelia-admin-kicker mb-3 d-inline-block">{t("catalog.categories.kicker")}</span>
+        <h1 className="font-display-xl text-headline-lg font-normal mb-4 mt-2">{t("catalog.categories.title")}</h1>
         <p className="aurelia-muted mb-0">
-          Pick a category to explore pieces crafted with intention by our master artisans.
+          {t("catalog.categories.copy")}
         </p>
       </header>
 
@@ -43,7 +45,7 @@ export const CategoriesPage = () => {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter"
           aria-busy="true"
           aria-live="polite"
-          aria-label="Loading categories"
+          aria-label={t("catalog.categories.loading")}
         >
           {[0, 1, 2].map((i) => (
             <div key={i} className="aspect-square aurelia-shimmer-block" aria-hidden />
@@ -53,12 +55,12 @@ export const CategoriesPage = () => {
 
       {isError && (
         <div className="text-center aurelia-muted py-5">
-          Could not load categories. Please refresh and try again.
+          {t("catalog.categories.error")}
         </div>
       )}
 
       {!showSkeleton && !isError && data && data.length === 0 && (
-        <div className="text-center aurelia-muted py-5">No categories available yet.</div>
+        <div className="text-center aurelia-muted py-5">{t("catalog.categories.empty")}</div>
       )}
 
       {!showSkeleton && !isError && data && data.length > 0 && (
@@ -69,7 +71,7 @@ export const CategoriesPage = () => {
               to={`/categories/${category.id}/products`}
               className="relative group block aspect-square overflow-hidden bg-surface-dim"
               style={{ color: "#fff8f3", textDecoration: "none" }}
-              aria-label={`Browse ${category.name}`}
+              aria-label={t("catalog.categories.browse", { name: category.name })}
             >
               <img
                 src={imageFor(category.name)}
@@ -92,7 +94,7 @@ export const CategoriesPage = () => {
                   className="block text-[11px] uppercase tracking-[0.32em] mb-3 transition-transform duration-500"
                   style={{ color: "rgba(255,248,243,0.72)", fontFamily: "Inter, sans-serif" }}
                 >
-                  {String(index + 1).padStart(2, "0")} &nbsp;·&nbsp; Collection
+                  {String(index + 1).padStart(2, "0")} &nbsp;·&nbsp; {t("catalog.categories.collection")}
                 </span>
 
                 <div className="flex items-end justify-between gap-4">
@@ -124,7 +126,7 @@ export const CategoriesPage = () => {
 
       <div className="text-center mt-12 md:mt-16">
         <MotionLink to="/products" className="aurelia-btn aurelia-btn-primary text-decoration-none" {...linkPressProps}>
-          View All Products
+          {t("catalog.action.viewAllProducts")}
         </MotionLink>
       </div>
     </section>

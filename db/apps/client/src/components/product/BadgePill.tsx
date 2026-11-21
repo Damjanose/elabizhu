@@ -1,21 +1,15 @@
 import type { UrgencyBadge } from "@jewellery/types"
-import { badgeLabel } from "../../utils/productBadges"
+import { useI18n } from "../../i18n"
 
-const styleFor = (b: UrgencyBadge): string => {
-  switch (b) {
-    case "new":
-      return "text-bg-success"
-    case "low_stock":
-      return "text-bg-warning"
-    case "sold_out":
-      return "text-bg-secondary"
-    default:
-      return "text-bg-light border"
-  }
+const LABEL_KEY: Partial<Record<UrgencyBadge, string>> = {
+  new: "home.badge.new",
+  low_stock: "home.badge.low_stock",
+  sold_out: "home.badge.sold_out",
 }
 
 export const BadgePill = ({ badge }: { badge: UrgencyBadge }) => {
-  const label = badgeLabel(badge)
-  if (!label) return null
-  return <span className={`badge rounded-pill ${styleFor(badge)}`}>{label}</span>
+  const { t } = useI18n()
+  const key = LABEL_KEY[badge]
+  if (!key) return null
+  return <span className={`eb-home-badge eb-home-badge--${badge}`}>{t(key)}</span>
 }

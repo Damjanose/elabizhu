@@ -1,388 +1,378 @@
+import { useEffect, useMemo, useRef } from "react"
+import gsap from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { motion, type Variants } from "motion/react"
+import { Link } from "react-router-dom"
+import { FiInstagram } from "react-icons/fi"
+import { FaTiktok } from "react-icons/fa"
 import { useFeaturedProductsQuery } from "../hooks/queries/useFeaturedProducts"
 import { useCategories } from "../hooks/useCatalog"
 import { useQueryLoadState } from "../hooks/useQueryLoadState"
-import gsap from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { motion } from "motion/react"
-import { useEffect, useMemo, useRef } from "react"
+import { useI18n } from "../i18n"
 import { MotionLink, linkPressProps } from "../components/motion/MotionLink"
+import { BadgePill } from "../components/product/BadgePill"
 import { fadeUp, listItem, listStagger, scrollRevealViewport, shouldReduceMotion, transition } from "../lib/motion"
-import { ProductCard } from "../components/product/ProductCard"
-import { FiInstagram } from "react-icons/fi"
-import { INSTAGRAM_HANDLE, INSTAGRAM_URL, instagramPosts } from "../data/instagram"
+import { deriveDisplayBadge } from "../utils/productBadges"
+import { INSTAGRAM_HANDLE, INSTAGRAM_URL, TIKTOK_URL, instagramPosts } from "../data/instagram"
+import { HOME_CATEGORIES, matchHomeCategory } from "./home-categories"
+import "../styles/home.css"
 
-const CATEGORY_TILES = [
-  {
-    label: "Rings",
-    to: "/categories",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCUCHmTYIJOJ5wHsDpcxGrnB8IoZYhdRfeeEOL6loLp9RhZ-X75eABlbfi1VokYKsf0pPjpN6U5KDla5h4Tuv953JkrshABTw1QXla7fw1g08a762tuX0dmXjcQN8uUHRWoknYYm6n_UlXV-o1ZPZICFGzKPAzBBwf234FUqxli3IzAkMN-YddIlcPGd6uC3NVVmE10s76I_B28_vqguclGYE9UZcQQpdrFLWT2DzBvDQjV7UsFQAijDqK2YtGjcofRXHK482Jf1Q",
-  },
-  {
-    label: "Necklaces",
-    to: "/categories",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuDls09bXH9zpm_nvTZOOAJ0vui7QX-RrLm7V3zsv0cypbxpoP-mpePXuvn-4iRAqglr9MgQh9-UFYy_lHu4DORu1a-B0SWCOuKtePiA-3KnySf8WlvR5Dn4jK0xK0MefnMvXtaPhDSMFTIsZpOjWUwA7c1f9nzwkqQ4yyGzg13QcHr5UJdjZg3Zh9TnbDJ87v0Qa_ndGzHIvjIA-XqVLtvo1F6PUkXfPQxPEq3LZ2gK6EarnB_g9CXet91YiRy8Z-fpQ7ROordXoQ",
-  },
-  {
-    label: "Bespoke",
-    to: "/categories",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuC2a5NvgT3nw6nbJt-1nTW555XAN_2nqzoDEJlxE1Buz1a9wIlJwjMBKBPE3SYoVCgjcmMk73lmQxuFIPqwNxY3OO9d7cXTWP24To_WNRtfKhh2Mzw2pXUzPEJFOlK86EIc9epl5o5RrjnxrczcCgdgUkr3E9iqmuy4I98xXxl_tM6vVN7fY3_Af7o-WArja1GKsU4YSxs18tr7BxcMR-mgBaKTCTHd3zN6l2rK9Ar3eqFZLpezmxsR0dKM6YYD3ELNN6tanVCUPw",
-  },
-] as const
+const heroStagger: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.09, delayChildren: 0.05 } },
+}
+
+const heroRise: Variants = {
+  hidden: { opacity: 0, y: 22 },
+  visible: { opacity: 1, y: 0, transition: transition.slow },
+}
+
+const STEP_KEYS = [1, 2, 3] as const
+const GALLERY_SLOTS = 6
+
+/** Scroll-reveal props; empty when the user prefers reduced motion so content renders immediately. */
+const revealProps = (reduce: boolean) =>
+  reduce ? {} : { variants: fadeUp, initial: "hidden", whileInView: "visible", viewport: scrollRevealViewport }
 
 export const HomePage = () => {
-  const heroRef = useRef<HTMLElement | null>(null)
+  const { t } = useI18n()
+  const rootRef = useRef<HTMLDivElement | null>(null)
+  const reduceMotion = useMemo(() => shouldReduceMotion(), [])
   const featuredQuery = useFeaturedProductsQuery()
   const categoriesQuery = useCategories()
   const featured = featuredQuery.data
   const { showSkeleton: showFeaturedSkeleton } = useQueryLoadState(featuredQuery)
 
-  const categoryRoutes = useMemo(() => {
-    const mapping = new Map<string, string>()
-    categoriesQuery.data?.forEach((category) => {
-      mapping.set(category.name.toLowerCase(), category.id)
+  const products = useMemo(() => (featured ?? []).slice(0, 8), [featured])
+  const heroImage = useMemo(() => featured?.find((p) => p.images[0])?.images[0]?.url, [featured])
+
+  const categoryTiles = useMemo(() => {
+    const list = categoriesQuery.data ?? []
+    return HOME_CATEGORIES.map(({ key }) => {
+      const match = matchHomeCategory(key, list)
+      return { key, to: match ? `/categories/${match.id}/products` : "/categories" }
     })
-    return mapping
   }, [categoriesQuery.data])
 
-  const categoryTiles = useMemo(
-    () =>
-      CATEGORY_TILES.map((tile) => {
-        const categoryId = categoryRoutes.get(tile.label.toLowerCase())
-        return {
-          ...tile,
-          to: categoryId ? `/categories/${categoryId}/products` : tile.to,
-        }
-      }),
-    [categoryRoutes],
-  )
+  const watchesTo = categoryTiles.find((tile) => tile.key === "watches")?.to ?? "/categories"
 
   useEffect(() => {
-    if (!heroRef.current || shouldReduceMotion()) return
+    if (!rootRef.current || shouldReduceMotion()) return
     gsap.registerPlugin(ScrollTrigger)
 
     const ctx = gsap.context(() => {
-      gsap.fromTo(
-        ".aurelia-hero-overlay",
-        { yPercent: 18, autoAlpha: 0 },
-        { yPercent: 0, autoAlpha: 1, duration: 0.9, ease: "power3.out" },
-      )
+      gsap.to(".eb-home-hero-img", {
+        yPercent: 6,
+        ease: "none",
+        scrollTrigger: { trigger: ".eb-home-hero", start: "top top", end: "bottom top", scrub: true },
+      })
 
       gsap.fromTo(
-        ".aurelia-hero-image",
-        { scale: 1.08, yPercent: -4 },
+        ".eb-home-band-quote",
+        { yPercent: -10 },
         {
-          scale: 1,
-          yPercent: 6,
+          yPercent: 10,
           ease: "none",
-          scrollTrigger: {
-            trigger: ".aurelia-hero",
-            scrub: true,
-            start: "top top",
-            end: "bottom top",
-          },
+          scrollTrigger: { trigger: ".eb-home-band", start: "top bottom", end: "bottom top", scrub: true },
         },
       )
-    }, heroRef)
+    }, rootRef)
 
     return () => ctx.revert()
   }, [])
 
+  const reveal = revealProps(reduceMotion)
+
   return (
-    <motion.div className="aurelia-home" variants={fadeUp} initial="hidden" animate="visible">
-      <section className="aurelia-hero mb-5" ref={heroRef}>
-        <img
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfrdXXDMvv_4i_QFR-cJQr4iUBQSgbhCXdTXoK6o6vnj5UenpWxIpHkaQsZ9XDXFy79XlmYCed9Tg-MDbQ5z4bw3OJHUd9z43VFF2qnAHg78HSf8OqAJs3PfFkAsuZBE8vqOsqP45J6NSvkjbSYGAHWLZw2mL1pwZI4IY_e6ttpbMG0153ZE4UC-w8PbSU97SwCKMnwbFmnr4bD4srvGTX4BYxqqM4vLnhyBIl9a8ppoXeS6g-WeYPDac1pcJhAFffPKEjfIGJDw"
-          alt=""
-          className="aurelia-hero-image"
-          decoding="async"
-          fetchPriority="high"
-        />
-        <div className="aurelia-hero-overlay">
-          <span className="aurelia-admin-kicker mb-3">Est. 1924</span>
-          <h1 className="aurelia-hero-title">Timeless Jewellery, Curated Weekly</h1>
-          <p className="aurelia-hero-copy">
-            Discover a collection of handcrafted pieces that celebrate the art of fine jewellery.
-          </p>
-          <div className="d-flex gap-2 justify-content-center mt-3">
-            <MotionLink
-              className="aurelia-btn aurelia-btn-primary text-decoration-none"
-              to="/products"
-              {...linkPressProps}
-            >
-              Shop Collection
-            </MotionLink>
-            <MotionLink
-              className="aurelia-btn text-decoration-none"
-              to="/products?featured=1"
-              {...linkPressProps}
-            >
-              View New Arrivals
-            </MotionLink>
-          </div>
+    <div className="eb-home" ref={rootRef}>
+      <div className="eb-home-marquee" aria-hidden>
+        <div className="eb-home-marquee-track">
+          {[0, 1].map((group) => (
+            <span className="eb-home-marquee-group" key={group}>
+              <span>{t("home.marquee.style")}</span>
+              <span>{t("home.marquee.material")}</span>
+              <span>{t("home.marquee.shipping")}</span>
+            </span>
+          ))}
         </div>
+      </div>
+
+      <section className="eb-home-hero" aria-labelledby="eb-home-hero-title">
+        <motion.div
+          className="eb-home-hero-text"
+          variants={heroStagger}
+          initial={reduceMotion ? false : "hidden"}
+          animate="visible"
+        >
+          <motion.span className="eb-home-kicker" variants={heroRise}>
+            {t("home.hero.kicker")}
+          </motion.span>
+          <motion.h1 id="eb-home-hero-title" className="eb-home-hero-title" variants={heroRise}>
+            {t("home.hero.titleStart")}
+            <br />
+            <em>{t("home.hero.titleEnd")}</em>
+          </motion.h1>
+        </motion.div>
+
+        <motion.div
+          className="eb-home-hero-media"
+          initial={reduceMotion ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={transition.slow}
+        >
+          {heroImage ? (
+            <img
+              src={heroImage}
+              alt={t("home.hero.imageAlt")}
+              className="eb-home-hero-img"
+              decoding="async"
+              fetchPriority="high"
+            />
+          ) : (
+            <span className="eb-home-hero-img eb-home-shimmer" aria-hidden>
+              <span className="eb-home-placeholder-label">{t("home.hero.placeholder")}</span>
+            </span>
+          )}
+        </motion.div>
+
+        <motion.div
+          className="eb-home-hero-body"
+          variants={heroStagger}
+          initial={reduceMotion ? false : "hidden"}
+          animate="visible"
+        >
+          <motion.p className="eb-home-hero-copy" variants={heroRise}>
+            {t("home.hero.copy")}
+          </motion.p>
+          <motion.div className="eb-home-actions" variants={heroRise}>
+            <MotionLink to="/products" className="eb-home-pill" {...linkPressProps}>
+              {t("home.hero.shop")}
+            </MotionLink>
+            <motion.a
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="eb-home-pill eb-home-pill--outline"
+              {...linkPressProps}
+            >
+              <FiInstagram aria-hidden />
+              Instagram
+            </motion.a>
+            <motion.a
+              href={TIKTOK_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="eb-home-pill eb-home-pill--outline"
+              {...linkPressProps}
+            >
+              <FaTiktok aria-hidden />
+              TikTok
+            </motion.a>
+          </motion.div>
+        </motion.div>
       </section>
 
-      <section className="mb-5">
-        <motion.div
-          className="d-flex justify-content-between align-items-end mb-4"
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={scrollRevealViewport}
-        >
+      <nav className="eb-home-chips-wrap" aria-label={t("home.categories.title")}>
+        <ul className="eb-home-chips">
+          {categoryTiles.map((tile) => (
+            <li key={tile.key}>
+              <Link className="eb-home-chip" to={tile.to}>
+                {t(`home.categories.name.${tile.key}`)}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <section className="eb-home-section" aria-labelledby="eb-home-categories-title">
+        <motion.h2 id="eb-home-categories-title" className="eb-home-h2 eb-home-section-title" {...reveal}>
+          {t("home.categories.title")}
+        </motion.h2>
+        <motion.ul className="eb-home-cat-grid" variants={listStagger} initial={reduceMotion ? false : "hidden"} whileInView="visible" viewport={scrollRevealViewport}>
+          {categoryTiles.map((tile) => (
+            <motion.li key={tile.key} variants={listItem} className="eb-home-cat-item">
+              <Link to={tile.to} className="eb-home-cat eb-home-shimmer">
+                <span className="eb-home-cat-name">{t(`home.categories.name.${tile.key}`)}</span>
+                <span className="eb-home-cat-cta">
+                  {t("home.categories.view")} <span aria-hidden>→</span>
+                </span>
+              </Link>
+            </motion.li>
+          ))}
+        </motion.ul>
+      </section>
+
+      <section className="eb-home-section" aria-labelledby="eb-home-featured-title">
+        <motion.div className="eb-home-head" {...reveal}>
           <div>
-            <h2 className="aurelia-admin-title mb-2">The Signature Series</h2>
-            <p className="aurelia-muted mb-0 small">Refined essentials for the modern connoisseur.</p>
+            <h2 id="eb-home-featured-title" className="eb-home-h2">
+              {t("home.featured.title")}
+            </h2>
+            <p className="eb-home-muted">{t("home.featured.copy")}</p>
           </div>
-          <MotionLink to="/products?featured=1" className="aurelia-nav-link" {...linkPressProps}>
-            View all
+          <MotionLink to="/products?featured=1" className="eb-home-link" {...linkPressProps}>
+            {t("home.featured.viewAll")}
           </MotionLink>
         </motion.div>
+
         {showFeaturedSkeleton ? (
-          <FeaturedProductsSkeleton />
-        ) : featured && featured.length > 0 ? (
-          <motion.div
-            key={featured
-              .slice(0, 4)
-              .map((p) => p.id)
-              .join("-")}
-            className="row g-4"
-            variants={listStagger}
-            initial="hidden"
-            animate="visible"
-          >
-            {featured.slice(0, 4).map((p) => (
-              <motion.div key={p.id} className="col-6 col-lg-3" variants={listItem}>
-                <ProductCard product={p} eagerImage />
-              </motion.div>
+          <div className="eb-home-row" aria-busy="true" aria-live="polite" aria-label={t("home.featured.loading")}>
+            {[0, 1, 2, 3].map((i) => (
+              <div className="eb-home-row-item" key={i} aria-hidden>
+                <div className="eb-home-media eb-home-shimmer" />
+              </div>
             ))}
+          </div>
+        ) : products.length > 0 ? (
+          <motion.div className="eb-home-row" variants={listStagger} initial={reduceMotion ? false : "hidden"} animate="visible">
+            {products.map((product, index) => {
+              const badge = deriveDisplayBadge(product)
+              const thumb = product.images[0]?.url
+              const name = product.name
+              return (
+                <motion.article className="eb-home-row-item" key={product.id} variants={listItem}>
+                  <Link to={`/products/${product.id}`} className="eb-home-media eb-home-product-media">
+                    {thumb ? (
+                      <img
+                        src={thumb}
+                        alt={name}
+                        className="eb-home-product-img"
+                        loading={index < 2 ? "eager" : "lazy"}
+                        decoding="async"
+                      />
+                    ) : (
+                      <span className="eb-home-shimmer eb-home-product-img" aria-hidden>
+                        <span className="eb-home-placeholder-label">{t("home.product.placeholder")}</span>
+                      </span>
+                    )}
+                  </Link>
+                  <div className="eb-home-product-meta">
+                    <div className="eb-home-product-tags">
+                      {badge ? <BadgePill badge={badge} /> : <span className="eb-home-tag">{t("home.featured.tag")}</span>}
+                    </div>
+                    <Link to={`/products/${product.id}`} className="eb-home-product-name">
+                      {name}
+                    </Link>
+                    <span className="eb-home-product-price">{`$${Number(product.price).toFixed(2)}`}</span>
+                    <motion.a
+                      href={INSTAGRAM_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={t("home.product.orderAria", { name })}
+                      className="eb-home-pill eb-home-pill--outline eb-home-pill--sm"
+                      {...linkPressProps}
+                    >
+                      {t("home.product.orderInstagram")}
+                    </motion.a>
+                  </div>
+                </motion.article>
+              )
+            })}
           </motion.div>
-        ) : null}
-      </section>
-
-      <section className="aurelia-feature-block mb-5">
-        <div className="row g-4 align-items-center">
-          <motion.div
-            className="col-md-5 overflow-hidden"
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={scrollRevealViewport}
-          >
-            <motion.img
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuANIPK2sA_DRxWB_X0cI9oci-WSe6NXAJqBeV5uM-oNM7loqG2k7g7pBlapLwp_wZ0OGa0R5npIpEr_XD2x6SU_bAp-g1C4KGl3UWFPuM8rO2rSEXdTBlWO_NA8AIjlf12oCTHnMehix8fRwglYRDYfBVhKfagn1YN0QkTILB3_eqtipyes0e1P19vkR6oMivth7PNQftjceEEOaZOXTFns8iInHoDjkLH2_WFlWb1Z8DfLkCbBl_DV6jrISOgov80h7lOFKCn4Gw"
-              alt=""
-              className="w-100 aurelia-feature-image"
-              loading="lazy"
-              decoding="async"
-              whileHover={{ scale: 1.04 }}
-              transition={transition.slow}
-            />
-          </motion.div>
-          <motion.div
-            className="col-md-7"
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={scrollRevealViewport}
-          >
-            <h2 className="aurelia-admin-title mb-3">Celestial Craftsmanship</h2>
-            <p className="aurelia-muted mb-4">
-              Our newest arrivals bridge traditional techniques and contemporary design. Every piece
-              in the Aurora collection features ethically sourced stones set in recycled gold.
-            </p>
-            <div className="row g-3">
-              <div className="col-6">
-                <h3 className="aurelia-feature-point">Ethically Sourced</h3>
-                <p className="aurelia-muted small mb-0">Committed to transparency in our supply chain.</p>
-              </div>
-              <div className="col-6">
-                <h3 className="aurelia-feature-point">Hand-Finished</h3>
-                <p className="aurelia-muted small mb-0">Individually polished for a mirror-like shine.</p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      <section className="py-16 md:py-24">
-        <motion.h2
-          className="font-display-xl text-headline-lg text-center mb-16 font-normal"
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={scrollRevealViewport}
-        >
-          Shop by Category
-        </motion.h2>
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-gutter"
-          variants={listStagger}
-          initial="hidden"
-          whileInView="visible"
-          viewport={scrollRevealViewport}
-        >
-          {categoryTiles.map((tile, index) => (
-            <motion.div key={tile.label} variants={listItem}>
-            <MotionLink
-              key={tile.label}
-              to={tile.to}
-              className="relative group block aspect-square overflow-hidden bg-surface-dim"
-              style={{ color: "#fff8f3", textDecoration: "none" }}
-              whileHover={{ scale: 1.015, y: -4 }}
-              whileTap={{ scale: 0.98 }}
-              transition={transition.base}
-            >
-              <motion.img
-                src={tile.image}
-                alt={tile.label}
-                className="absolute inset-0 w-full h-full object-cover"
-                loading="lazy"
-                decoding="async"
-                whileHover={{ scale: 1.08 }}
-                transition={transition.slow}
-              />
-
-              <div
-                aria-hidden
-                className="absolute inset-0 transition-opacity duration-500 group-hover:opacity-95"
-                style={{
-                  background:
-                    "linear-gradient(180deg, rgba(20,16,10,0.20) 0%, rgba(20,16,10,0) 32%, rgba(20,16,10,0) 50%, rgba(20,16,10,0.88) 100%)",
-                }}
-              />
-
-              <div className="absolute inset-x-0 bottom-0 px-6 pb-6 md:px-8 md:pb-8">
-                <span
-                  className="block text-[11px] uppercase tracking-[0.32em] mb-3"
-                  style={{ color: "rgba(255,248,243,0.72)", fontFamily: "Inter, sans-serif" }}
-                >
-                  {String(index + 1).padStart(2, "0")} &nbsp;·&nbsp; Collection
-                </span>
-
-                <div className="flex items-end justify-between gap-4">
-                  <h3
-                    className="m-0 font-normal leading-none text-[28px] md:text-[36px] lg:text-[40px] tracking-wide"
-                    style={{ color: "#fff8f3", fontFamily: '"Noto Serif", serif' }}
-                  >
-                    {tile.label}
-                  </h3>
-                  <span
-                    aria-hidden
-                    className="text-2xl leading-none transition-transform duration-500 ease-out group-hover:translate-x-1.5"
-                    style={{ color: "#fff8f3", fontWeight: 200 }}
-                  >
-                    →
-                  </span>
-                </div>
-
-                <span
-                  aria-hidden
-                  className="mt-5 block h-px w-8 group-hover:w-full transition-all duration-700 ease-out"
-                  style={{ background: "rgba(255,248,243,0.6)" }}
-                />
-              </div>
-            </MotionLink>
-            </motion.div>
-          ))}
-        </motion.div>
-      </section>
-
-      <section className="py-16 md:py-24 text-center">
-        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={scrollRevealViewport}>
-          <h2 className="font-display-xl text-headline-lg font-normal mb-3">Follow @{INSTAGRAM_HANDLE}</h2>
-          <p className="aurelia-muted mb-4">New pieces, behind-the-scenes moments and styling ideas on Instagram.</p>
-        </motion.div>
-        {instagramPosts.length > 0 && (
-          <motion.div
-            className="grid grid-cols-2 md:grid-cols-4 gap-gutter mb-5"
-            variants={listStagger}
-            initial="hidden"
-            whileInView="visible"
-            viewport={scrollRevealViewport}
-          >
-            {instagramPosts.map((post) => (
-              <motion.a
-                key={post.image}
-                variants={listItem}
-                href={post.href ?? INSTAGRAM_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="relative block aspect-square overflow-hidden bg-surface-dim"
-              >
-                <motion.img
-                  src={post.image}
-                  alt={post.alt}
-                  className="absolute inset-0 w-full h-full object-cover"
-                  loading="lazy"
-                  decoding="async"
-                  whileHover={{ scale: 1.06 }}
-                  transition={transition.slow}
-                />
-              </motion.a>
-            ))}
-          </motion.div>
+        ) : (
+          <p className="eb-home-muted">{t("home.featured.empty")}</p>
         )}
+      </section>
+
+      <section className="eb-home-band" aria-label={t("home.quote")}>
+        <p className="eb-home-band-quote">{t("home.quote")}</p>
+        <span className="eb-home-band-rule" aria-hidden />
+      </section>
+
+      <section className="eb-home-section eb-home-men" aria-labelledby="eb-home-men-title">
+        <motion.div className="eb-home-men-media" {...reveal}>
+          <Link to={watchesTo} className="eb-home-men-link" aria-label={t("home.men.cta")}>
+            <span className="eb-home-shimmer eb-home-men-img" aria-hidden>
+              <span className="eb-home-placeholder-label">{t("home.hero.placeholder")}</span>
+            </span>
+          </Link>
+        </motion.div>
+        <motion.div className="eb-home-men-text" {...reveal}>
+          <span className="eb-home-kicker">{t("home.men.kicker")}</span>
+          <h2 id="eb-home-men-title" className="eb-home-h2">
+            {t("home.men.title")}
+            <br />
+            <em>{t("home.men.titleAlt")}</em>
+          </h2>
+          <p className="eb-home-muted">{t("home.men.copy")}</p>
+          <MotionLink to={watchesTo} className="eb-home-pill eb-home-pill--outline" {...linkPressProps}>
+            {t("home.men.cta")}
+          </MotionLink>
+        </motion.div>
+      </section>
+
+      <section className="eb-home-section" aria-labelledby="eb-home-steps-title">
+        <motion.h2 id="eb-home-steps-title" className="eb-home-h2 eb-home-section-title" {...reveal}>
+          {t("home.steps.title")}
+        </motion.h2>
+        <motion.ol className="eb-home-steps" variants={listStagger} initial={reduceMotion ? false : "hidden"} whileInView="visible" viewport={scrollRevealViewport}>
+          {STEP_KEYS.map((n) => (
+            <motion.li key={n} className="eb-home-step" variants={listItem}>
+              <span className="eb-home-step-num" aria-hidden>
+                {String(n).padStart(2, "0")}
+              </span>
+              <h3 className="eb-home-step-title">{t(`home.steps.${n}.title`)}</h3>
+              <p className="eb-home-muted">{t(`home.steps.${n}.copy`)}</p>
+            </motion.li>
+          ))}
+        </motion.ol>
+      </section>
+
+      <section className="eb-home-section" aria-labelledby="eb-home-gallery-title">
+        <motion.div className="eb-home-head eb-home-head--center" {...reveal}>
+          <div>
+            <h2 id="eb-home-gallery-title" className="eb-home-h2">
+              {t("home.gallery.title")}
+            </h2>
+            <p className="eb-home-muted">{t("home.gallery.copy")}</p>
+          </div>
+        </motion.div>
+        <motion.div className="eb-home-gallery" variants={listStagger} initial={reduceMotion ? false : "hidden"} whileInView="visible" viewport={scrollRevealViewport}>
+          {instagramPosts.length > 0
+            ? instagramPosts.slice(0, GALLERY_SLOTS).map((post) => (
+                <motion.a
+                  key={post.image}
+                  variants={listItem}
+                  href={post.href ?? INSTAGRAM_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="eb-home-gallery-item"
+                >
+                  <img src={post.image} alt={post.alt} className="eb-home-gallery-img" loading="lazy" decoding="async" />
+                </motion.a>
+              ))
+            : Array.from({ length: GALLERY_SLOTS }, (_, i) => (
+                <motion.span key={i} variants={listItem} className="eb-home-gallery-item eb-home-shimmer" aria-hidden />
+              ))}
+        </motion.div>
+        <motion.div className="eb-home-follow" {...reveal}>
+          <motion.a
+            href={INSTAGRAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${t("home.gallery.follow")} @${INSTAGRAM_HANDLE}`}
+            className="eb-home-pill"
+            {...linkPressProps}
+          >
+            <FiInstagram aria-hidden />
+            {t("home.gallery.follow")}
+          </motion.a>
+        </motion.div>
+      </section>
+
+      <div className="eb-home-sticky">
         <motion.a
           href={INSTAGRAM_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="aurelia-btn aurelia-btn-primary d-inline-flex align-items-center gap-2 text-decoration-none"
-          whileHover={{ scale: 1.03, y: -1 }}
-          whileTap={{ scale: 0.97 }}
-          transition={transition.quick}
+          aria-label={t("home.sticky.aria")}
+          className="eb-home-pill eb-home-pill--sticky"
+          {...linkPressProps}
         >
-          <FiInstagram aria-hidden /> Follow on Instagram
+          <FiInstagram aria-hidden />
+          {t("home.sticky.label")}
         </motion.a>
-      </section>
-
-      <section className="aurelia-newsletter text-center">
-        <motion.div
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={scrollRevealViewport}
-        >
-          <h2 className="aurelia-admin-title mb-2">Join the ElaBizhu Circle</h2>
-          <p className="aurelia-muted mb-3">
-            Be the first to explore our weekly curations, exclusive bespoke opportunities and private events.
-          </p>
-          <div className="d-flex justify-content-center gap-2 flex-wrap">
-            <input type="email" className="aurelia-newsletter-input" placeholder="Your Email Address" />
-            <motion.button
-              type="button"
-              className="aurelia-btn aurelia-btn-primary"
-              whileHover={{ scale: 1.03, y: -1 }}
-              whileTap={{ scale: 0.97 }}
-              transition={transition.quick}
-            >
-              Subscribe
-            </motion.button>
-          </div>
-        </motion.div>
-      </section>
-
-    </motion.div>
+      </div>
+    </div>
   )
 }
-
-const FeaturedProductsSkeleton = () => (
-  <motion.div
-    className="row g-4"
-    aria-busy="true"
-    aria-live="polite"
-    aria-label="Loading featured products"
-    variants={listStagger}
-    initial="hidden"
-    animate="visible"
-  >
-    {[0, 1, 2, 3].map((i) => (
-      <motion.div key={i} className="col-6 col-lg-3" variants={listItem}>
-        <motion.div className="aurelia-product-skeleton" aria-hidden />
-      </motion.div>
-    ))}
-  </motion.div>
-)

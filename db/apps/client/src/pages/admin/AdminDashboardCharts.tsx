@@ -20,6 +20,7 @@ import {
 } from "../../lib/admin-dashboard-metrics"
 import { formatDisplayMoney } from "../../lib/display-currency"
 import { useAdminDisplayCurrency } from "../../stores/adminDisplayCurrencyStore"
+import { useI18n } from "../../i18n"
 
 type Props = {
   orders: OrderSummary[]
@@ -56,6 +57,7 @@ const ChartTooltip = ({
 }
 
 export const AdminDashboardCharts = ({ orders }: Props) => {
+  const { t } = useI18n()
   const displayCurrency = useAdminDisplayCurrency()
   const dayCount = 14
   const daily = getDailyOrderSeries(orders, dayCount)
@@ -75,22 +77,26 @@ export const AdminDashboardCharts = ({ orders }: Props) => {
   const hasAnyOrders = orders.length > 0
 
   return (
-    <section className="aurelia-admin-charts-section" aria-label="Order and revenue charts">
+    <section className="aurelia-admin-charts-section" aria-label={t("admin.charts.sectionAria")}>
       <div className="aurelia-admin-dashboard-table-header">
         <div>
-          <h2 className="aurelia-admin-card-title mb-2">Performance &amp; pipeline</h2>
+          <h2 className="aurelia-admin-card-title mb-2">{t("admin.charts.title")}</h2>
           <p className="aurelia-muted mb-0">
-            Last {trailing.dayCount} days: {trailing.totalOrders} orders · {formatRevenueCompact(trailing.totalRevenue)}{" "}
-            earned (excl. cancelled) · {formatRevenueCompact(trailing.avgOrderValue)} average ticket.
+            {t("admin.charts.summary", {
+              days: trailing.dayCount,
+              orders: trailing.totalOrders,
+              revenue: formatRevenueCompact(trailing.totalRevenue),
+              average: formatRevenueCompact(trailing.avgOrderValue),
+            })}
           </p>
         </div>
       </div>
 
       <div className="aurelia-admin-charts-grid">
         <article className="aurelia-admin-chart-card">
-          <p className="aurelia-admin-chart-kicker">Orders &amp; revenue by day</p>
+          <p className="aurelia-admin-chart-kicker">{t("admin.charts.ordersByDay")}</p>
           {hasAnyOrders ? (
-            <div className="aurelia-admin-chart-frame" role="img" aria-label="Bar and line chart of daily orders and revenue">
+            <div className="aurelia-admin-chart-frame" role="img" aria-label={t("admin.charts.barLineAria")}>
               <ResponsiveContainer width="100%" height="100%" minHeight={260}>
                 <ComposedChart data={daily} margin={{ top: 8, right: 8, left: -18, bottom: 0 }}>
                   <CartesianGrid stroke="rgba(209, 197, 180, 0.45)" vertical={false} />
@@ -130,12 +136,12 @@ export const AdminDashboardCharts = ({ orders }: Props) => {
                     wrapperStyle={{ fontSize: "11px", paddingTop: 8 }}
                     formatter={(value) => <span className="aurelia-admin-chart-legend-text">{value}</span>}
                   />
-                  <Bar yAxisId="left" dataKey="orders" name="Orders" fill="#c5a059" radius={[4, 4, 0, 0]} maxBarSize={28} />
+                  <Bar yAxisId="left" dataKey="orders" name={t("admin.charts.seriesOrders")} fill="#c5a059" radius={[4, 4, 0, 0]} maxBarSize={28} />
                   <Line
                     yAxisId="right"
                     type="monotone"
                     dataKey="revenue"
-                    name="Revenue"
+                    name={t("admin.charts.seriesRevenue")}
                     stroke="#4e4639"
                     strokeWidth={2}
                     dot={{ r: 3, fill: "#4e4639" }}
@@ -145,14 +151,14 @@ export const AdminDashboardCharts = ({ orders }: Props) => {
               </ResponsiveContainer>
             </div>
           ) : (
-            <p className="aurelia-admin-chart-empty aurelia-muted mb-0">No order history to chart yet.</p>
+            <p className="aurelia-admin-chart-empty aurelia-muted mb-0">{t("admin.charts.noHistory")}</p>
           )}
         </article>
 
         <article className="aurelia-admin-chart-card">
-          <p className="aurelia-admin-chart-kicker">Orders by status</p>
+          <p className="aurelia-admin-chart-kicker">{t("admin.charts.ordersByStatus")}</p>
           {statusRows.length > 0 ? (
-            <div className="aurelia-admin-chart-frame" role="img" aria-label="Horizontal bar chart of order counts by status">
+            <div className="aurelia-admin-chart-frame" role="img" aria-label={t("admin.charts.statusBarAria")}>
               <ResponsiveContainer width="100%" height="100%" minHeight={260}>
                 <BarChart data={statusRows} layout="vertical" margin={{ top: 8, right: 12, left: 4, bottom: 8 }}>
                   <CartesianGrid stroke="rgba(209, 197, 180, 0.45)" horizontal={false} />
@@ -174,13 +180,13 @@ export const AdminDashboardCharts = ({ orders }: Props) => {
                         <div className="aurelia-admin-chart-tooltip">
                           <p className="aurelia-admin-chart-tooltip-label">{row.label}</p>
                           <p className="mb-0">
-                            <strong>{row.count}</strong> {row.count === 1 ? "order" : "orders"}
+                            <strong>{row.count}</strong> {t(row.count === 1 ? "admin.charts.orderSingular" : "admin.charts.orderPlural")}
                           </p>
                         </div>
                       )
                     }}
                   />
-                  <Bar dataKey="count" name="Orders" radius={[0, 4, 4, 0]} maxBarSize={22}>
+                  <Bar dataKey="count" name={t("admin.charts.seriesOrders")} radius={[0, 4, 4, 0]} maxBarSize={22}>
                     {statusRows.map((row) => (
                       <Cell key={row.status} fill={row.fill} />
                     ))}
@@ -189,7 +195,7 @@ export const AdminDashboardCharts = ({ orders }: Props) => {
               </ResponsiveContainer>
             </div>
           ) : (
-            <p className="aurelia-admin-chart-empty aurelia-muted mb-0">No status breakdown available.</p>
+            <p className="aurelia-admin-chart-empty aurelia-muted mb-0">{t("admin.charts.noStatus")}</p>
           )}
         </article>
       </div>

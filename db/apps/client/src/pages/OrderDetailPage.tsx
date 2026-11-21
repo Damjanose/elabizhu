@@ -8,58 +8,61 @@ import { useQueryLoadState } from "../hooks/useQueryLoadState"
 import { queryKeys } from "../lib/query-keys"
 import { queryTiming } from "../lib/query-client"
 import { fetchOrder } from "../services/orders"
+import { useI18n, type Lang, type TFunction } from "../i18n"
 
 const TAX_RATE = 0.2
 
 const STATUS_DISPLAY: Record<
   OrderStatus,
-  { label: string; tone: "neutral" | "primary" | "secondary" | "success" | "danger"; copy: string }
+  { labelKey: string; tone: "neutral" | "primary" | "secondary" | "success" | "danger"; copyKey: string }
 > = {
   pending: {
-    label: "Pending",
+    labelKey: "account.status.pending",
     tone: "neutral",
-    copy: "Your order is awaiting confirmation from the atelier.",
+    copyKey: "account.detail.copy.pending",
   },
   confirmed: {
-    label: "Confirmed",
+    labelKey: "account.status.confirmed",
     tone: "primary",
-    copy: "We have your order. Each piece is being prepared with care.",
+    copyKey: "account.detail.copy.confirmed",
   },
   shipped: {
-    label: "In Transit",
+    labelKey: "account.detail.inTransit",
     tone: "secondary",
-    copy: "Your selection is on its way via insured white-glove delivery.",
+    copyKey: "account.detail.copy.shipped",
   },
   delivered: {
-    label: "Delivered",
+    labelKey: "account.status.delivered",
     tone: "success",
-    copy: "Your piece has arrived. We hope it brings you joy.",
+    copyKey: "account.detail.copy.delivered",
   },
   cancelled: {
-    label: "Cancelled",
+    labelKey: "account.status.cancelled",
     tone: "danger",
-    copy: "This order has been cancelled. Please contact us if you have questions.",
+    copyKey: "account.detail.copy.cancelled",
   },
 }
 
-const PAYMENT_LABELS: Record<string, string> = {
-  card: "Card (simulated)",
-  cod: "Cash on Delivery",
-  bank: "Bank Transfer",
+const PAYMENT_KEYS: Record<string, string> = {
+  card: "account.checkout.paymentCard",
+  cod: "account.checkout.paymentCod",
+  bank: "account.checkout.paymentBank",
 }
 
-const formatCurrency = (value: string | number) =>
-  new Intl.NumberFormat("en-GB", {
+const localeFor = (lang: Lang) => (lang === "sq" ? "sq-AL" : "en-GB")
+
+const formatCurrency = (value: string | number, lang: Lang) =>
+  new Intl.NumberFormat(localeFor(lang), {
     style: "currency",
     currency: "GBP",
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(Number(value))
 
-const formatDate = (iso: string) => {
+const formatDate = (iso: string, lang: Lang) => {
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return iso
-  return new Intl.DateTimeFormat("en-GB", {
+  return new Intl.DateTimeFormat(localeFor(lang), {
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -68,12 +71,13 @@ const formatDate = (iso: string) => {
 
 const orderRef = (id: string) => `#AUR-${id.slice(0, 6).toUpperCase()}`
 
-const formatPayment = (raw: string | null) => {
-  if (!raw) return "Not recorded"
-  return PAYMENT_LABELS[raw] ?? raw.replace(/_/g, " ")
+const formatPayment = (raw: string | null, t: TFunction) => {
+  if (!raw) return t("account.detail.paymentNotRecorded")
+  return PAYMENT_KEYS[raw] ? t(PAYMENT_KEYS[raw]) : raw.replace(/_/g, " ")
 }
 
 export const OrderDetailPage = () => {
+  const { t, lang } = useI18n()
   const { orderId = "" } = useParams<{ orderId: string }>()
   const orderQuery = useQuery({
     queryKey: queryKeys.order(orderId),
@@ -87,7 +91,7 @@ export const OrderDetailPage = () => {
 
   if (showSkeleton) {
     return (
-      <section className="aurelia-order-detail" aria-busy="true" aria-live="polite" aria-label="Loading order">
+      <section className="aurelia-order-detail" aria-busy="true" aria-live="polite" aria-label={t("account.detail.loadingAria")}>
         <div className="aurelia-detail-skeleton-back aurelia-shimmer-block" aria-hidden />
         <div className="aurelia-detail-skeleton-hero" aria-hidden>
           <div>
@@ -114,11 +118,11 @@ export const OrderDetailPage = () => {
           <EmptyState
             variant="page"
             icon="search_off"
-            kicker="Order Not Found"
-            title="We couldn’t locate this order"
-            copy="The reference you used may be incorrect, or the order belongs to a different account."
-            cta={{ to: "/orders", label: "Back to Orders" }}
-            secondaryCta={{ to: "/products", label: "Browse Collections" }}
+            kicker={t("account.detail.notFoundKicker")}
+            title={t("account.detail.notFoundTitle")}
+            copy={t("account.detail.notFoundCopy")}
+            cta={{ to: "/orders", label: t("account.common.backToOrders") }}
+            secondaryCta={{ to: "/products", label: t("account.common.browseCollections") }}
           />
         </section>
       )
@@ -129,11 +133,11 @@ export const OrderDetailPage = () => {
           variant="page"
           icon="error"
           tone="danger"
-          kicker="Something Went Wrong"
-          title="Could not load this order"
-          copy="An unexpected error interrupted our request. Please try again."
-          cta={{ label: isFetching ? "Retrying…" : "Try Again", onClick: () => void refetch() }}
-          secondaryCta={{ to: "/orders", label: "Back to Orders" }}
+          kicker={t("account.detail.errorKicker")}
+          title={t("account.detail.errorTitle")}
+          copy={t("account.common.unexpectedError")}
+          cta={{ label: isFetching ? t("account.common.retrying") : t("account.common.tryAgain"), onClick: () => void refetch() }}
+          secondaryCta={{ to: "/orders", label: t("account.common.backToOrders") }}
         />
       </section>
     )
@@ -155,23 +159,23 @@ export const OrderDetailPage = () => {
     <section className="aurelia-order-detail">
       <Link to="/orders" className="aurelia-order-detail-back">
         <span className="material-symbols-outlined" aria-hidden>chevron_left</span>
-        <span>Back to Orders</span>
+        <span>{t("account.common.backToOrders")}</span>
       </Link>
 
       <header className="aurelia-order-detail-hero">
         <div className="aurelia-order-detail-hero-meta">
-          <span className="aurelia-order-detail-kicker">Order Reference</span>
+          <span className="aurelia-order-detail-kicker">{t("account.detail.reference")}</span>
           <h1 className="aurelia-order-detail-ref">{orderRef(data.id)}</h1>
-          <p className="aurelia-order-detail-placed">Placed on {formatDate(data.createdAt)}</p>
+          <p className="aurelia-order-detail-placed">{t("account.detail.placedOn", { date: formatDate(data.createdAt, lang) })}</p>
         </div>
         <div className="aurelia-order-detail-hero-status">
           <span
             className={`aurelia-orders-status aurelia-orders-status--${display.tone} aurelia-order-detail-status`}
           >
             <span className="aurelia-orders-status-dot" aria-hidden />
-            {display.label}
+            {t(display.labelKey)}
           </span>
-          <p className="aurelia-order-detail-status-copy">{display.copy}</p>
+          <p className="aurelia-order-detail-status-copy">{t(display.copyKey)}</p>
         </div>
       </header>
 
@@ -179,9 +183,9 @@ export const OrderDetailPage = () => {
         <div className="aurelia-order-detail-main">
           <article className="aurelia-order-detail-card">
             <header className="aurelia-order-detail-card-header">
-              <h2 className="aurelia-order-detail-card-title">Items</h2>
+              <h2 className="aurelia-order-detail-card-title">{t("account.detail.itemsTitle")}</h2>
               <span className="aurelia-order-detail-card-meta">
-                {itemCount} {itemCount === 1 ? "piece" : "pieces"}
+                {itemCount === 1 ? t("account.detail.piecesOne", { count: itemCount }) : t("account.detail.piecesMany", { count: itemCount })}
               </span>
             </header>
 
@@ -189,8 +193,8 @@ export const OrderDetailPage = () => {
               <EmptyState
                 variant="inline"
                 icon="inventory_2"
-                title="No items recorded"
-                copy="This order has no items associated with it."
+                title={t("account.detail.noItemsTitle")}
+                copy={t("account.detail.noItemsCopy")}
               />
             ) : (
               <ul className="aurelia-order-items">
@@ -211,11 +215,11 @@ export const OrderDetailPage = () => {
                         {item.productName}
                       </Link>
                       <p className="aurelia-order-item-sub">
-                        {formatCurrency(item.unitPrice)} each · Qty {item.quantity}
+                        {t("account.detail.itemSub", { price: formatCurrency(item.unitPrice, lang), quantity: item.quantity })}
                       </p>
                     </div>
                     <span className="aurelia-order-item-total">
-                      {formatCurrency(Number(item.unitPrice) * item.quantity)}
+                      {formatCurrency(Number(item.unitPrice) * item.quantity, lang)}
                     </span>
                   </li>
                 ))}
@@ -224,34 +228,34 @@ export const OrderDetailPage = () => {
 
             <dl className="aurelia-order-detail-totals">
               <div>
-                <dt>Subtotal</dt>
-                <dd>{formatCurrency(itemSubtotal)}</dd>
+                <dt>{t("account.summary.subtotal")}</dt>
+                <dd>{formatCurrency(itemSubtotal, lang)}</dd>
               </div>
               <div>
-                <dt>Estimated Taxes</dt>
-                <dd>{formatCurrency(estimatedTax)}</dd>
+                <dt>{t("account.summary.estimatedTaxes")}</dt>
+                <dd>{formatCurrency(estimatedTax, lang)}</dd>
               </div>
               <div>
-                <dt>Shipping</dt>
-                <dd className="aurelia-order-detail-shipping">Complimentary</dd>
+                <dt>{t("account.summary.shipping")}</dt>
+                <dd className="aurelia-order-detail-shipping">{t("account.common.complimentary")}</dd>
               </div>
               <div className="aurelia-order-detail-totals-final">
-                <dt>Total Paid</dt>
-                <dd>{formatCurrency(data.total)}</dd>
+                <dt>{t("account.summary.totalPaid")}</dt>
+                <dd>{formatCurrency(data.total, lang)}</dd>
               </div>
             </dl>
           </article>
 
           <article className="aurelia-order-detail-card">
             <header className="aurelia-order-detail-card-header">
-              <h2 className="aurelia-order-detail-card-title">Tracking Timeline</h2>
+              <h2 className="aurelia-order-detail-card-title">{t("account.detail.timelineTitle")}</h2>
             </header>
             {data.timeline.length === 0 ? (
               <EmptyState
                 variant="inline"
                 icon="timeline"
-                title="No tracking events yet"
-                copy="We’ll record updates here as your order progresses."
+                title={t("account.detail.noEventsTitle")}
+                copy={t("account.detail.noEventsCopy")}
               />
             ) : (
               <OrderTimeline events={data.timeline} />
@@ -262,7 +266,7 @@ export const OrderDetailPage = () => {
         <aside className="aurelia-order-detail-aside">
           <article className="aurelia-order-detail-card">
             <header className="aurelia-order-detail-card-header">
-              <h2 className="aurelia-order-detail-card-title">Shipping</h2>
+              <h2 className="aurelia-order-detail-card-title">{t("account.detail.shippingTitle")}</h2>
               <span className="material-symbols-outlined aurelia-order-detail-card-icon" aria-hidden>
                 local_shipping
               </span>
@@ -270,41 +274,40 @@ export const OrderDetailPage = () => {
             {data.shippingAddress ? (
               <address className="aurelia-order-detail-address">{data.shippingAddress}</address>
             ) : (
-              <p className="aurelia-order-detail-empty">No shipping address recorded.</p>
+              <p className="aurelia-order-detail-empty">{t("account.detail.noAddress")}</p>
             )}
           </article>
 
           <article className="aurelia-order-detail-card">
             <header className="aurelia-order-detail-card-header">
-              <h2 className="aurelia-order-detail-card-title">Payment</h2>
+              <h2 className="aurelia-order-detail-card-title">{t("account.detail.paymentTitle")}</h2>
               <span className="material-symbols-outlined aurelia-order-detail-card-icon" aria-hidden>
                 lock
               </span>
             </header>
-            <p className="aurelia-order-detail-payment">{formatPayment(data.paymentMethod)}</p>
+            <p className="aurelia-order-detail-payment">{formatPayment(data.paymentMethod, t)}</p>
             <p className="aurelia-order-detail-payment-note">
-              Securely captured at the time of order.
+              {t("account.detail.paymentSecure")}
             </p>
           </article>
 
           <article className="aurelia-order-detail-card aurelia-order-detail-concierge">
             <header className="aurelia-order-detail-card-header">
-              <h2 className="aurelia-order-detail-card-title">Concierge</h2>
+              <h2 className="aurelia-order-detail-card-title">{t("account.detail.conciergeTitle")}</h2>
               <span className="material-symbols-outlined aurelia-order-detail-card-icon" aria-hidden>
                 support_agent
               </span>
             </header>
             <p className="aurelia-order-detail-concierge-copy">
-              Our atelier is available for questions, alterations, or shipping enquiries about this
-              order.
+              {t("account.detail.conciergeCopy")}
             </p>
             <a
               className="aurelia-order-detail-concierge-link"
               href={`mailto:concierge@aurelia.atelier?subject=${encodeURIComponent(
-                `Enquiry about order ${orderRef(data.id)}`,
+                t("account.detail.enquirySubject", { ref: orderRef(data.id) }),
               )}`}
             >
-              <span>Contact Concierge</span>
+              <span>{t("account.detail.contactConcierge")}</span>
               <span className="material-symbols-outlined" aria-hidden>arrow_forward</span>
             </a>
           </article>
